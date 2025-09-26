@@ -20,7 +20,7 @@ init() async {
 
   await Future.wait([
     LocalStorage.getAllPrefData(),
-    NotificationService.initLocalNotification(),
+    // NotificationService.initLocalNotification(),
     dotenv.load(fileName: ".env"),
   ]);
 }

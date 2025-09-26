@@ -23,7 +23,7 @@ class SocketServices {
     _socket.connect();
     _socket.on("user-notification::${LocalStorage.userId}", (data) {
       appLog("================> get Data on socket: $data");
-      NotificationService.showNotification(data);
+      // NotificationService.showNotification(data);
     });
   }
 
