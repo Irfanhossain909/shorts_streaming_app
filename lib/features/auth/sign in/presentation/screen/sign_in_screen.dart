@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:testemu/core/component/button/common_button.dart';
+import 'package:testemu/core/component/button/common_button_pro.dart';
+import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_account.dart';
 import '../controller/sign_in_controller.dart';
-
-import '../widgets/do_not_account.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -21,6 +22,7 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       /// App Bar Sections Starts here
       appBar: AppBar(),
+      bottomNavigationBar: SafeArea(child: DoNotHaveAccount()),
 
       /// Body Sections Starts here
       body: GetBuilder<SignInController>(
@@ -30,35 +32,63 @@ class SignInScreen extends StatelessWidget {
             child: Form(
               key: controller.formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Log In Instruction here
-                  const CommonText(
-                    text: AppString.logIntoYourAccount,
-                    fontSize: 32,
-                    bottom: 20,
-                    top: 36,
-                  ),
+                  24.height,
 
-                  /// Account Email Input here
-                  const CommonText(text: AppString.email, bottom: 8),
+                  /// Log In Instruction here
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 18.h),
+
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.background),
+                      borderRadius: BorderRadius.circular(30.w),
+                      color: AppColors.white.withValues(alpha: 0.3),
+                    ),
+                    child: Column(
+                      children: [
+                        CommonText(
+                          text: "Logo",
+                          fontSize: 64.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                        CommonText(
+                          text: "Let's Get Started!",
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                        CommonText(
+                          text: "Let's dive in into your occount",
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                      ],
+                    ),
+                  ),
+                  24.height,
+
                   CommonTextField(
                     controller: controller.emailController,
-                    prefixIcon: const Icon(Icons.mail),
+                    borderColor: AppColors.background,
+                    borderRadius: 30.w,
+                    textColor: AppColors.background,
+                    hintTextColor: AppColors.background,
+                    fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.email,
                     validator: OtherHelper.emailValidator,
                   ),
-
-                  /// Account Password Input here
-                  const CommonText(
-                    text: AppString.password,
-                    bottom: 8,
-                    top: 24,
-                  ),
+                  20.height,
                   CommonTextField(
                     controller: controller.passwordController,
-                    prefixIcon: const Icon(Icons.lock),
+                    borderColor: AppColors.background,
+                    textColor: AppColors.background,
+                    hintTextColor: AppColors.background,
+                    borderRadius: 30.w,
+                    fillColor: AppColors.background.withValues(alpha: 0.3),
                     isPassword: true,
                     hintText: AppString.password,
                     validator: OtherHelper.passwordValidator,
@@ -73,24 +103,57 @@ class SignInScreen extends StatelessWidget {
                         text: AppString.forgotThePassword,
                         top: 10,
                         bottom: 30,
-                        color: AppColors.primaryColor,
-                        fontSize: 16,
+                        color: AppColors.white,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
 
-                  /// Submit Button here
-                  CommonButton(
-                    titleText: AppString.signIn,
-                    isLoading: controller.isLoading,
-                    onTap: controller.signInUser,
+                  CommonButtonPro(text: "Sign In"),
+                  24.height,
+                  CommonText(
+                    text: "Or",
+                    fontSize: 18.sp,
+                    color: AppColors.background,
                   ),
-                  30.height,
-
-                  /// Account Creating Instruction here
-                  const DoNotHaveAccount(),
-                  30.height,
+                  24.height,
+                  Row(
+                    spacing: 12.w,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.w),
+                            color: AppColors.background,
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 18.h),
+                          child: Center(
+                            child: CommonImage(
+                              imageSrc: AppImages.google,
+                              width: 24.w,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.w),
+                            color: AppColors.blue,
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 18.h),
+                          child: Center(
+                            child: CommonImage(
+                              imageSrc: AppImages.facebook,
+                              width: 24.w,
+                              imageColor: AppColors.background,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:testemu/core/component/button/common_button.dart';
+import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -38,64 +39,71 @@ class CreatePassword extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  64.height,
+                  /// Log In Instruction here
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 18.h,
+                    ),
 
-                  /// Reset password image here
-                  const Center(
-                    child: CommonImage(
-                      imageSrc: AppImages.noImage,
-                      height: 297,
-                      width: 297,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.background),
+                      borderRadius: BorderRadius.circular(30.w),
+                      color: AppColors.white.withValues(alpha: 0.3),
+                    ),
+                    child: Column(
+                      spacing: 8.h,
+                      children: [
+                        CommonImage(
+                          imageSrc: AppImages.verifyImage,
+                          width: 210.w,
+                        ),
+                        CommonText(
+                          text: "Set Your New Password",
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.background,
+                        ),
+                        CommonText(
+                          maxLines: 3,
+                          textAlign: TextAlign.center,
+
+                          text:
+                              "Create a new password for your account. Make sure it’s strong and secure.",
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.background,
+                        ),
+                      ],
                     ),
                   ),
+                  44.height,
 
-                  /// Instruction of Creating New Password
-                  const CommonText(
-                    text: AppString.createYourNewPassword,
-                    fontSize: 18,
-                    textAlign: TextAlign.start,
-                    top: 64,
-                    bottom: 24,
-                  ),
-
-                  /// New Password here
-                  const CommonText(text: AppString.password, bottom: 8),
                   CommonTextField(
                     controller: controller.passwordController,
-                    prefixIcon: const Icon(Icons.lock),
+                    borderColor: AppColors.background,
+                    textColor: AppColors.background,
+                    hintTextColor: AppColors.background,
+                    borderRadius: 30.w,
+                    fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.password,
-                    isPassword: true,
                     validator: OtherHelper.passwordValidator,
                   ),
-
-                  /// Confirm Password here
-                  const CommonText(
-                    text: AppString.password,
-                    bottom: 8,
-                    top: 12,
-                  ),
                   CommonTextField(
-                    controller: controller.confirmPasswordController,
-                    prefixIcon: const Icon(Icons.lock),
-                    hintText: AppString.confirmPassword,
-                    validator: (value) => OtherHelper.confirmPasswordValidator(
-                      value,
-                      controller.passwordController,
-                    ),
-                    isPassword: true,
+                    controller: controller.passwordController,
+                    borderColor: AppColors.background,
+                    textColor: AppColors.background,
+                    hintTextColor: AppColors.background,
+                    borderRadius: 30.w,
+                    fillColor: AppColors.background.withValues(alpha: 0.3),
+                    hintText: AppString.newPassword,
+                    validator: OtherHelper.passwordValidator,
                   ),
-                  64.height,
+                  38.height,
 
-                  /// Submit Button here
-                  CommonButton(
-                    titleText: AppString.continues,
-                    isLoading: controller.isLoadingReset,
-                    onTap: () {
-                      if (formKey.currentState!.validate()) {
-                        controller.resetPasswordRepo();
-                      }
-                    },
-                  ),
+                  ///  Submit Button here
+                  CommonButtonPro(text: "Save New Password"),
                 ],
               ),
             ),

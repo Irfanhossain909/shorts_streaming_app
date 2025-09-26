@@ -18,7 +18,8 @@ class AppColors {
   static const Color white = Colors.white;
   static const Color black = Colors.black;
   static const Color red = Colors.red;
-  static const Color red2 = Color(0xFFD21D1D);
+  static const Color red2 = Color(0xFF981C2C);
+  static const Color blue = Color(0xFF1877F2);
   static const Color filledColor = Color(0xFFe7e7e7);
   static const Color textFiledColor = Color(0xFF979797);
   static const Color textSecondary = Color(0xFF555555);
@@ -28,4 +29,8 @@ class AppColors {
   static const Color blue200 = Color(0xFFB2D1D8);
 
   static const Color activeTrackColor = Color(0xFFE6E6E6);
+
+
+
+
 }

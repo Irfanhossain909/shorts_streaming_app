@@ -62,6 +62,8 @@ class AppImages {
   static const String view = "$baseurl/view.png";
   static const String whatsapp = "$baseurl/whatsapp.png";
   static const String home = "$baseurl/home.png";
+  static const String verifyImage = "$baseurl/verify_account.png";
+  static const String forgetPassImage = "$baseurl/forget_pass_img.png";
 
   // Additional new images
   static const String approvedJob = "$baseurl/approvedjob.png";

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:testemu/core/component/button/common_button.dart';
+import 'package:testemu/core/component/button/common_button_pro.dart';
+import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:get/get.dart';
@@ -35,33 +38,63 @@ class ForgotPasswordScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// forget password take email for reset Password
-                const CommonText(text: AppString.email, bottom: 8, top: 80),
-                CommonTextField(
-                  controller: controller.emailController,
-                  prefixIcon: const Icon(Icons.mail),
-                  hintText: AppString.email,
-                  validator: OtherHelper.emailValidator,
+                /// Log In Instruction here
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 18.h,
+                  ),
+
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.background),
+                    borderRadius: BorderRadius.circular(30.w),
+                    color: AppColors.white.withValues(alpha: 0.3),
+                  ),
+                  child: Column(
+                    spacing: 8.h,
+                    children: [
+                      CommonImage(
+                        imageSrc: AppImages.forgetPassImage,
+                        width: 210.w,
+                      ),
+                      CommonText(
+                        text: "Forgot Your Password?",
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.background,
+                      ),
+                      CommonText(
+                        maxLines: 3,
+                        textAlign: TextAlign.center,
+
+                        text:
+                            "No worries! Enter the email address associated with your account, and we’ll send you instructions to reset your password.",
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.background,
+                      ),
+                    ],
+                  ),
                 ),
-                100.height,
+                50.height,
+
+                CommonTextField(
+                  controller: controller.passwordController,
+                  borderColor: AppColors.background,
+                  textColor: AppColors.background,
+                  hintTextColor: AppColors.background,
+                  borderRadius: 30.w,
+                  fillColor: AppColors.background.withValues(alpha: 0.3),
+                  hintText: AppString.email,
+                  validator: OtherHelper.passwordValidator,
+                ),
+                24.height,
+
+                ///  Submit Button here
+                CommonButtonPro(text: "Get Verification Code"),
               ],
             ),
-          ),
-        ),
-
-        /// Bottom Navigation Bar Section
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-
-          /// Submit Button
-          child: CommonButton(
-            titleText: AppString.continues,
-            isLoading: controller.isLoadingEmail,
-            onTap: () {
-              if (formKey.currentState!.validate()) {
-                controller.forgotPasswordRepo();
-              }
-            },
           ),
         ),
       ),
