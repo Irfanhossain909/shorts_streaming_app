@@ -64,6 +64,10 @@ class AppImages {
   static const String home = "$baseurl/home.png";
   static const String verifyImage = "$baseurl/verify_account.png";
   static const String forgetPassImage = "$baseurl/forget_pass_img.png";
+  static const String nav1 = "$baseurl/nav1.png";
+  static const String nav2 = "$baseurl/nav2.png";
+  static const String nav3 = "$baseurl/nav3.png";
+  static const String nav4 = "$baseurl/nav4.png";
 
   // Additional new images
   static const String approvedJob = "$baseurl/approvedjob.png";

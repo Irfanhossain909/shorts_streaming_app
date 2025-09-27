@@ -8,6 +8,7 @@ import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_scre
 import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.dart';
 import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
 import 'package:testemu/features/message/presentation/screen/message_screen.dart';
+import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
 import 'package:testemu/features/profile/presentation/screen/edit_profile.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String privacyPolicy = "/privacy_policy_screen.dart";
   static const String termsOfServices = "/terms_of_services_screen.dart";
   static const String setting = "/setting_screen.dart";
+  static const String navigation = "/navigation_screen.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -55,5 +57,6 @@ class AppRoutes {
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
     GetPage(name: termsOfServices, page: () => const TermsOfServicesScreen()),
     GetPage(name: setting, page: () => const SettingScreen()),
+    GetPage(name: navigation, page: () => const NavigationScreen()),
   ];
 }

@@ -3,6 +3,7 @@ import 'package:testemu/features/auth/change_password/presentation/controller/ch
 import 'package:testemu/features/auth/forgot%20password/presentation/controller/forget_password_controller.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/controller/sign_in_controller.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/controller/sign_up_controller.dart';
+import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 
 class DependencyInjection extends Bindings {
   @override
@@ -12,6 +13,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => SignInController(), fenix: true);
     Get.lazyPut(() => ForgetPasswordController(), fenix: true);
     Get.lazyPut(() => ChangePasswordController(), fenix: true);
+    Get.lazyPut(() => NavigationScreenController(), fenix: true);
 
     // Common Feature Controllers
   }
