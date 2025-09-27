@@ -10,6 +10,7 @@ import 'package:testemu/features/auth/forgot%20password/presentation/screen/veri
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
+import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({super.key});
@@ -27,7 +28,7 @@ class NavigationScreen extends StatelessWidget {
                 const SignInScreen(),
                 const SignUpScreen(),
                 const VerifyScreen(),
-                CreatePassword(),
+                const ProfileScreen(),
               ],
             ),
           ),

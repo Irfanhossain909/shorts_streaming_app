@@ -68,6 +68,13 @@ class AppImages {
   static const String nav2 = "$baseurl/nav2.png";
   static const String nav3 = "$baseurl/nav3.png";
   static const String nav4 = "$baseurl/nav4.png";
+  static const String offlineDownload2 = "$baseurl/offline_download.png";
+  static const String icSetting = "$baseurl/ic_setting.png";
+  static const String icLogout = "$baseurl/ic_logout.png";
+  static const String icLanguage = "$baseurl/ic_language.png";
+  static const String icFeedback = "$baseurl/ic_feedback.png";
+  static const String icFaq = "$baseurl/ic_faq.png";
+  static const String icOfflineDownload = "$baseurl/ic_offlinedownload.png";
 
   // Additional new images
   static const String approvedJob = "$baseurl/approvedjob.png";
