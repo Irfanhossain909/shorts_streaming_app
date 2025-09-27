@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -20,8 +21,16 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Sections Starts here
-      appBar: AppBar(),
+      appBar: CommonAppBar(
+        title: "",
+        actions: [
+          TextButton(
+            onPressed: () {},
+            child: CommonText(text: "Skip", color: AppColors.background),
+          ),
+        ],
+      ),
+
       bottomNavigationBar: SafeArea(child: DoNotHaveAccount()),
 
       /// Body Sections Starts here

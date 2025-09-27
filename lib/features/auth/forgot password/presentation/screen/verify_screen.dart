@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_images.dart';
@@ -32,12 +33,14 @@ class _VerifyScreenState extends State<VerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       /// App Bar Section
-      appBar: AppBar(
-        title: const CommonText(
-          text: AppString.forgotPassword,
-          fontWeight: FontWeight.w700,
-          fontSize: 24,
-        ),
+      appBar: CommonAppBar(
+        title: "",
+        actions: [
+          TextButton(
+            onPressed: () {},
+            child: CommonText(text: "Skip", color: AppColors.background),
+          ),
+        ],
       ),
 
       /// Body Section

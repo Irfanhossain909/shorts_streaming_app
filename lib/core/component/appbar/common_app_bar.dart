@@ -5,6 +5,7 @@ import 'package:testemu/core/component/other_widgets/glass_effect_icon.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -61,24 +62,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottomRight: Radius.circular(shapeRadius),
         ),
       ),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment(-0.9, 0),
-            end: Alignment(1.0, 0),
-            colors: [
-              Color(0xFF083E4B), // #083E4B
-              Color(0xFF074E5E), // #074E5E
-              Color(0xFF0288A6), // #0288A6
-            ],
-            stops: [0.0, 0.4, 1.0],
-          ),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(shapeRadius),
-            bottomRight: Radius.circular(shapeRadius),
-          ),
-        ),
-      ),
+      flexibleSpace: CustomGrediantForAllScreen(),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -108,9 +92,13 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           (isShowBackButton ?? true
               ? IconButton(
                   onPressed: () => Get.back(),
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_outlined,
-                    color: leadingColor ?? AppColors.white,
+                  icon: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.red2, // Background color
+                    ),
+                    padding: EdgeInsets.all(8), // Size control
+                    child: Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 )
               : null),
