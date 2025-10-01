@@ -89,4 +89,8 @@ class AppImages {
   static const String resume = "$baseurl/resume.png";
   static const String editFile = "$baseurl/edit_file.png";
   static const String vipCardImg = "$baseurl/vip_card_img.png";
+  static const String short = "$baseurl/short.webp";
+  static const String offLineDownload = "$baseurl/ofline_download.webp";
+  static const String free = "$baseurl/free.webp";
+  static const String addFree = "$baseurl/add_free.webp";
 }
