@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';

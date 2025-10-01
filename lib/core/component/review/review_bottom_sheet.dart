@@ -75,7 +75,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: AppColors.textFiledColor.withOpacity(0.3),
+                color: AppColors.textFiledColor.withValues(alpha: .3),
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -109,7 +109,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                     size: 48.sp,
                     color: index < selectedRating
                         ? AppColors.blue500
-                        : AppColors.textFiledColor.withOpacity(0.3),
+                        : AppColors.textFiledColor.withValues(alpha: .3),
                   ),
                 ),
               );
@@ -133,7 +133,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
             height: 120.h,
             decoration: BoxDecoration(
               border: Border.all(
-                color: AppColors.textFiledColor.withOpacity(0.3),
+                color: AppColors.textFiledColor.withValues(alpha: .3),
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(8.r),
@@ -146,7 +146,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
               decoration: InputDecoration(
                 hintText: "Type Your Review",
                 hintStyle: TextStyle(
-                  color: AppColors.textFiledColor.withOpacity(0.6),
+                  color: AppColors.textFiledColor.withValues(alpha: .6),
                   fontSize: 14.sp,
                 ),
                 border: InputBorder.none,

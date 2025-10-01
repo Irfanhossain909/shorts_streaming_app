@@ -98,7 +98,7 @@ class _AddWhatsappLinkPopupState extends State<AddWhatsappLinkPopup> {
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: AppColors.textFiledColor.withOpacity(0.2),
+                    color: AppColors.textFiledColor.withValues(alpha: .2),
                     width: 1,
                   ),
                 ),

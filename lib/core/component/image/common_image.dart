@@ -69,6 +69,7 @@ class CommonImage extends StatelessWidget {
   Widget _buildSvgImage() {
     return SvgPicture.asset(
       imageSrc,
+      // ignore: deprecated_member_use
       color: imageColor,
       height: size ?? height,
       width: size ?? width,
