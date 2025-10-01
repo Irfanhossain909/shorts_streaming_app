@@ -33,11 +33,13 @@ class CategoryFilter extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.red : AppColors.transparent,
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [AppColors.red2, AppColors.red],
-                ),
+                gradient: isSelected
+                    ? LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [AppColors.red2, AppColors.red],
+                      )
+                    : null,
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
                   color: isSelected
