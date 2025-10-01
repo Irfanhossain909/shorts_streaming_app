@@ -88,4 +88,5 @@ class AppImages {
   static const String pendingJob = "$baseurl/pendingjob.png";
   static const String resume = "$baseurl/resume.png";
   static const String editFile = "$baseurl/edit_file.png";
+  static const String vipCardImg = "$baseurl/vip_card_img.png";
 }

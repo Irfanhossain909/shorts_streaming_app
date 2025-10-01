@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -124,27 +127,32 @@ class ProfileScreen extends StatelessWidget {
                 12.width,
                 Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.red.withValues(alpha: 0.8),
-                            AppColors.red.withValues(alpha: 0.6),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.subscription);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
                         ),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: CommonText(
-                        text: "\$99.00/Week",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.background,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.red.withValues(alpha: 0.8),
+                              AppColors.red.withValues(alpha: 0.6),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: CommonText(
+                          text: "\$99.00/Week",
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
                       ),
                     ),
                     CommonText(
@@ -170,38 +178,40 @@ class ProfileScreen extends StatelessWidget {
                 topRight: Radius.circular(20.r),
               ),
             ),
-            child: Column(
-              spacing: 16.h,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CommonText(
-                  text: "Account Settings",
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.background,
-                ),
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 16.h,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonText(
+                    text: "Account Settings",
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
 
-                ProfileRow(
-                  title: "Offline Download",
-                  leadPath: AppImages.icOfflineDownload,
-                ),
-                ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
-                ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
-                CommonText(
-                  text: "Account Settings",
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.background,
-                ),
-                ProfileRow(title: "Feedback", leadPath: AppImages.icFeedback),
-                ProfileRow(title: "Settings", leadPath: AppImages.icSetting),
-                ProfileRow(
-                  leadColor: AppColors.red,
-                  title: "Log out",
-                  leadPath: AppImages.icLogout,
-                ),
-                48.height,
-              ],
+                  ProfileRow(
+                    title: "Offline Download",
+                    leadPath: AppImages.icOfflineDownload,
+                  ),
+                  ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
+                  ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
+                  CommonText(
+                    text: "Account Settings",
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
+                  ProfileRow(title: "Feedback", leadPath: AppImages.icFeedback),
+                  ProfileRow(title: "Settings", leadPath: AppImages.icSetting),
+                  ProfileRow(
+                    leadColor: AppColors.red,
+                    title: "Log out",
+                    leadPath: AppImages.icLogout,
+                  ),
+                  48.height,
+                ],
+              ),
             ),
           ),
         ],
