@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -52,133 +51,135 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        spacing: 4.h,
-        children: [
-          SizedBox(
-            width: 110.w,
-            height: 110.h,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50), // width/2 or height/2
-              child: Image.network(
-                "https://cdn.pixabay.com/photo/2025/02/05/08/07/man-9383629_640.jpg",
-                fit: BoxFit.cover, // image circular ভেতরে ঠিকমত দেখানোর জন্য
+      body: SingleChildScrollView(
+        child: Column(
+          spacing: 4.h,
+          children: [
+            SizedBox(
+              width: 110.w,
+              height: 110.h,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50), // width/2 or height/2
+                child: Image.network(
+                  "https://cdn.pixabay.com/photo/2025/02/05/08/07/man-9383629_640.jpg",
+                  fit: BoxFit.cover, // image circular ভেতরে ঠিকমত দেখানোর জন্য
+                ),
               ),
             ),
-          ),
-          CommonText(
-            text: "Designjot",
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.background,
-          ),
-          Row(
-            spacing: 4.w,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CommonText(
-                text: "UID: 143398274",
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                color: AppColors.background.withValues(alpha: 0.6),
-              ),
-              Icon(
-                Icons.copy,
-                size: 12.sp,
-                color: AppColors.background.withValues(alpha: 0.6),
-              ),
-            ],
-          ),
-          // Subscription Card
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: AppColors.red.withValues(alpha: 0.7),
-                width: 1.w,
-              ),
+            CommonText(
+              text: "Designjot",
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.background,
             ),
-            child: Row(
+            Row(
+              spacing: 4.w,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                CommonText(
+                  text: "UID: 143398274",
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.background.withValues(alpha: 0.6),
+                ),
+                Icon(
+                  Icons.copy,
+                  size: 12.sp,
+                  color: AppColors.background.withValues(alpha: 0.6),
+                ),
+              ],
+            ),
+            // Subscription Card
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: AppColors.red.withValues(alpha: 0.7),
+                  width: 1.w,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText(
+                          text: "Subscribe",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                        4.height,
+                        CommonText(
+                          text:
+                              "Join membership now for unlimited adfree access",
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.background.withValues(alpha: 0.8),
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  12.width,
+                  Column(
                     children: [
-                      CommonText(
-                        text: "Subscribe",
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.background,
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.subscription);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.red.withValues(alpha: 0.8),
+                                AppColors.red.withValues(alpha: 0.6),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: CommonText(
+                            text: "\$99.00/Week",
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.background,
+                          ),
+                        ),
                       ),
                       4.height,
                       CommonText(
-                        text: "Join membership now for unlimited adfree access",
-                        fontSize: 12.sp,
+                        text: r"Renew at $ 199.00",
+                        fontSize: 8.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.background.withValues(alpha: 0.8),
                         maxLines: 1,
                       ),
                     ],
                   ),
-                ),
-                12.width,
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.subscription);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 8.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.red.withValues(alpha: 0.8),
-                              AppColors.red.withValues(alpha: 0.6),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: CommonText(
-                          text: "\$99.00/Week",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
-                        ),
-                      ),
-                    ),
-                    CommonText(
-                      text: r"Renew at $ 199.00",
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.background.withValues(alpha: 0.8),
-                      maxLines: 1,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Spacer(),
-          Container(
-            padding: EdgeInsets.all(16.h),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.textSecondary.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.r),
-                topRight: Radius.circular(20.r),
+                ],
               ),
             ),
-            child: SingleChildScrollView(
+
+            Container(
+              padding: EdgeInsets.all(16.h),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
+                ),
+              ),
               child: Column(
                 spacing: 16.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,8 +214,8 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
