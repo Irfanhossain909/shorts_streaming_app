@@ -24,7 +24,6 @@ class ShowGoogleMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ShowGoogleMapController>(
-      init: ShowGoogleMapController(), // Ensure controller is initialized
       builder: (controller) {
         return GoogleMap(
           mapType: MapType.normal,

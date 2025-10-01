@@ -16,8 +16,7 @@ class NavigationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder(
-      init: NavigationScreenController(),
+    return GetBuilder<NavigationScreenController>(
       builder: (controller) {
         return Scaffold(
           body: Obx(

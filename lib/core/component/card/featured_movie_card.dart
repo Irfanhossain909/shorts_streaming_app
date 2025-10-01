@@ -26,12 +26,12 @@ class FeaturedMovieCard extends StatelessWidget {
       height: 200.h,
       margin: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: AppColors.black.withValues(alpha: 0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -39,7 +39,7 @@ class FeaturedMovieCard extends StatelessWidget {
         children: [
           // Background image
           ClipRRect(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(24.r),
             child: CommonImage(
               imageSrc: imageUrl,
               width: double.infinity,
@@ -51,97 +51,120 @@ class FeaturedMovieCard extends StatelessWidget {
           // Gradient overlay
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(24.r),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.transparent,
-                  AppColors.black.withValues(alpha: 0.7),
+                  AppColors.black.withValues(alpha: 0.2),
+                  AppColors.black.withValues(alpha: 0.8),
                 ],
               ),
             ),
           ),
 
           // Content
-          Positioned(
-            bottom: 20.h,
-            left: 20.w,
-            right: 20.w,
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 14.w, horizontal: 22.h),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                8.height,
-                Text(
-                  duration,
-                  style: TextStyle(
-                    color: AppColors.white.withValues(alpha: 0.8),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                16.height,
-                Row(
+                const Spacer(),
+                // Title and duration centered
+                Column(
                   children: [
-                    // Watch button
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: onWatchTap,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.red,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.play_arrow,
-                                color: AppColors.white,
-                                size: 20.sp,
-                              ),
-                              8.width,
-                              Text(
-                                'Watch',
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    Text(
+                      title.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 36.sp,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 8,
+                        height: 1.1,
                       ),
                     ),
-                    16.width,
-                    // Bookmark button
+                    12.height,
+                    Text(
+                      duration,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.white.withValues(alpha: 0.9),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+                24.height,
+                // Buttons row
+                Row(
+                  children: [
+                    // Bookmark button (left)
                     GestureDetector(
                       onTap: onBookmarkTap,
                       child: Container(
-                        padding: EdgeInsets.all(12.w),
+                        width: 32.w,
+                        height: 32.w,
                         decoration: BoxDecoration(
-                          color: AppColors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8.r),
+                          color: AppColors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(
                             color: AppColors.white.withValues(alpha: 0.3),
-                            width: 1,
+                            width: 1.5,
                           ),
                         ),
                         child: Icon(
                           Icons.bookmark_border,
                           color: AppColors.white,
                           size: 20.sp,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    // Watch button (right)
+                    GestureDetector(
+                      onTap: onWatchTap,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.red,
+                          borderRadius: BorderRadius.circular(50.r),
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [AppColors.red2, AppColors.red],
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Watch',
+                              style: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            4.width,
+                            Container(
+                              padding: EdgeInsets.all(2.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.white.withValues(alpha: 0.3),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.play_arrow_rounded,
+                                color: AppColors.white,
+                                size: 12.sp,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

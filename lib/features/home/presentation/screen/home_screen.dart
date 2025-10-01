@@ -14,7 +14,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
-      init: HomeController(),
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFF1A1A1A),
@@ -34,14 +33,12 @@ class HomeScreen extends StatelessWidget {
                   20.height,
 
                   // Featured Movie Card
-                  Obx(
-                    () => FeaturedMovieCard(
-                      title: controller.featuredMovie['title']!,
-                      duration: controller.featuredMovie['duration']!,
-                      imageUrl: controller.featuredMovie['imageUrl']!,
-                      onWatchTap: controller.onWatchTap,
-                      onBookmarkTap: controller.onBookmarkTap,
-                    ),
+                  FeaturedMovieCard(
+                    title: controller.featuredMovie['title']!,
+                    duration: controller.featuredMovie['duration']!,
+                    imageUrl: controller.featuredMovie['imageUrl']!,
+                    onWatchTap: controller.onWatchTap,
+                    onBookmarkTap: controller.onBookmarkTap,
                   ),
 
                   30.height,
@@ -85,21 +82,21 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Good Evening,',
+                'Good Evening, ${controller.userName.value}!',
                 style: TextStyle(
                   color: AppColors.white.withValues(alpha: 0.8),
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               4.height,
               Obx(
                 () => Text(
-                  '${controller.userName.value}!',
+                  'What you want to watch?',
                   style: TextStyle(
                     color: AppColors.white,
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
@@ -109,7 +106,7 @@ class HomeScreen extends StatelessWidget {
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: AppColors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(30.r),
             ),
             child: Icon(
               Icons.notifications_outlined,
@@ -129,15 +126,6 @@ class HomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'What you want to watch?',
-            style: TextStyle(
-              color: AppColors.white.withValues(alpha: 0.7),
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          8.height,
-          Text(
             'Popular Movie',
             style: TextStyle(
               color: AppColors.white,
@@ -156,7 +144,7 @@ class HomeScreen extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(30.r),
         ),
         child: TextField(
           style: TextStyle(color: AppColors.white),
@@ -184,7 +172,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildMoviesGrid(HomeController controller) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -192,7 +180,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisCount: 3,
           crossAxisSpacing: 12.w,
           mainAxisSpacing: 16.h,
-          childAspectRatio: 0.65,
+          childAspectRatio: 0.50,
         ),
         itemCount: controller.movies.length,
         itemBuilder: (context, index) {
