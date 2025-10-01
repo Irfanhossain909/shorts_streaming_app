@@ -10,6 +10,8 @@ class MovieCard extends StatelessWidget {
   final VoidCallback? onTap;
   final double? width;
   final double? height;
+  final String? date;
+  final bool isRemindMe;
 
   const MovieCard({
     super.key,
@@ -19,6 +21,8 @@ class MovieCard extends StatelessWidget {
     this.onTap,
     this.width,
     this.height,
+    this.date,
+    this.isRemindMe = false,
   });
 
   @override
@@ -93,16 +97,69 @@ class MovieCard extends StatelessWidget {
             SizedBox(height: 8.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  height: 1.3,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (date != null)
+                    Text(
+                      date!,
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        height: 1.3,
+                      ),
+                    ),
+
+                  if (isRemindMe)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.red,
+                        borderRadius: BorderRadius.circular(8.r),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.red,
+                            AppColors.red.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.alarm,
+                            color: AppColors.white,
+                            size: 16.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'Remind me',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
             ),
           ],

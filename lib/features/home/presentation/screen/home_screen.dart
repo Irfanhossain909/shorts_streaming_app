@@ -49,12 +49,10 @@ class HomeScreen extends StatelessWidget {
                   20.height,
 
                   // Category Filter
-                  Obx(
-                    () => CategoryFilter(
-                      categories: controller.categories,
-                      selectedCategory: controller.selectedCategory.value,
-                      onCategorySelected: controller.selectCategory,
-                    ),
+                  CategoryFilter(
+                    categories: controller.categories,
+                    selectedCategory: controller.selectedCategory.value,
+                    onCategorySelected: controller.selectCategory,
                   ),
 
                   20.height,
@@ -78,20 +76,23 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Good Evening, ${controller.userName.value}!',
-                style: TextStyle(
-                  color: AppColors.white.withValues(alpha: 0.8),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w600,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () => Text(
+                    'Good Evening, ${controller.userName.value}!',
+                    style: TextStyle(
+                      color: AppColors.white.withValues(alpha: 0.8),
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              4.height,
-              Obx(
-                () => Text(
+                4.height,
+                Text(
                   'What you want to watch?',
                   style: TextStyle(
                     color: AppColors.white,
@@ -99,8 +100,8 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Container(
             padding: EdgeInsets.all(8.w),
