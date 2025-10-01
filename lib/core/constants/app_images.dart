@@ -93,4 +93,8 @@ class AppImages {
   static const String offLineDownload = "$baseurl/ofline_download.webp";
   static const String free = "$baseurl/free.webp";
   static const String addFree = "$baseurl/add_free.webp";
+  static const String star = "$baseurl/starIc.png";
+  static const String shareIc = "$baseurl/shareIc.png";
+  static const String listIc = "$baseurl/listIc.png";
+  static const String icDownload = "$baseurl/ic_download.png";
 }
