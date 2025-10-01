@@ -7,9 +7,9 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
-import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
+import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({super.key});
@@ -27,7 +27,7 @@ class NavigationScreen extends StatelessWidget {
                   index: controller.selectedIndex.value,
                   children: [
                     const SignInScreen(),
-                    const SignUpScreen(),
+                    const ShortsFeedScreen(),
                     const VerifyScreen(),
                     const ProfileScreen(),
                   ],
@@ -48,7 +48,7 @@ class NavigationScreen extends StatelessWidget {
                       sigmaY: 10,
                     ), // blur effect
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 12.w), //top: 12.w
+                      // padding: EdgeInsets.only(bottom: 12.w), //top: 12.w
                       decoration: BoxDecoration(
                         color: AppColors.background.withValues(
                           alpha: 0.3,

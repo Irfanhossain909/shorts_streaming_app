@@ -17,6 +17,7 @@ import 'package:testemu/features/setting/presentation/screen/privacy_policy_scre
 import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/terms_of_services_screen.dart';
+import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
 
 class AppRoutes {
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String setting = "/setting_screen.dart";
   static const String navigation = "/navigation_screen.dart";
   static const String subscription = "/subscription_screen.dart";
+  static const String shortScreen = "/shorts_screen.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -61,5 +63,6 @@ class AppRoutes {
     GetPage(name: setting, page: () => const SettingScreen()),
     GetPage(name: navigation, page: () => const NavigationScreen()),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
+    GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
   ];
 }
