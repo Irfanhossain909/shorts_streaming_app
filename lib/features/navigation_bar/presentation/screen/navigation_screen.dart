@@ -5,10 +5,9 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
-import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
+import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 
@@ -25,7 +24,7 @@ class NavigationScreen extends StatelessWidget {
             () => IndexedStack(
               index: controller.selectedIndex.value,
               children: [
-                const SignInScreen(),
+                const HomeScreen(),
                 const SignUpScreen(),
                 const VerifyScreen(),
                 const ProfileScreen(),

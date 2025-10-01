@@ -6,6 +6,7 @@ import 'package:testemu/features/auth/forgot%20password/presentation/screen/veri
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.dart';
+import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
 import 'package:testemu/features/message/presentation/screen/message_screen.dart';
 import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String termsOfServices = "/terms_of_services_screen.dart";
   static const String setting = "/setting_screen.dart";
   static const String navigation = "/navigation_screen.dart";
+  static const String home = "/home_screen.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -58,5 +60,6 @@ class AppRoutes {
     GetPage(name: termsOfServices, page: () => const TermsOfServicesScreen()),
     GetPage(name: setting, page: () => const SettingScreen()),
     GetPage(name: navigation, page: () => const NavigationScreen()),
+    GetPage(name: home, page: () => const HomeScreen()),
   ];
 }
