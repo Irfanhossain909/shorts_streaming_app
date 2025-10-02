@@ -12,6 +12,7 @@ import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/auth/sign%20up/presentation/widget/already_accunt_rich_text.dart';
 import '../controller/sign_up_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -30,6 +31,7 @@ class SignUpScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: SafeArea(child: AlreadyAccountRichText()),
 
       /// Body Section Starts Here
       body: GetBuilder<SignUpController>(

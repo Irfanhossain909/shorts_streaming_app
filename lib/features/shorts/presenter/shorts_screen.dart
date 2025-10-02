@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
 import 'package:testemu/features/shorts/widgets/reel_button.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,21 +28,6 @@ class _ShortsFeedScreenState extends State<ShortsFeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   toolbarHeight: 88,
-      //   backgroundColor: Colors.transparent,
-      //   leading: IconButton(
-      //     onPressed: () {},
-      //     icon: Container(
-      //       decoration: BoxDecoration(
-      //         shape: BoxShape.circle,
-      //         color: AppColors.red2, // Background color
-      //       ),
-      //       padding: EdgeInsets.all(8), // Size control
-      //       child: Icon(Icons.arrow_back, color: Colors.white),
-      //     ),
-      //   ),
-      // ),
       body: PageView.builder(
         scrollDirection: Axis.vertical,
         itemCount: videos.length,
@@ -73,6 +60,7 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
   }
 
   void _initializeVideo() {
+    // ignore: deprecated_member_use
     _controller = VideoPlayerController.network(widget.videoUrl)
       ..initialize()
           .then((_) {
@@ -118,6 +106,7 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
       child: Stack(
         alignment: Alignment.center,
         children: [
+          /// Background video
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _hasError
@@ -138,14 +127,35 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
                   ),
                 ),
 
-          // Play icon overlay
+          /// Play icon overlay
           if (!_isPlaying && !_isLoading && !_hasError)
             const Icon(Icons.play_arrow, size: 64, color: Colors.white),
 
-          // Progress bar
+          /// 🔥 Gradient Shadow from bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 550.h, // তোমার চাওয়া অনুযায়ী
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: .8), // নিচে গাঢ়
+                    Colors.black.withValues(alpha: .5), // মাঝামাঝি
+                    Colors.transparent, // ওপরে transparent
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          /// Texts + Progress bar
           if (!_isLoading && !_hasError)
             Positioned(
-              bottom: 130.h,
+              bottom: 110.h,
               left: 20,
               right: 20,
               child: Column(
@@ -157,7 +167,6 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
                     fontWeight: FontWeight.w600,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-
                     color: AppColors.background,
                   ),
                   SizedBox(
@@ -172,6 +181,7 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
                           "This is the description text. It is long and should be shown only in 2 lines initially. When the user clicks 'See more', the full description will be displayed properly without cutting off any part of the text.",
                     ),
                   ),
+                  SizedBox(width: 8.h),
                   Row(
                     children: [
                       CommonImage(imageSrc: AppImages.listIc, width: 16),
@@ -191,7 +201,7 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
                       allowScrubbing: true,
                       colors: VideoProgressColors(
                         playedColor: AppColors.red2,
-                        bufferedColor: Colors.grey.withOpacity(0.5),
+                        bufferedColor: Colors.grey.withValues(alpha: .5),
                         backgroundColor: Colors.grey,
                       ),
                     ),
@@ -200,30 +210,38 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
               ),
             ),
 
+          /// Right side action buttons
           Positioned(
-            bottom: 173.h,
+            bottom: 146.h,
             right: 10,
             child: Column(
               spacing: 16.h,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: AppColors.background, width: 1.w),
-                  ),
-
-                  child: CommonImage(
-                    size: 46.w,
-                    fill: BoxFit.cover,
-                    imageSrc:
-                        "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: CommonImage(
+                      fill: BoxFit.cover,
+                      imageSrc:
+                          "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                      width: 56,
+                      height: 56,
+                    ),
                   ),
                 ),
                 ReelButton(imgPath: AppImages.star, text: "125.5K"),
-                ReelButton(imgPath: AppImages.listIc, text: "List"),
+                ReelButton(
+                  imgPath: AppImages.listIc,
+                  text: "List",
+                  onTap: () {
+                    Get.bottomSheet(
+                      isScrollControlled: true,
+                      ListBottomSheet(),
+                    );
+                  },
+                ),
                 ReelButton(imgPath: AppImages.shareIc, text: "Share"),
                 ReelButton(imgPath: AppImages.download, text: "DownLoad"),
               ],

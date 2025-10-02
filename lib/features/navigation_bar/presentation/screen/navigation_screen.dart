@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
+import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
@@ -26,7 +26,7 @@ class NavigationScreen extends StatelessWidget {
                   children: [
                     const HomeScreen(),
                     const ShortsFeedScreen(),
-                    const VerifyScreen(),
+                    const MyListScree(),
                     const ProfileScreen(),
                   ],
                 ),
@@ -46,7 +46,7 @@ class NavigationScreen extends StatelessWidget {
                       sigmaY: 10,
                     ), // blur effect
                     child: Container(
-                      // padding: EdgeInsets.only(bottom: 12.w), //top: 12.w
+                      padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
                       decoration: BoxDecoration(
                         color: AppColors.background.withValues(
                           alpha: 0.3,
@@ -57,41 +57,39 @@ class NavigationScreen extends StatelessWidget {
                         ),
                       ),
                       child: Obx(
-                        () => SafeArea(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: List.generate(4, (index) {
-                              final isSelected =
-                                  controller.selectedIndex.value == index;
-                              final iconPaths = [
-                                AppImages.nav1,
-                                AppImages.nav2,
-                                AppImages.nav3,
-                                AppImages.nav4,
-                              ];
+                        () => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: List.generate(4, (index) {
+                            final isSelected =
+                                controller.selectedIndex.value == index;
+                            final iconPaths = [
+                              AppImages.nav1,
+                              AppImages.nav2,
+                              AppImages.nav3,
+                              AppImages.nav4,
+                            ];
 
-                              return InkWell(
-                                onTap: () => controller.changeIndex(index),
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: isSelected
-                                      ? const BoxDecoration(
-                                          color: AppColors.red2,
-                                          shape: BoxShape.circle,
-                                        )
-                                      : null,
-                                  child: CommonImage(
-                                    imageSrc: iconPaths[index],
-                                    width: 24,
-                                    height: 24,
-                                    imageColor: isSelected
-                                        ? Colors.white
-                                        : AppColors.background,
-                                  ),
+                            return InkWell(
+                              onTap: () => controller.changeIndex(index),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: isSelected
+                                    ? const BoxDecoration(
+                                        color: AppColors.red2,
+                                        shape: BoxShape.circle,
+                                      )
+                                    : null,
+                                child: CommonImage(
+                                  imageSrc: iconPaths[index],
+                                  width: 24.w,
+                                  height: 24.w,
+                                  imageColor: isSelected
+                                      ? Colors.white
+                                      : AppColors.background,
                                 ),
-                              );
-                            }),
-                          ),
+                              ),
+                            );
+                          }),
                         ),
                       ),
                     ),

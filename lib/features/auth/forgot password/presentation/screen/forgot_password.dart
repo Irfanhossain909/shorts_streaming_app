@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
@@ -22,12 +24,14 @@ class ForgotPasswordScreen extends StatelessWidget {
     return GetBuilder<ForgetPasswordController>(
       builder: (controller) => Scaffold(
         /// App Bar Section
-        appBar: AppBar(
-          title: const CommonText(
-            text: AppString.forgotPassword,
-            fontWeight: FontWeight.w700,
-            fontSize: 24,
-          ),
+        appBar: CommonAppBar(
+          title: "",
+          actions: [
+            TextButton(
+              onPressed: () {},
+              child: CommonText(text: "Skip", color: AppColors.background),
+            ),
+          ],
         ),
 
         /// body section
@@ -92,7 +96,12 @@ class ForgotPasswordScreen extends StatelessWidget {
                 24.height,
 
                 ///  Submit Button here
-                CommonButtonPro(text: "Get Verification Code"),
+                CommonButtonPro(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.verifyEmail);
+                  },
+                  text: "Get Verification Code",
+                ),
               ],
             ),
           ),

@@ -19,8 +19,8 @@ class AlreadyAccountRichText extends StatelessWidget {
           TextSpan(
             text: AppString.alreadyHaveAccount,
             style: GoogleFonts.plusJakartaSans(
-              color: AppColors.black,
-              fontSize: 16,
+              color: AppColors.white,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -33,7 +33,7 @@ class AlreadyAccountRichText extends StatelessWidget {
                 Get.toNamed(AppRoutes.signIn);
               },
             style: GoogleFonts.plusJakartaSans(
-              color: AppColors.primaryColor,
+              color: AppColors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),

@@ -9,6 +9,7 @@ import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
 import 'package:testemu/features/message/presentation/screen/message_screen.dart';
+import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
 import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
@@ -44,6 +45,7 @@ class AppRoutes {
   static const String subscription = "/subscription_screen.dart";
   static const String shortScreen = "/shorts_screen.dart";
   static const String home = "/home_screen.dart";
+  static const String myListScreen = "/my-list-screen.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -67,5 +69,6 @@ class AppRoutes {
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
     GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
     GetPage(name: home, page: () => const HomeScreen()),
+    GetPage(name: myListScreen, page: () => const MyListScree()),
   ];
 }
