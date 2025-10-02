@@ -52,7 +52,7 @@ class Item extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -75,12 +75,12 @@ class Item extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(100),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: .25),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: .3),
                         blurRadius: 15,
                         offset: Offset(0, 5),
                       ),
