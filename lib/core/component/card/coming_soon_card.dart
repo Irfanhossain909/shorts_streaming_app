@@ -141,7 +141,7 @@ class ComingSoonCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
                   color: AppColors.red,
-                  borderRadius: BorderRadius.circular(6.r),
+                  borderRadius: BorderRadius.circular(30.r),
                   gradient: LinearGradient(
                     colors: [AppColors.red2, AppColors.red],
                     begin: Alignment.topLeft,
@@ -151,11 +151,7 @@ class ComingSoonCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.alarm,
-                      color: AppColors.white,
-                      size: 14.sp,
-                    ),
+                    Icon(Icons.alarm, color: AppColors.white, size: 14.sp),
                     4.horizontalSpace,
                     Text(
                       'Remind Me',

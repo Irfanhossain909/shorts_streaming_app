@@ -129,7 +129,7 @@ class MovieCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.red,
-                        borderRadius: BorderRadius.circular(8.r),
+                        borderRadius: BorderRadius.circular(30.r),
                         gradient: LinearGradient(
                           colors: [
                             AppColors.red,

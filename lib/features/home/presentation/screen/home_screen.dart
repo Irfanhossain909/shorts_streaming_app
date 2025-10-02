@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   // Header Section
+                  // Header Section
                   _buildHeader(controller),
 
                   20.height,
@@ -77,19 +77,14 @@ class HomeScreen extends StatelessWidget {
                     30.height,
 
                     // Only on Thisflix Section
-                    SectionHeader(
-                      title: 'Only on Thisflix',
-                    ),
+                    SectionHeader(title: 'Only on Thisflix'),
 
                     20.height,
 
                     _buildOnlyOnThisflixSection(controller),
-
                   ] else if (controller.selectedCategory.value == 'New') ...[
                     // Coming Soon Section
-                    SectionHeader(
-                      title: 'Coming Soon',
-                    ),
+                    SectionHeader(title: 'Coming Soon'),
 
                     20.height,
 
@@ -98,19 +93,14 @@ class HomeScreen extends StatelessWidget {
                     30.height,
 
                     // New Release Section
-                    SectionHeader(
-                      title: 'New Release',
-                    ),
+                    SectionHeader(title: 'New Release'),
 
                     20.height,
 
                     _buildNewReleaseSection(controller),
-
                   ] else ...[
                     // Regular category content
-                    SectionHeader(
-                      title: controller.selectedCategory.value,
-                    ),
+                    SectionHeader(title: controller.selectedCategory.value),
 
                     20.height,
 
@@ -127,7 +117,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-   Widget _buildHeader(HomeController controller) {
+  Widget _buildHeader(HomeController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Row(
@@ -195,8 +185,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildSearchBar() {
     return Padding(
@@ -279,7 +267,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildComingSoonSection(HomeController controller) {
     return SizedBox(
-      height: 280.h,
+      height: 300.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -301,7 +289,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildNewReleaseSection(HomeController controller) {
     return SizedBox(
-      height: 200.h,
+      height: 280.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
