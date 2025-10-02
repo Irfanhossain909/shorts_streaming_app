@@ -4,6 +4,7 @@ class HomeController extends GetxController {
   // Observable variables
   var selectedCategory = 'Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
+  var selectedRankingFilter = 'Most Popular'.obs;
   var userName = 'Designjot'.obs;
 
   // Categories
@@ -18,6 +19,9 @@ class HomeController extends GetxController {
 
   // VIP sub-filters
   final List<String> vipFilters = ['Daily', 'Weekly'];
+
+  // Ranking sub-filters
+  final List<String> rankingFilters = ['Most Popular', 'Hottest', 'New Series'];
 
   // Featured movie
   final featuredMovie = {
@@ -199,6 +203,93 @@ class HomeController extends GetxController {
         'badge': '#3',
       },
     ],
+  };
+
+  // Ranking movies data with different filters
+  final Map<String, List<Map<String, dynamic>>> rankingMovies = {
+    'Most Popular': [
+      {
+        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        'imageUrl': 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'ranking': 1,
+        'isHot': true,
+      },
+      {
+        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        'imageUrl': 'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'ranking': 2,
+        'isHot': true,
+      },
+      {
+        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        'imageUrl': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'ranking': 3,
+        'isHot': true,
+      },
+      {
+        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        'imageUrl': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        'ranking': 4,
+        'isHot': true,
+      },
+      {
+        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        'imageUrl': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'ranking': 5,
+        'isHot': true,
+      },
+    ],
+    'Hottest': [
+      {
+        'title': 'The CEO\'s Secret Romance',
+        'subtitle': 'A billionaire falls for his assistant in this hot...',
+        'imageUrl': 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
+        'ranking': 1,
+        'isHot': true,
+      },
+      {
+        'title': 'Forbidden Love Story',
+        'subtitle': 'Two hearts that shouldn\'t be together but...',
+        'imageUrl': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=300&fit=crop',
+        'ranking': 2,
+        'isHot': true,
+      },
+      {
+        'title': 'Passionate Nights',
+        'subtitle': 'A steamy romance that will keep you hooked...',
+        'imageUrl': 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
+        'ranking': 3,
+        'isHot': true,
+      },
+    ],
+    'New Series': [
+      {
+        'title': 'Fresh Start Romance',
+        'subtitle': 'A new beginning leads to unexpected love...',
+        'imageUrl': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop',
+        'ranking': 1,
+        'isHot': false,
+      },
+      {
+        'title': 'The New Chapter',
+        'subtitle': 'Starting over has never been this exciting...',
+        'imageUrl': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=300&fit=crop',
+        'ranking': 2,
+        'isHot': false,
+      },
+      {
+        'title': 'Modern Love Tales',
+        'subtitle': 'Contemporary romance for the digital age...',
+        'imageUrl': 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=300&fit=crop',
+        'ranking': 3,
+        'isHot': false,
+      },
+    ],
     'Mystery': [
       {
         'title': 'The Mystery Case',
@@ -235,6 +326,11 @@ class HomeController extends GetxController {
     return vipMovies[selectedVipFilter.value] ?? [];
   }
 
+  // Current ranking movies based on selected filter
+  List<Map<String, dynamic>> get currentRankingMovies {
+    return rankingMovies[selectedRankingFilter.value] ?? [];
+  }
+
   // Methods
   void selectCategory(String category) {
     selectedCategory.value = category;
@@ -243,6 +339,11 @@ class HomeController extends GetxController {
 
   void selectVipFilter(String filter) {
     selectedVipFilter.value = filter;
+    update();
+  }
+
+  void selectRankingFilter(String filter) {
+    selectedRankingFilter.value = filter;
     update();
   }
 
