@@ -47,7 +47,7 @@ class NavigationScreen extends StatelessWidget {
                       sigmaY: 10,
                     ), // blur effect
                     child: Container(
-                      // padding: EdgeInsets.only(bottom: 12.w), //top: 12.w
+                      padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
                       decoration: BoxDecoration(
                         color: AppColors.background.withValues(
                           alpha: 0.3,
@@ -58,41 +58,39 @@ class NavigationScreen extends StatelessWidget {
                         ),
                       ),
                       child: Obx(
-                        () => SafeArea(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: List.generate(4, (index) {
-                              final isSelected =
-                                  controller.selectedIndex.value == index;
-                              final iconPaths = [
-                                AppImages.nav1,
-                                AppImages.nav2,
-                                AppImages.nav3,
-                                AppImages.nav4,
-                              ];
+                        () => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: List.generate(4, (index) {
+                            final isSelected =
+                                controller.selectedIndex.value == index;
+                            final iconPaths = [
+                              AppImages.nav1,
+                              AppImages.nav2,
+                              AppImages.nav3,
+                              AppImages.nav4,
+                            ];
 
-                              return InkWell(
-                                onTap: () => controller.changeIndex(index),
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: isSelected
-                                      ? const BoxDecoration(
-                                          color: AppColors.red2,
-                                          shape: BoxShape.circle,
-                                        )
-                                      : null,
-                                  child: CommonImage(
-                                    imageSrc: iconPaths[index],
-                                    width: 24,
-                                    height: 24,
-                                    imageColor: isSelected
-                                        ? Colors.white
-                                        : AppColors.background,
-                                  ),
+                            return InkWell(
+                              onTap: () => controller.changeIndex(index),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: isSelected
+                                    ? const BoxDecoration(
+                                        color: AppColors.red2,
+                                        shape: BoxShape.circle,
+                                      )
+                                    : null,
+                                child: CommonImage(
+                                  imageSrc: iconPaths[index],
+                                  width: 24.w,
+                                  height: 24.w,
+                                  imageColor: isSelected
+                                      ? Colors.white
+                                      : AppColors.background,
                                 ),
-                              );
-                            }),
-                          ),
+                              ),
+                            );
+                          }),
                         ),
                       ),
                     ),
