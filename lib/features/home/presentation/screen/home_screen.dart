@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/card/coming_soon_card.dart';
 import 'package:testemu/core/component/card/featured_movie_card.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
+import 'package:testemu/core/component/card/ranking_card.dart';
 import 'package:testemu/core/component/card/vip_movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
+import 'package:testemu/core/component/other_widgets/secondary_filter.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -25,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   // Header Section
+                  // Header Section
                   _buildHeader(controller),
 
                   20.height,
@@ -77,19 +79,14 @@ class HomeScreen extends StatelessWidget {
                     30.height,
 
                     // Only on Thisflix Section
-                    SectionHeader(
-                      title: 'Only on Thisflix',
-                    ),
+                    SectionHeader(title: 'Only on Thisflix'),
 
                     20.height,
 
                     _buildOnlyOnThisflixSection(controller),
-
                   ] else if (controller.selectedCategory.value == 'New') ...[
                     // Coming Soon Section
-                    SectionHeader(
-                      title: 'Coming Soon',
-                    ),
+                    SectionHeader(title: 'Coming Soon'),
 
                     20.height,
 
@@ -98,19 +95,27 @@ class HomeScreen extends StatelessWidget {
                     30.height,
 
                     // New Release Section
-                    SectionHeader(
-                      title: 'New Release',
-                    ),
+                    SectionHeader(title: 'New Release'),
 
                     20.height,
 
                     _buildNewReleaseSection(controller),
+                  ] else if (controller.selectedCategory.value ==
+                      'Ranking') ...[
+                    // Ranking Section with secondary filters
+                    SecondaryFilter(
+                      filters: controller.rankingFilters,
+                      selectedFilter: controller.selectedRankingFilter.value,
+                      onFilterSelected: controller.selectRankingFilter,
+                    ),
 
+                    20.height,
+
+                    // Ranking List
+                    _buildRankingSection(controller),
                   ] else ...[
                     // Regular category content
-                    SectionHeader(
-                      title: controller.selectedCategory.value,
-                    ),
+                    SectionHeader(title: controller.selectedCategory.value),
 
                     20.height,
 
@@ -127,7 +132,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-   Widget _buildHeader(HomeController controller) {
+  Widget _buildHeader(HomeController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Row(
@@ -195,8 +200,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildSearchBar() {
     return Padding(
@@ -347,6 +350,22 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildRankingSection(HomeController controller) {
+    return Column(
+      children:
+          controller.currentRankingMovies.map((movie) {
+            return RankingCard(
+              title: movie['title'],
+              subtitle: movie['subtitle'],
+              imageUrl: movie['imageUrl'],
+              ranking: movie['ranking'],
+              isHot: movie['isHot'] ?? false,
+              onTap: () => controller.onMovieTap(movie['title']),
+            );
+          }).toList(),
     );
   }
 }
