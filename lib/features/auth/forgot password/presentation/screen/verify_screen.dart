@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import '../controller/forget_password_controller.dart';
@@ -158,7 +159,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 24.height,
 
                 ///  Submit Button here
-                CommonButtonPro(text: "Get Verification Code"),
+                CommonButtonPro(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.createPassword);
+                  },
+                  text: "Get Verification Code",
+                ),
               ],
             ),
           ),

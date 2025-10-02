@@ -119,7 +119,12 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
 
-                  CommonButtonPro(text: "Sign In"),
+                  CommonButtonPro(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.navigation);
+                    },
+                    text: "Sign In",
+                  ),
                   24.height,
                   CommonText(
                     text: "Or",
