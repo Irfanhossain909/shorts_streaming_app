@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
+import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
@@ -27,7 +27,7 @@ class NavigationScreen extends StatelessWidget {
                   children: [
                     const HomeScreen(),
                     const ShortsFeedScreen(),
-                    const VerifyScreen(),
+                    const MyListScree(),
                     const ProfileScreen(),
                   ],
                 ),

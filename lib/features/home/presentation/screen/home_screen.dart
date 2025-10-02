@@ -21,109 +21,160 @@ class HomeScreen extends StatelessWidget {
     return GetBuilder<HomeController>(
       builder: (controller) {
         return Scaffold(
-          backgroundColor: const Color(0xFF1A1A1A),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Section
-                  _buildHeader(controller),
-
-                  20.height,
-
-                  // Popular Movie Section
-                  _buildPopularMovieSection(),
-
-                  20.height,
-
-                  // Featured Movie Card
-                  FeaturedMovieCard(
-                    title: controller.featuredMovie['title']!,
-                    duration: controller.featuredMovie['duration']!,
-                    imageUrl: controller.featuredMovie['imageUrl']!,
-                    onWatchTap: controller.onWatchTap,
-                    onBookmarkTap: controller.onBookmarkTap,
-                  ),
-
-                  30.height,
-                  // Search Bar at top
-                  _buildSearchBar(),
-
-                  20.height,
-
-                  // Category Filter
-                  CategoryFilter(
-                    categories: controller.categories,
-                    selectedCategory: controller.selectedCategory.value,
-                    onCategorySelected: controller.selectCategory,
-                  ),
-
-                  20.height,
-
-                  // Conditional content based on selected category
-                  if (controller.selectedCategory.value == 'VIP') ...[
-                    // VIP Section with Daily/Weekly filters
-                    SectionHeader(
-                      title: 'Top VIP Picks',
-                      subFilters: controller.vipFilters,
-                      selectedSubFilter: controller.selectedVipFilter.value,
-                      onSubFilterSelected: controller.selectVipFilter,
-                    ),
-
-                    20.height,
-
-                    // VIP Movies Grid
-                    _buildVipMoviesGrid(controller),
-
-                    30.height,
-
-                    // Only on Thisflix Section
-                    SectionHeader(title: 'Only on Thisflix'),
-
-                    20.height,
-
-                    _buildOnlyOnThisflixSection(controller),
-                  ] else if (controller.selectedCategory.value == 'New') ...[
-                    // Coming Soon Section
-                    SectionHeader(title: 'Coming Soon'),
-
-                    20.height,
-
-                    _buildComingSoonSection(controller),
-
-                    30.height,
-
-                    // New Release Section
-                    SectionHeader(title: 'New Release'),
-
-                    20.height,
-
-                    _buildNewReleaseSection(controller),
-                  ] else if (controller.selectedCategory.value ==
-                      'Ranking') ...[
-                    // Ranking Section with secondary filters
-                    SecondaryFilter(
-                      filters: controller.rankingFilters,
-                      selectedFilter: controller.selectedRankingFilter.value,
-                      onFilterSelected: controller.selectRankingFilter,
-                    ),
-
-                    20.height,
-
-                    // Ranking List
-                    _buildRankingSection(controller),
-                  ] else ...[
-                    // Regular category content
-                    SectionHeader(title: controller.selectedCategory.value),
-
-                    20.height,
-
-                    _buildMoviesGrid(controller),
-                  ],
-
-                  30.height,
+          // backgroundColor: const Color(0xFF1A1A1A),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.red2, // প্রথম color
+                  Colors.transparent, // শেষ color
+                  Colors.transparent, // শেষ color
+                  Colors.transparent, // শেষ color
+                  Colors.transparent, // শেষ color
+                  Colors.transparent, // শেষ color
                 ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: SafeArea(
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          // Header Section
+                          _buildHeader(controller),
+                          20.height,
+
+                          // Popular Movie Section
+                          _buildPopularMovieSection(),
+
+                          20.height,
+
+                          // Featured Movie Card
+                          FeaturedMovieCard(
+                            title: controller.featuredMovie['title']!,
+                            duration: controller.featuredMovie['duration']!,
+                            imageUrl: controller.featuredMovie['imageUrl']!,
+                            onWatchTap: controller.onWatchTap,
+                            onBookmarkTap: controller.onBookmarkTap,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      floating: false,
+                      delegate: _StickyHeaderDelegate(
+                        minHeight: 140.h,
+                        maxHeight: 140.h,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.transparent,
+                                Colors.black,
+                                Colors.black,
+                                Colors.black,
+                                Colors.black,
+                                Colors.black,
+                                Colors.black,
+                                Colors.black,
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              30.height,
+                              //                     // Search Bar at top
+                              _buildSearchBar(),
+
+                              CategoryFilter(
+                                categories: controller.categories,
+                                selectedCategory:
+                                    controller.selectedCategory.value,
+                                onCategorySelected: controller.selectCategory,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ];
+                },
+                body: Column(
+                  children: [
+                    30.height,
+
+                    // Conditional content based on selected category
+                    if (controller.selectedCategory.value == 'VIP') ...[
+                      // VIP Section with Daily/Weekly filters
+                      SectionHeader(
+                        title: 'Top VIP Picks',
+                        subFilters: controller.vipFilters,
+                        selectedSubFilter: controller.selectedVipFilter.value,
+                        onSubFilterSelected: controller.selectVipFilter,
+                      ),
+
+                      20.height,
+
+                      // VIP Movies Grid
+                      _buildVipMoviesGrid(controller),
+
+                      30.height,
+
+                      // Only on Thisflix Section
+                      SectionHeader(title: 'Only on Thisflix'),
+
+                      20.height,
+
+                      _buildOnlyOnThisflixSection(controller),
+                    ] else if (controller.selectedCategory.value == 'New') ...[
+                      // Coming Soon Section
+                      SectionHeader(title: 'Coming Soon'),
+
+                      20.height,
+
+                      _buildComingSoonSection(controller),
+
+                      30.height,
+
+                      // New Release Section
+                      SectionHeader(title: 'New Release'),
+
+                      20.height,
+
+                      _buildNewReleaseSection(controller),
+                    ] else if (controller.selectedCategory.value ==
+                        'Ranking') ...[
+                      // Ranking Section with secondary filters
+                      SecondaryFilter(
+                        filters: controller.rankingFilters,
+                        selectedFilter: controller.selectedRankingFilter.value,
+                        onFilterSelected: controller.selectRankingFilter,
+                      ),
+
+                      20.height,
+
+                      // Ranking List
+                      _buildRankingSection(controller),
+                    ] else ...[
+                      // Regular category content
+                      SectionHeader(title: controller.selectedCategory.value),
+
+                      20.height,
+
+                      _buildMoviesGrid(controller),
+                    ],
+
+                    30.height,
+                  ],
+                ),
               ),
             ),
           ),
@@ -366,5 +417,39 @@ class HomeScreen extends StatelessWidget {
         );
       }).toList(),
     );
+  }
+}
+
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  _StickyHeaderDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_StickyHeaderDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }
