@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
-import 'package:testemu/core/component/other_widgets/section_header.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
 class MoviesGridSection extends StatelessWidget {
   final HomeController controller;
 
-  const MoviesGridSection({
-    super.key,
-    required this.controller,
-  });
+  const MoviesGridSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         // Regular category content
-        SectionHeader(title: controller.selectedCategory.value),
-
         10.height,
 
         _buildMoviesGrid(),

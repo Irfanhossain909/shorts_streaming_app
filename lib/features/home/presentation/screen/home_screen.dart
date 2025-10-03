@@ -45,6 +45,8 @@ class HomeScreen extends StatelessWidget {
                   return [
                     SliverToBoxAdapter(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Header Section
                           HomeHeader(controller: controller),

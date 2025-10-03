@@ -9,10 +9,7 @@ import 'package:testemu/features/home/presentation/controller/home_controller.da
 class ComingSoonSection extends StatelessWidget {
   final HomeController controller;
 
-  const ComingSoonSection({
-    super.key,
-    required this.controller,
-  });
+  const ComingSoonSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +57,19 @@ class ComingSoonSection extends StatelessWidget {
 
   Widget _buildNewReleaseMovies() {
     return SizedBox(
-      height: 380.h,
-      child: ListView.builder(
+      height: 700.h,
+      child: GridView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4.w,
+          childAspectRatio: 1.5,
+        ),
         itemCount: controller.onlyOnThisflixMovies.length,
         itemBuilder: (context, index) {
           final movie = controller.onlyOnThisflixMovies[index];
           return Container(
-            width: 200.w,
             margin: EdgeInsets.only(right: 12.w),
             child: TopChartCard(
               title: movie['title'],

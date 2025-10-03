@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:testemu/core/component/card/movie_card.dart';
+import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -63,18 +63,17 @@ class LibrarySection extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 2,
           crossAxisSpacing: 12.w,
-          mainAxisSpacing: 16.h,
-          childAspectRatio: 0.50,
+          childAspectRatio: 0.60,
         ),
-        itemCount: controller.movies.length,
+        itemCount: controller.onlyOnThisflixMovies.length,
         itemBuilder: (context, index) {
-          final movie = controller.movies[index];
-          return MovieCard(
+          final movie = controller.onlyOnThisflixMovies[index];
+          return TopChartCard(
             title: movie['title'],
             imageUrl: movie['imageUrl'],
-            badge: movie['badge'],
+            view: movie['views'] ?? '0',
             onTap: () => controller.onMovieTap(movie['title']),
           );
         },

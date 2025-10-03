@@ -207,6 +207,24 @@ class HomeController extends GetxController {
             'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
+      {
+        'title': 'Second Life, The Godfather\'s Wife',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': 'My Poor Ex-wife is a Hidden Heiress',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': 'The Billionaire\'s Secret',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
     ],
     'New': [
       {
