@@ -6,6 +6,7 @@ import 'package:testemu/features/auth/sign%20in/presentation/controller/sign_in_
 import 'package:testemu/features/auth/sign%20up/presentation/controller/sign_up_controller.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
+import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 
 class DependencyInjection extends Bindings {
   @override
@@ -17,6 +18,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => ChangePasswordController(), fenix: true);
     Get.lazyPut(() => NavigationScreenController(), fenix: true);
     Get.lazyPut(() => HomeController(), fenix: true);
+    Get.lazyPut(() => NotificationsController(), fenix: true);
 
     // Common Feature Controllers
     Get.lazyPut(() => ShowGoogleMapController(), fenix: true);

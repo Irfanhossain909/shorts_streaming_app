@@ -4,14 +4,12 @@ import 'package:get/get.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
+import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class HomeHeader extends StatelessWidget {
   final HomeController controller;
 
-  const HomeHeader({
-    super.key,
-    required this.controller,
-  });
+  const HomeHeader({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +45,19 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(30.r),
-            ),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: AppColors.white,
-              size: 24.sp,
+          GestureDetector(
+            onTap: () => Get.to(() => NotificationScreen()),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Icon(
+                Icons.notifications_outlined,
+                color: AppColors.white,
+                size: 24.sp,
+              ),
             ),
           ),
         ],

@@ -6,6 +6,7 @@ import 'package:testemu/core/component/other_widgets/category_filter.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
+import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class MyListScree extends StatelessWidget {
   const MyListScree({super.key});
@@ -68,16 +69,19 @@ class MyListScree extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(30.r),
-            ),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: AppColors.white,
-              size: 24.sp,
+          GestureDetector(
+            onTap: () => Get.to(() => NotificationScreen()),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Icon(
+                Icons.notifications_outlined,
+                color: AppColors.white,
+                size: 24.sp,
+              ),
             ),
           ),
         ],
