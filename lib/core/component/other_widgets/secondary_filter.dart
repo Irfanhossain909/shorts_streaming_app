@@ -17,7 +17,7 @@ class SecondaryFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30.r),
         border: Border.all(
@@ -26,6 +26,7 @@ class SecondaryFilter extends StatelessWidget {
         ),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: filters.map((filter) {
           final isSelected = filter == selectedFilter;
           return GestureDetector(

@@ -5,6 +5,7 @@ class HomeController extends GetxController {
   // Observable variables
   var selectedCategory = 'Popular'.obs;
   var selectedMyListCategory = 'Recently Watched'.obs;
+  var selectedLibraryCategory = 'Most Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
   var selectedRankingFilter = 'Most Popular'.obs;
   var userName = 'Designjot'.obs;
@@ -24,6 +25,14 @@ class HomeController extends GetxController {
     'Fantasy',
     'Library',
   ];
+
+  final List<String> libraryMovies = ['All', 'Featured', 'Movie'];
+  final List<String> libraryMovies2 = [
+    'All',
+    'Contemporary',
+    'Recently Watched',
+  ];
+  final List<String> libraryMovies3 = ['Realistic', 'Suspense', 'Urban'];
 
   final List<String> myListCategories = ['Recently Watched', 'My Collection '];
 
@@ -146,6 +155,27 @@ class HomeController extends GetxController {
       'imageUrl':
           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
       'views': '48.2K',
+    },
+    {
+      'title': 'Married First, Loved Later',
+      'subtitle': 'Romance drama',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'views': '69.3K',
+    },
+    {
+      'title': 'Married First, Loved Later',
+      'subtitle': 'Romance drama',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'views': '69.3K',
+    },
+    {
+      'title': 'Married First, Loved Later',
+      'subtitle': 'Romance drama',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'views': '69.3K',
     },
     {
       'title': 'Married First, Loved Later',

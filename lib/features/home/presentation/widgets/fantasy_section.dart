@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:testemu/core/component/card/movie_card.dart';
-import 'package:testemu/core/component/card/vip_movie_card.dart';
-import 'package:testemu/core/component/other_widgets/secondary_filter.dart';
-import 'package:testemu/core/component/other_widgets/section_header.dart';
+import 'package:testemu/core/component/card/most_popular_card.dart';
+import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
-class VipMoviesSection extends StatelessWidget {
+class FantasySection extends StatelessWidget {
   final HomeController controller;
 
-  const VipMoviesSection({super.key, required this.controller});
-
+  const FantasySection({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        // Fantasy Section with Daily/Weekly filters
         Padding(
           padding: EdgeInsets.only(left: 10.0.w),
           child: Text(
-            'Top VIP Picks',
+            'Most Popular',
             style: TextStyle(
               color: AppColors.white,
               fontSize: 20.sp,
@@ -29,51 +28,41 @@ class VipMoviesSection extends StatelessWidget {
             ),
           ),
         ),
-        SecondaryFilter(
-          filters: controller.vipFilters,
-          selectedFilter: controller.selectedVipFilter.value,
-          onFilterSelected: controller.selectVipFilter,
+        _buildMostPeopleMovies(),
+        20.height,
+        Padding(
+          padding: EdgeInsets.only(left: 10.0.w),
+          child: Text(
+            'Top Chart',
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
-
         20.height,
-
-        // VIP Movies Grid
-        _buildVipMoviesGrid(),
-        10.height,
-        _buildVipMoviesGrid(),
-        10.height,
-        _buildVipMoviesGrid(),
-
-        30.height,
-
-        // Only on Thisflix Section
-        SectionHeader(title: 'Only on Thisflix'),
-
-        20.height,
-
-        _buildOnlyOnThisflixSection(),
+        _buildNewReleaseMovies(),
       ],
     );
   }
 
-  Widget _buildVipMoviesGrid() {
+  Widget _buildNewReleaseMovies() {
     return SizedBox(
-      height: 140.h,
+      height: 380.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        itemCount: controller.currentVipMovies.length,
+        itemCount: controller.onlyOnThisflixMovies.length,
         itemBuilder: (context, index) {
-          final movie = controller.currentVipMovies[index];
+          final movie = controller.onlyOnThisflixMovies[index];
           return Container(
             width: 200.w,
             margin: EdgeInsets.only(right: 12.w),
-            child: VipMovieCard(
+            child: TopChartCard(
               title: movie['title'],
-              subtitle: movie['subtitle'],
               imageUrl: movie['imageUrl'],
-              badge: movie['badge'],
-              ranking: movie['ranking'],
+              view: movie['views'] ?? '0',
               onTap: () => controller.onMovieTap(movie['title']),
             ),
           );
@@ -82,19 +71,19 @@ class VipMoviesSection extends StatelessWidget {
     );
   }
 
-  Widget _buildOnlyOnThisflixSection() {
+  Widget _buildMostPeopleMovies() {
     return SizedBox(
-      height: 240.h,
+      height: 200.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: controller.onlyOnThisflixMovies.length,
         itemBuilder: (context, index) {
           final movie = controller.onlyOnThisflixMovies[index];
           return Container(
-            margin: EdgeInsets.only(right: 12.w),
-            child: MovieCard(
-              title: movie['title'],
+            width: 130.w,
+            margin: EdgeInsets.only(right: 4.w),
+            child: MostPopularCard(
+              ranking: index + 1,
               imageUrl: movie['imageUrl'],
               onTap: () => controller.onMovieTap(movie['title']),
             ),

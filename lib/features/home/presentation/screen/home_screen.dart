@@ -7,7 +7,9 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/home/presentation/widgets/coming_soon_section.dart';
+import 'package:testemu/features/home/presentation/widgets/fantasy_section.dart';
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
+import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
 import 'package:testemu/features/home/presentation/widgets/popular_movie_section.dart';
 import 'package:testemu/features/home/presentation/widgets/ranking_section.dart';
@@ -96,7 +98,8 @@ class HomeScreen extends StatelessWidget {
 
                               CategoryFilter(
                                 categories: controller.categories,
-                                selectedCategory: controller.selectedCategory.value,
+                                selectedCategory:
+                                    controller.selectedCategory.value,
                                 onCategorySelected: controller.selectCategory,
                               ),
                             ],
@@ -108,6 +111,7 @@ class HomeScreen extends StatelessWidget {
                 },
                 body: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       30.height,
 
@@ -134,6 +138,10 @@ class HomeScreen extends StatelessWidget {
         return ComingSoonSection(controller: controller);
       case 'Ranking':
         return RankingSection(controller: controller);
+      case 'Library':
+        return LibrarySection(controller: controller);
+      case 'Fantasy':
+        return FantasySection(controller: controller);
       default:
         return MoviesGridSection(controller: controller);
     }
