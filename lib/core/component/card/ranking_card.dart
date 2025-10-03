@@ -26,55 +26,69 @@ class RankingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         child: Row(
           children: [
-            // Ranking number
-            Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: _getRankingColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                gradient: _getRankingGradient(),
-              ),
-              child: Center(
-                child: Text(
-                  ranking.toString(),
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(width: 12.w),
-
             // Movie thumbnail
-            Container(
-              width: 80.w,
-              height: 120.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+            Stack(
+              children: [
+                Container(
+                  width: 80.w,
+                  height: 120.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: CommonImage(
-                  imageSrc: imageUrl,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fill: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: CommonImage(
+                      imageSrc: imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fill: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: 8.h,
+                  left: 4.w,
+                  child: Container(
+                    width: 30.w,
+                    height: 30.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.3),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        ranking.toString(),
+                        style: TextStyle(
+                          fontSize: 28.sp,
+                          fontWeight: FontWeight.w900,
+
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth =
+                                1 // Border এর width
+                            ..color = AppColors.white, // Border color white
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             SizedBox(width: 16.w),

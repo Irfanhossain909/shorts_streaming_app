@@ -5,6 +5,7 @@ import 'package:testemu/core/component/card/coming_soon_card.dart';
 import 'package:testemu/core/component/card/featured_movie_card.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/card/ranking_card.dart';
+import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/card/vip_movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
 import 'package:testemu/core/component/other_widgets/secondary_filter.dart';
@@ -68,8 +69,8 @@ class HomeScreen extends StatelessWidget {
                       pinned: true,
                       floating: false,
                       delegate: _StickyHeaderDelegate(
-                        minHeight: 140.h,
-                        maxHeight: 140.h,
+                        minHeight: 150.h,
+                        maxHeight: 150.h,
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -90,9 +91,10 @@ class HomeScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              30.height,
+                              25.height,
                               //                     // Search Bar at top
                               _buildSearchBar(),
+                              10.height,
 
                               CategoryFilter(
                                 categories: controller.categories,
@@ -107,73 +109,81 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ];
                 },
-                body: Column(
-                  children: [
-                    30.height,
-
-                    // Conditional content based on selected category
-                    if (controller.selectedCategory.value == 'VIP') ...[
-                      // VIP Section with Daily/Weekly filters
-                      SectionHeader(
-                        title: 'Top VIP Picks',
-                        subFilters: controller.vipFilters,
-                        selectedSubFilter: controller.selectedVipFilter.value,
-                        onSubFilterSelected: controller.selectVipFilter,
-                      ),
-
-                      20.height,
-
-                      // VIP Movies Grid
-                      _buildVipMoviesGrid(controller),
-
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
                       30.height,
 
-                      // Only on Thisflix Section
-                      SectionHeader(title: 'Only on Thisflix'),
+                      // Conditional content based on selected category
+                      if (controller.selectedCategory.value == 'VIP') ...[
+                        // VIP Section with Daily/Weekly filters
+                        SectionHeader(
+                          title: 'Top VIP Picks',
+                          subFilters: controller.vipFilters,
+                          selectedSubFilter: controller.selectedVipFilter.value,
+                          onSubFilterSelected: controller.selectVipFilter,
+                        ),
 
-                      20.height,
+                        20.height,
 
-                      _buildOnlyOnThisflixSection(controller),
-                    ] else if (controller.selectedCategory.value == 'New') ...[
-                      // Coming Soon Section
-                      SectionHeader(title: 'Coming Soon'),
+                        // VIP Movies Grid
+                        _buildVipMoviesGrid(controller),
+                        10.height,
+                        _buildVipMoviesGrid(controller),
+                        10.height,
+                        _buildVipMoviesGrid(controller),
 
-                      20.height,
+                        30.height,
 
-                      _buildComingSoonSection(controller),
+                        // Only on Thisflix Section
+                        SectionHeader(title: 'Only on Thisflix'),
+
+                        20.height,
+
+                        _buildOnlyOnThisflixSection(controller),
+                      ] else if (controller.selectedCategory.value ==
+                          'New') ...[
+                        // Coming Soon Section
+                        SectionHeader(title: 'Coming Soon'),
+
+                        20.height,
+
+                        _buildComingSoonSection(controller),
+
+                        30.height,
+
+                        // New Release Section
+                        SectionHeader(title: 'New Release'),
+
+                        20.height,
+
+                        _buildNewReleaseSection(controller),
+                      ] else if (controller.selectedCategory.value ==
+                          'Ranking') ...[
+                        // Ranking Section with secondary filters
+                        SecondaryFilter(
+                          filters: controller.rankingFilters,
+                          selectedFilter:
+                              controller.selectedRankingFilter.value,
+                          onFilterSelected: controller.selectRankingFilter,
+                        ),
+
+                        20.height,
+
+                        // Ranking List
+                        _buildRankingSection(controller),
+                      ] else ...[
+                        // Regular category content
+                        SectionHeader(title: controller.selectedCategory.value),
+
+                        10.height,
+
+                        _buildMoviesGrid(controller),
+                      ],
 
                       30.height,
-
-                      // New Release Section
-                      SectionHeader(title: 'New Release'),
-
-                      20.height,
-
-                      _buildNewReleaseSection(controller),
-                    ] else if (controller.selectedCategory.value ==
-                        'Ranking') ...[
-                      // Ranking Section with secondary filters
-                      SecondaryFilter(
-                        filters: controller.rankingFilters,
-                        selectedFilter: controller.selectedRankingFilter.value,
-                        onFilterSelected: controller.selectRankingFilter,
-                      ),
-
-                      20.height,
-
-                      // Ranking List
-                      _buildRankingSection(controller),
-                    ] else ...[
-                      // Regular category content
-                      SectionHeader(title: controller.selectedCategory.value),
-
-                      20.height,
-
-                      _buildMoviesGrid(controller),
                     ],
-
-                    30.height,
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -257,7 +267,7 @@ class HomeScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.15),
+          color: AppColors.white200.withValues(alpha: 0.20),
           borderRadius: BorderRadius.circular(30.r),
         ),
         child: TextField(
@@ -286,20 +296,24 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildVipMoviesGrid(HomeController controller) {
     return SizedBox(
-      height: 240.h,
+      height: 140.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: controller.currentVipMovies.length,
         itemBuilder: (context, index) {
           final movie = controller.currentVipMovies[index];
-          return VipMovieCard(
-            title: movie['title'],
-            subtitle: movie['subtitle'],
-            imageUrl: movie['imageUrl'],
-            badge: movie['badge'],
-            ranking: movie['ranking'],
-            onTap: () => controller.onMovieTap(movie['title']),
+          return Container(
+            width: 200.w,
+            margin: EdgeInsets.only(right: 12.w),
+            child: VipMovieCard(
+              title: movie['title'],
+              subtitle: movie['subtitle'],
+              imageUrl: movie['imageUrl'],
+              badge: movie['badge'],
+              ranking: movie['ranking'],
+              onTap: () => controller.onMovieTap(movie['title']),
+            ),
           );
         },
       ),
@@ -308,7 +322,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildOnlyOnThisflixSection(HomeController controller) {
     return SizedBox(
-      height: 200.h,
+      height: 240.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -316,13 +330,12 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final movie = controller.onlyOnThisflixMovies[index];
           return Container(
-            width: 160.w,
             margin: EdgeInsets.only(right: 12.w),
-            child: VipMovieCard(
+            child: MovieCard(
               title: movie['title'],
-              subtitle: movie['subtitle'],
+              //subtitle: movie['subtitle'],
               imageUrl: movie['imageUrl'],
-              isLarge: true,
+              //isLarge: true,
               onTap: () => controller.onMovieTap(movie['title']),
             ),
           );
@@ -333,7 +346,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildComingSoonSection(HomeController controller) {
     return SizedBox(
-      height: 300.h,
+      height: 320.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -342,7 +355,6 @@ class HomeScreen extends StatelessWidget {
           final movie = controller.comingSoonMovies[index];
           return ComingSoonCard(
             title: movie['title'],
-            subtitle: movie['subtitle'],
             imageUrl: movie['imageUrl'],
             releaseDate: movie['releaseDate'],
             onTap: () => controller.onMovieTap(movie['title']),
@@ -355,7 +367,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildNewReleaseSection(HomeController controller) {
     return SizedBox(
-      height: 280.h,
+      height: 380.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -363,13 +375,12 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final movie = controller.onlyOnThisflixMovies[index];
           return Container(
-            width: 160.w,
+            width: 200.w,
             margin: EdgeInsets.only(right: 12.w),
-            child: VipMovieCard(
+            child: TopChartCard(
               title: movie['title'],
-              subtitle: movie['subtitle'],
               imageUrl: movie['imageUrl'],
-              isLarge: true,
+              view: movie['views'] ?? '0',
               onTap: () => controller.onMovieTap(movie['title']),
             ),
           );

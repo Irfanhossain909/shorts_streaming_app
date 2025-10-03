@@ -18,23 +18,31 @@ class SecondaryFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30.r),
+        border: Border.all(
+          color: AppColors.white.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
       child: Row(
         children: filters.map((filter) {
           final isSelected = filter == selectedFilter;
           return GestureDetector(
             onTap: () => onFilterSelected(filter),
             child: Container(
-              margin: EdgeInsets.only(right: 16.w),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              margin: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.red : AppColors.transparent,
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.red
-                      : AppColors.white.withValues(alpha: 0.3),
-                  width: 1,
-                ),
+                gradient: isSelected
+                    ? LinearGradient(
+                        colors: [AppColors.red2, AppColors.red],
+                        begin: Alignment.centerRight,
+                        end: Alignment.centerLeft,
+                      )
+                    : null,
+                borderRadius: BorderRadius.circular(30.r),
               ),
               child: Text(
                 filter,

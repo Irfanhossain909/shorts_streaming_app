@@ -4,6 +4,7 @@ import 'dart:async';
 class HomeController extends GetxController {
   // Observable variables
   var selectedCategory = 'Popular'.obs;
+  var selectedMyListCategory = 'Recently Watched'.obs;
   var selectedVipFilter = 'Daily'.obs;
   var selectedRankingFilter = 'Most Popular'.obs;
   var userName = 'Designjot'.obs;
@@ -20,7 +21,11 @@ class HomeController extends GetxController {
     'Ranking',
     'Mystery',
     'Romance',
+    'Fantasy',
+    'Library',
   ];
+
+  final List<String> myListCategories = ['Recently Watched', 'My Collection '];
 
   // VIP sub-filters
   final List<String> vipFilters = ['Daily', 'Weekly'];
@@ -379,6 +384,11 @@ class HomeController extends GetxController {
   // Methods
   void selectCategory(String category) {
     selectedCategory.value = category;
+    update();
+  }
+
+  void selectMyListCategory(String category) {
+    selectedMyListCategory.value = category;
     update();
   }
 
