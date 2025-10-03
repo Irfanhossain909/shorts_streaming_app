@@ -189,7 +189,7 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: "Account Settings",
+                    text: "Settings Account",
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                     color: AppColors.background,
@@ -202,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                   ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
                   ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
                   CommonText(
-                    text: "Account Settings",
+                    text: "More Setting",
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                     color: AppColors.background,

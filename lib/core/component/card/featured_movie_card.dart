@@ -23,8 +23,8 @@ class FeaturedMovieCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200.h,
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      height: 220.h,
+      // margin: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [

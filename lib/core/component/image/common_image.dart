@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import '../../constants/app_images.dart';
 import '../../utils/log/error_log.dart';
 
@@ -57,7 +58,7 @@ class CommonImage extends StatelessWidget {
         ),
       ),
       progressIndicatorBuilder: (context, url, downloadProgress) =>
-          CircularProgressIndicator(value: downloadProgress.progress),
+          CircularProgressIndicator(value: downloadProgress.progress,color: AppColors.red2),
       errorWidget: (context, url, error) {
         errorLog(error, source: "Common Image");
 

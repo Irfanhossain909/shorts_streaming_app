@@ -98,4 +98,5 @@ class AppImages {
   static const String shareIc = "$baseurl/shareIc.png";
   static const String listIc = "$baseurl/listIc.png";
   static const String icDownload = "$baseurl/ic_download.png";
+  static const String icFireIcon = "$baseurl/fire_icon.png";
 }

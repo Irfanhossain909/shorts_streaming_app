@@ -42,13 +42,39 @@ class HomeController extends GetxController {
   // Ranking sub-filters
   final List<String> rankingFilters = ['Most Popular', 'Hottest', 'New Series'];
 
-  // Featured movie
-  final featuredMovie = {
-    'title': 'ETHERION',
-    'duration': 'in 50 min',
-    'imageUrl':
-        'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop',
-  };
+  // Featured movies for carousel
+  final List<Map<String, dynamic>> featuredMovies = [
+    {
+      'title': 'ETHERION',
+      'duration': 'in 50 min',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop',
+    },
+    {
+      'title': 'APEX LEGENDS',
+      'duration': 'in 45 min',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&h=300&fit=crop',
+    },
+    {
+      'title': 'CYBERNIGHT',
+      'duration': 'in 60 min',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=300&fit=crop',
+    },
+    {
+      'title': 'SHADOWBORN',
+      'duration': 'in 38 min',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=500&h=300&fit=crop',
+    },
+    {
+      'title': 'NEON DREAMS',
+      'duration': 'in 55 min',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop',
+    },
+  ];
 
   // VIP Movies data with Daily/Weekly filters
   final Map<String, List<Map<String, dynamic>>> vipMovies = {
@@ -454,12 +480,12 @@ class HomeController extends GetxController {
     Get.snackbar('Movie Selected', title);
   }
 
-  void onWatchTap() {
-    Get.snackbar('Watch', 'Starting ${featuredMovie['title']}');
+  void onWatchTap(String title) {
+    Get.snackbar('Watch', 'Starting $title');
   }
 
-  void onBookmarkTap() {
-    Get.snackbar('Bookmark', 'Added to bookmarks');
+  void onBookmarkTap(String title) {
+    Get.snackbar('Bookmark', 'Added $title to bookmarks');
   }
 
   void onRemindMeTap(String title) {

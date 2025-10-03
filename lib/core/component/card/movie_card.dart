@@ -103,8 +103,8 @@ class MovieCard extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: AppColors.white,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w800,
                       height: 1.3,
                     ),
                     maxLines: 2,

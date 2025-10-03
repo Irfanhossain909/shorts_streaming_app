@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:testemu/core/component/card/featured_movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/home/presentation/widgets/coming_soon_section.dart';
 import 'package:testemu/features/home/presentation/widgets/fantasy_section.dart';
+import 'package:testemu/features/home/presentation/widgets/featured_movies_carousel.dart';
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
 import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
@@ -56,11 +56,9 @@ class HomeScreen extends StatelessWidget {
                           const PopularMovieSection(),
                           20.height,
 
-                          // Featured Movie Card
-                          FeaturedMovieCard(
-                            title: controller.featuredMovie['title']!,
-                            duration: controller.featuredMovie['duration']!,
-                            imageUrl: controller.featuredMovie['imageUrl']!,
+                          // Featured Movies Carousel
+                          FeaturedMoviesCarousel(
+                            movies: controller.featuredMovies,
                             onWatchTap: controller.onWatchTap,
                             onBookmarkTap: controller.onBookmarkTap,
                           ),
@@ -78,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                             gradient: LinearGradient(
                               colors: [
                                 Colors.transparent,
-                                Colors.transparent,
+
                                 Colors.black,
                                 Colors.black,
                                 Colors.black,

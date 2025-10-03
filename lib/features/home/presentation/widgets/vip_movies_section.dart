@@ -69,6 +69,7 @@ class VipMoviesSection extends StatelessWidget {
             width: 200.w,
             margin: EdgeInsets.only(right: 12.w),
             child: VipMovieCard(
+              
               title: movie['title'],
               subtitle: movie['subtitle'],
               imageUrl: movie['imageUrl'],
