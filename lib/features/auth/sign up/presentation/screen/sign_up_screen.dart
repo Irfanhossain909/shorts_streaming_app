@@ -20,17 +20,10 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final signUpFormKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Section Starts Here
-      appBar: CommonAppBar(
-        title: "",
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: CommonText(text: "Skip", color: AppColors.background),
-          ),
-        ],
-      ),
+      appBar: CommonAppBar(title: ""),
       bottomNavigationBar: SafeArea(child: AlreadyAccountRichText()),
 
       /// Body Section Starts Here
@@ -39,7 +32,7 @@ class SignUpScreen extends StatelessWidget {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Form(
-              key: controller.signUpFormKey,
+              key: signUpFormKey,
               child: Column(
                 children: [
                   // crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,11 +50,10 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CommonText(
-                          text: "Logo",
-                          fontSize: 64.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
+                        CommonImage(
+                          width: 120.w,
+                          height: 120.h,
+                          imageSrc: AppImages.logo,
                         ),
                         CommonText(
                           text: "Create Your Account",
