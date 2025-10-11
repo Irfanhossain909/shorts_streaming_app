@@ -20,6 +20,7 @@ import 'package:testemu/features/setting/presentation/screen/setting_screen.dart
 import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/terms_of_services_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
+import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
 
 class AppRoutes {
@@ -46,6 +47,7 @@ class AppRoutes {
   static const String shortScreen = "/shorts_screen.dart";
   static const String home = "/home_screen.dart";
   static const String myListScreen = "/my-list-screen.dart";
+  static const String videoDetail = "/video_detail_screen.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -70,5 +72,6 @@ class AppRoutes {
     GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
     GetPage(name: home, page: () => const HomeScreen()),
     GetPage(name: myListScreen, page: () => const MyListScree()),
+    GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
   ];
 }

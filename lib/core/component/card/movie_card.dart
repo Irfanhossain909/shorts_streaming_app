@@ -98,6 +98,7 @@ class MovieCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,

@@ -23,7 +23,7 @@ class EpisodSelectBtn extends StatelessWidget {
         isRunning
             ? Container(
                 decoration: BoxDecoration(
-                  color: AppColors.red.withValues(alpha: 0.5),
+                  color: AppColors.buttonColor2.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(6.r),
                   border: Border.all(
                     color: AppColors.white.withValues(alpha: 0.5),
@@ -39,7 +39,7 @@ class EpisodSelectBtn extends StatelessWidget {
             : Container(
                 decoration: BoxDecoration(
                   color: isLock
-                      ? Colors.blueGrey.withValues(alpha: 0.5)
+                      ? AppColors.buttonColor2.withValues(alpha: 0.5)
                       : Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(6.r),
                   border: Border.all(
@@ -51,9 +51,7 @@ class EpisodSelectBtn extends StatelessWidget {
                   text: text ?? "no text",
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
-                  color: isLock
-                      ? AppColors.background.withValues(alpha: 0.5)
-                      : AppColors.white,
+                  color: isLock ? AppColors.white : AppColors.white,
                 ),
               ),
         isLock
@@ -63,7 +61,7 @@ class EpisodSelectBtn extends StatelessWidget {
                 child: Icon(
                   Icons.lock_outline,
                   size: 14.w,
-                  color: AppColors.red2,
+                  color: AppColors.white,
                 ),
               )
             : SizedBox(),

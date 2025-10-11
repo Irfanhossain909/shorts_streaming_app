@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/features/shorts/model/bottom_card_btn_model.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_selection_button.dart';
@@ -56,11 +58,17 @@ class ListBottomSheet extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CommonText(
-                      text: "Reborn True Princess Returns",
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.white,
+                    GestureDetector(
+                      onTap: () {
+                        //print("Reborn True Princess Returns");
+                        Get.toNamed(AppRoutes.videoDetail);
+                      },
+                      child: CommonText(
+                        text: "Reborn True Princess Returns >",
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.white,
+                      ),
                     ),
                     CommonText(
                       text: "Update to EP.67/EP.67",
