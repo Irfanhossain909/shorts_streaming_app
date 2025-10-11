@@ -43,11 +43,11 @@ class SignUpScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 18.h),
 
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.background),
-                      borderRadius: BorderRadius.circular(30.w),
-                      color: AppColors.white.withValues(alpha: 0.3),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: AppColors.background),
+                    //   borderRadius: BorderRadius.circular(30.w),
+                    //   color: AppColors.white.withValues(alpha: 0.3),
+                    // ),
                     child: Column(
                       children: [
                         CommonImage(

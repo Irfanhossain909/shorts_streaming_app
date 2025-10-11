@@ -26,12 +26,12 @@ class ForgotPasswordScreen extends StatelessWidget {
         /// App Bar Section
         appBar: CommonAppBar(
           title: "",
-          actions: [
-            TextButton(
-              onPressed: () {},
-              child: CommonText(text: "Skip", color: AppColors.background),
-            ),
-          ],
+          // actions: [
+          //   TextButton(
+          //     onPressed: () {},
+          //     child: CommonText(text: "Skip", color: AppColors.background),
+          //   ),
+          // ],
         ),
 
         /// body section
@@ -50,17 +50,18 @@ class ForgotPasswordScreen extends StatelessWidget {
                     vertical: 18.h,
                   ),
 
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.background),
-                    borderRadius: BorderRadius.circular(30.w),
-                    color: AppColors.white.withValues(alpha: 0.3),
-                  ),
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(color: AppColors.background),
+                  //   borderRadius: BorderRadius.circular(30.w),
+                  //   color: AppColors.white.withValues(alpha: 0.3),
+                  // ),
                   child: Column(
                     spacing: 8.h,
                     children: [
                       CommonImage(
-                        imageSrc: AppImages.forgetPassImage,
-                        width: 210.w,
+                        width: 120.w,
+                        height: 120.h,
+                        imageSrc: AppImages.logo,
                       ),
                       CommonText(
                         text: "Forgot Your Password?",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/other_widgets/no_data.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -14,24 +15,26 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CommonAppBar(title: ""),
+
       /// App Bar Section starts here
 
       /// Body Section starts here
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.red2,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   gradient: LinearGradient(
+        //     colors: [
+        //       AppColors.red2,
+        //       Colors.transparent,
+        //       Colors.transparent,
+        //       Colors.transparent,
+        //       Colors.transparent,
+        //       Colors.transparent,
+        //     ],
+        //     begin: Alignment.topCenter,
+        //     end: Alignment.bottomCenter,
+        //   ),
+        // ),
         child: GetBuilder<NotificationsController>(
           builder: (controller) {
             return controller.isLoading
