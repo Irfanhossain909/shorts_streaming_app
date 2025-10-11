@@ -6,6 +6,7 @@ import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
@@ -23,12 +24,7 @@ class CreatePassword extends StatelessWidget {
     return Scaffold(
       appBar: CommonAppBar(
         title: "",
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: CommonText(text: "Skip", color: AppColors.background),
-          ),
-        ],
+        //
       ),
 
       /// Body Section
@@ -48,17 +44,14 @@ class CreatePassword extends StatelessWidget {
                       horizontal: 16.w,
                       vertical: 18.h,
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.background),
-                      borderRadius: BorderRadius.circular(30.w),
-                      color: AppColors.white.withValues(alpha: 0.3),
-                    ),
+
                     child: Column(
                       spacing: 8.h,
                       children: [
                         CommonImage(
-                          imageSrc: AppImages.verifyImage,
-                          width: 210.w,
+                          width: 120.w,
+                          height: 120.h,
+                          imageSrc: AppImages.logo,
                         ),
                         CommonText(
                           text: "Set Your New Password",
@@ -104,7 +97,12 @@ class CreatePassword extends StatelessWidget {
                   38.height,
 
                   /// Submit Button
-                  CommonButtonPro(text: "Save New Password"),
+                  CommonButtonPro(
+                    onTap: () {
+                      Get.offAllNamed(AppRoutes.navigation);
+                    },
+                    text: "Save New Password",
+                  ),
                 ],
               ),
             ),

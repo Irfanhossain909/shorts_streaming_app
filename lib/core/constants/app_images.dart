@@ -8,6 +8,7 @@ class AppImages {
   static const String employer = "$baseurl/employer.png";
   static const String seeker = "$baseurl/seeker.png";
   static const String google = "$baseurl/google.png";
+  static const String logo = "$baseurl/logo.png";
   static const String facebook = "$baseurl/facebook.png";
   static const String apple = "$baseurl/apple.png";
   static const String map = "$baseurl/map.png";
@@ -97,4 +98,5 @@ class AppImages {
   static const String shareIc = "$baseurl/shareIc.png";
   static const String listIc = "$baseurl/listIc.png";
   static const String icDownload = "$baseurl/ic_download.png";
+  static const String icFireIcon = "$baseurl/fire_icon.png";
 }

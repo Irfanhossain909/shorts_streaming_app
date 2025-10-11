@@ -5,7 +5,6 @@ import 'package:testemu/core/constants/app_colors.dart';
 
 class ComingSoonCard extends StatelessWidget {
   final String title;
-  final String subtitle;
   final String imageUrl;
   final String releaseDate;
   final VoidCallback? onTap;
@@ -16,7 +15,6 @@ class ComingSoonCard extends StatelessWidget {
   const ComingSoonCard({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.imageUrl,
     required this.releaseDate,
     this.onTap,
@@ -64,8 +62,8 @@ class ComingSoonCard extends StatelessWidget {
 
                   // VIP Badge at top right
                   Positioned(
-                    top: 8.h,
-                    right: 8.w,
+                    top: 0.h,
+                    right: 0.w,
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 6.w,
@@ -73,13 +71,16 @@ class ComingSoonCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.green,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8.r),
+                          bottomLeft: Radius.circular(8.r),
+                        ),
                       ),
                       child: Text(
-                        'VIP',
+                        'New',
                         style: TextStyle(
                           color: AppColors.white,
-                          fontSize: 8.sp,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -96,26 +97,11 @@ class ComingSoonCard extends StatelessWidget {
               title,
               style: TextStyle(
                 color: AppColors.white,
-                fontSize: 13.sp,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
                 height: 1.2,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            2.verticalSpace,
-
-            // Subtitle
-            Text(
-              subtitle,
-              style: TextStyle(
-                color: AppColors.white.withValues(alpha: 0.7),
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w400,
-                height: 1.2,
-              ),
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
 
@@ -125,8 +111,8 @@ class ComingSoonCard extends StatelessWidget {
             Text(
               releaseDate,
               style: TextStyle(
-                color: AppColors.white.withValues(alpha: 0.6),
-                fontSize: 10.sp,
+                color: AppColors.white.withValues(alpha: 0.9),
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w400,
               ),
             ),

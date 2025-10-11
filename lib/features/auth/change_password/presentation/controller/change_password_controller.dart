@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 class ChangePasswordController extends GetxController {
   bool isLoading = false;
-  final formKey = GlobalKey<FormState>();
 
   TextEditingController currentPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
@@ -12,7 +11,7 @@ class ChangePasswordController extends GetxController {
   ///  change password function
 
   Future<void> changePasswordRepo() async {
-    if (!formKey.currentState!.validate()) return;
+    //if (!formKey.currentState!.validate()) return;
     Get.back();
     return;
     // isLoading = true;

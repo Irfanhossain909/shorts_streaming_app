@@ -8,6 +8,7 @@ import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,28 +25,31 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 12.0),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.background.withValues(alpha: 0.2),
-              ),
-              padding: EdgeInsets.all(4.w),
-              child: Stack(
-                children: [
-                  Icon(Icons.notifications, color: AppColors.background),
-                  Positioned(
-                    right: 5.w,
-                    top: 4.w,
-                    child: Container(
-                      width: 6.w,
-                      height: 6.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.red,
+            child: GestureDetector(
+              onTap: () => Get.to(() => NotificationScreen()),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.background.withValues(alpha: 0.2),
+                ),
+                padding: EdgeInsets.all(4.w),
+                child: Stack(
+                  children: [
+                    Icon(Icons.notifications, color: AppColors.background),
+                    Positioned(
+                      right: 5.w,
+                      top: 4.w,
+                      child: Container(
+                        width: 6.w,
+                        height: 6.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.red,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -185,7 +189,7 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: "Account Settings",
+                    text: "Settings Account",
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                     color: AppColors.background,
@@ -198,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                   ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
                   ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
                   CommonText(
-                    text: "Account Settings",
+                    text: "More Setting",
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
                     color: AppColors.background,

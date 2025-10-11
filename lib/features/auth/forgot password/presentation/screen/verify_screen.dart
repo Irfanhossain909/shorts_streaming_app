@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import '../controller/forget_password_controller.dart';
@@ -35,12 +36,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
       /// App Bar Section
       appBar: CommonAppBar(
         title: "",
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: CommonText(text: "Skip", color: AppColors.background),
-          ),
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: () {},
+        //     child: CommonText(text: "Skip", color: AppColors.background),
+        //   ),
+        // ],
       ),
 
       /// Body Section
@@ -60,17 +61,18 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     vertical: 18.h,
                   ),
 
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.background),
-                    borderRadius: BorderRadius.circular(30.w),
-                    color: AppColors.white.withValues(alpha: 0.3),
-                  ),
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(color: AppColors.background),
+                  //   borderRadius: BorderRadius.circular(30.w),
+                  //   color: AppColors.white.withValues(alpha: 0.3),
+                  // ),
                   child: Column(
                     spacing: 8.h,
                     children: [
                       CommonImage(
-                        imageSrc: AppImages.verifyImage,
-                        width: 210.w,
+                        width: 120.w,
+                        height: 120.h,
+                        imageSrc: AppImages.logo,
                       ),
                       CommonText(
                         text: "Verify Your Account",
@@ -158,7 +160,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 24.height,
 
                 ///  Submit Button here
-                CommonButtonPro(text: "Get Verification Code"),
+                CommonButtonPro(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.createPassword);
+                  },
+                  text: "Get Verification Code",
+                ),
               ],
             ),
           ),

@@ -20,16 +20,9 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: CommonAppBar(
-        title: "",
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: CommonText(text: "Skip", color: AppColors.background),
-          ),
-        ],
-      ),
+      appBar: CommonAppBar(title: ""),
 
       bottomNavigationBar: SafeArea(child: DoNotHaveAccount()),
 
@@ -39,7 +32,7 @@ class SignInScreen extends StatelessWidget {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
             child: Form(
-              key: controller.formKey,
+              key: formKey,
               child: Column(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -50,18 +43,17 @@ class SignInScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 18.h),
 
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.background),
-                      borderRadius: BorderRadius.circular(30.w),
-                      color: AppColors.white.withValues(alpha: 0.3),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: AppColors.background),
+                    //   borderRadius: BorderRadius.circular(30.w),
+                    //   color: AppColors.white.withValues(alpha: 0.3),
+                    // ),
                     child: Column(
                       children: [
-                        CommonText(
-                          text: "Logo",
-                          fontSize: 64.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
+                        CommonImage(
+                          width: 120.w,
+                          height: 120.h,
+                          imageSrc: AppImages.logo,
                         ),
                         CommonText(
                           text: "Let's Get Started!",
@@ -119,7 +111,12 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
 
-                  CommonButtonPro(text: "Sign In"),
+                  CommonButtonPro(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.navigation);
+                    },
+                    text: "Sign In",
+                  ),
                   24.height,
                   CommonText(
                     text: "Or",

@@ -12,6 +12,7 @@ import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/auth/sign%20up/presentation/widget/already_accunt_rich_text.dart';
 import '../controller/sign_up_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -19,17 +20,11 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final signUpFormKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Section Starts Here
-      appBar: CommonAppBar(
-        title: "",
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: CommonText(text: "Skip", color: AppColors.background),
-          ),
-        ],
-      ),
+      appBar: CommonAppBar(title: ""),
+      bottomNavigationBar: SafeArea(child: AlreadyAccountRichText()),
 
       /// Body Section Starts Here
       body: GetBuilder<SignUpController>(
@@ -37,7 +32,7 @@ class SignUpScreen extends StatelessWidget {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Form(
-              key: controller.signUpFormKey,
+              key: signUpFormKey,
               child: Column(
                 children: [
                   // crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,18 +43,17 @@ class SignUpScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 18.h),
 
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.background),
-                      borderRadius: BorderRadius.circular(30.w),
-                      color: AppColors.white.withValues(alpha: 0.3),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: AppColors.background),
+                    //   borderRadius: BorderRadius.circular(30.w),
+                    //   color: AppColors.white.withValues(alpha: 0.3),
+                    // ),
                     child: Column(
                       children: [
-                        CommonText(
-                          text: "Logo",
-                          fontSize: 64.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
+                        CommonImage(
+                          width: 120.w,
+                          height: 120.h,
+                          imageSrc: AppImages.logo,
                         ),
                         CommonText(
                           text: "Create Your Account",
