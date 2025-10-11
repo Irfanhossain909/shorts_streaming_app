@@ -125,6 +125,13 @@ class HomeController extends GetxController {
   // Coming Soon movies
   final List<Map<String, dynamic>> comingSoonMovies = [
     {
+      'title': 'Alpha\'s Fake or Fated Mate',
+      'subtitle': 'Married First, Loved Later',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+      'releaseDate': '03/24/2025',
+    },
+    {
       'title': 'Second Life, the Godfather\'s Wife',
       'subtitle': 'Reborn True Princess Returns',
       'imageUrl':
