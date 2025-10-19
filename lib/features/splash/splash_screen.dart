@@ -17,36 +17,44 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  // void initState() {
-  //   Future.delayed(const Duration(seconds: 3), () {
-  //     // if (LocalStorage.isLogIn) {
-  //     //   if (LocalStorage.myRole == 'consultant') {
-  //     //     Get.offAllNamed(AppRoutes.doctorHome);
-  //     //   } else {
-  //     //     Get.offAllNamed(AppRoutes.patientsHome);
-  //     //   }
-  //     // } else {
-  //     Get.offAllNamed(AppRoutes.onboarding);
-  //   });
-  //   super.initState();
-  // }
+  void initState() {
+    Future.delayed(const Duration(seconds: 2), () {
+      // if (LocalStorage.isLogIn) {
+      //   if (LocalStorage.myRole == 'consultant') {
+      //     Get.offAllNamed(AppRoutes.doctorHome);
+      //   } else {
+      //     Get.offAllNamed(AppRoutes.patientsHome);
+      //   }
+      // } else {
+      Get.offAllNamed(AppRoutes.signUp,);
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black, // বা transparent রাখতে পারো
       body: Center(
-        child: Lottie.asset(
-          // 'assets/animations/confetti.json',
-          'assets/animations/creepyshorts_splash_screen.json',
-          frameRate: FrameRate(120),
-          width: 200,
-          height: 200,
-
-          // width: MediaQuery.of(context).size.width, // বা নির্দিষ্ট width
-          // height: MediaQuery.of(context).size.height, // বা নির্দিষ্ট height
-          fit: BoxFit.contain,
+        child: AspectRatio(
+          aspectRatio: 9 / 19.5,
+          child: LottieBuilder.asset(
+            'assets/animations/home_lotty_light.json',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
+    // return Scaffold(
+    //   backgroundColor: Colors.transparent,
+    //   body: Center(
+    //     child: Lottie.asset(
+    //       // 'assets/animations/confetti.json',
+    //       'assets/animations/home_lotty.json',
+    //       // width: MediaQuery.of(context).size.width, // বা নির্দিষ্ট width
+    //       // height: MediaQuery.of(context).size.height, // বা নির্দিষ্ট height
+    //       fit: BoxFit.cover,
+    //     ),
+    //   ),
+    // );
   }
 }
