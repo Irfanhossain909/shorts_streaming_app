@@ -99,4 +99,20 @@ class AppImages {
   static const String listIc = "$baseurl/listIc.png";
   static const String icDownload = "$baseurl/ic_download.png";
   static const String icFireIcon = "$baseurl/fire_icon.png";
+
+  ///////////////////Demo Movie Images
+  static const String m13 = "$baseurl/m13.webp";
+  static const String m12 = "$baseurl/m12.webp";
+  static const String m11 = "$baseurl/m11.webp";
+  static const String m10 = "$baseurl/m10.webp";
+  static const String m9 = "$baseurl/m9.webp";
+  static const String m8 = "$baseurl/m8.webp";
+  static const String m7 = "$baseurl/m7.webp";
+  static const String m6 = "$baseurl/m6.webp";
+  static const String m5 = "$baseurl/m5.webp";
+  static const String m4 = "$baseurl/m4.webp";
+  static const String m3 = "$baseurl/m3.webp";
+  static const String m2 = "$baseurl/m2.webp";
+  static const String m1 = "$baseurl/m1.webp";
+  // static const String icFireIcon = "$baseurl/fire_icon.png";
 }

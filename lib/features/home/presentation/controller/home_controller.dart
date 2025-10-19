@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'dart:async';
 
+import 'package:testemu/core/constants/app_images.dart';
+
 class HomeController extends GetxController {
   // Observable variables
   var selectedCategory = 'Popular'.obs;
@@ -80,70 +82,91 @@ class HomeController extends GetxController {
   final Map<String, List<Map<String, dynamic>>> vipMovies = {
     'Daily': [
       {
-        'title': 'Second Life, the Godfather\'s Wife',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+
         'subtitle': 'During the appointment ceremony...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
         'badge': 'VIP',
         'ranking': '1',
       },
       {
-        'title': 'Second Life, the Godfather\'s wife',
+        'title': 'The Wilson Sisters ',
+        'imageUrl': AppImages.m12,
         'subtitle': 'During the appointment ceremony...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
         'badge': 'VIP',
         'ranking': '2',
       },
       {
-        'title': 'Second Life, the Godfather\'s Wife',
+        'title': ' The Human Beast',
+        'imageUrl': AppImages.m11,
         'subtitle': 'During the appointment ceremony...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'badge': 'VIP',
         'ranking': '3',
       },
       {
-        'title': 'Second Life, the Godfather\'s Wife',
+        'title': ' The Mayan Mummies',
+        'imageUrl': AppImages.m9,
         'subtitle': 'During the appointment ceremony...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
         'badge': 'VIP',
         'ranking': '5',
       },
       {
-        'title': 'Second Life, the Godfather\'s Wife',
+        'title': ' The Guardian of the Threshold',
+        'imageUrl': AppImages.m13,
+
         'subtitle': 'During the appointment ceremony...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
         'badge': 'VIP',
         'ranking': '6',
       },
     ],
     'Weekly': [
       {
-        'title': 'Elite Weekly Romance',
-        'subtitle': 'Weekly exclusive content...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
+        'title': ' The Mayan Mummies',
+        'imageUrl': AppImages.m9,
+        'subtitle': 'During the appointment ceremony...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
         'badge': 'VIP',
-        'ranking': '1',
+        'ranking': '5',
       },
       {
-        'title': 'Premium Weekly Drama',
-        'subtitle': 'Weekly premium series...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=300&fit=crop',
+        'title': ' The Guardian of the Threshold',
+        'imageUrl': AppImages.m13,
+
+        'subtitle': 'During the appointment ceremony...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
         'badge': 'VIP',
-        'ranking': '2',
+        'ranking': '6',
       },
       {
-        'title': 'Weekly VIP Special',
-        'subtitle': 'Special weekly episodes...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
+        'title': ' The Mayan Mummies',
+        'imageUrl': AppImages.m9,
+        'subtitle': 'During the appointment ceremony...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
         'badge': 'VIP',
-        'ranking': '3',
+        'ranking': '5',
+      },
+      {
+        'title': ' The Guardian of the Threshold',
+        'imageUrl': AppImages.m13,
+
+        'subtitle': 'During the appointment ceremony...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'badge': 'VIP',
+        'ranking': '6',
       },
     ],
   };
@@ -151,31 +174,38 @@ class HomeController extends GetxController {
   // Coming Soon movies
   final List<Map<String, dynamic>> comingSoonMovies = [
     {
-      'title': 'Alpha\'s Fake or Fated Mate',
+      'title': ' The Guardian of the Threshold',
+      'imageUrl': AppImages.m13,
+
       'subtitle': 'Married First, Loved Later',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
       'releaseDate': '03/24/2025',
     },
     {
-      'title': 'Second Life, the Godfather\'s Wife',
+      'title': ' The Mayan Mummies',
+      'imageUrl': AppImages.m9,
+
       'subtitle': 'Reborn True Princess Returns',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
       'releaseDate': '04/24/2025',
     },
     {
-      'title': 'Reborn True Princess Returns',
+      'title': ' The Guardian of the Threshold',
+      'imageUrl': AppImages.m13,
       'subtitle': 'Alpha\'s Fake or Fated Mate',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
       'releaseDate': '04/24/2025',
     },
     {
-      'title': 'Alpha\'s Fake or Fated Mate',
+      'title': 'The Mark of Hell',
+      'imageUrl': AppImages.m8,
+
       'subtitle': 'Married First, Loved Later',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
       'releaseDate': '03/24/2025',
     },
   ];
@@ -183,10 +213,12 @@ class HomeController extends GetxController {
   // Only on Thisflix movies
   final List<Map<String, dynamic>> onlyOnThisflixMovies = [
     {
-      'title': 'The Payback Plan',
+      'title': 'The Mark of Hell',
+      'imageUrl': AppImages.m8,
+
       'subtitle': 'Exclusive series',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
       'views': '48.2K',
     },
     {
@@ -223,100 +255,139 @@ class HomeController extends GetxController {
   final Map<String, List<Map<String, dynamic>>> categoryMovies = {
     'Popular': [
       {
-        'title': 'Second Life, The Godfather\'s Wife',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
       {
-        'title': 'My Poor Ex-wife is a Hidden Heiress',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'title': 'The Wilson Sisters ',
+        'imageUrl': AppImages.m12,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
       {
-        'title': 'The Billionaire\'s Secret',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'title': ' The Human Beast',
+        'imageUrl': AppImages.m11,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
       {
-        'title': 'Second Life, The Godfather\'s Wife',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'title': ' The Mayan Mummies',
+        'imageUrl': AppImages.m9,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
       {
-        'title': 'My Poor Ex-wife is a Hidden Heiress',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'title': ' The Guardian of the Threshold',
+        'imageUrl': AppImages.m13,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
       {
-        'title': 'The Billionaire\'s Secret',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'title': 'The Mark of Hell',
+        'imageUrl': AppImages.m8,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'badge': 'POPULAR',
       },
     ],
     'New': [
       {
-        'title': 'Reborn True Princess Returns',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
+        'title': 'The Stairs of Terror ',
+        'imageUrl': AppImages.m7,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
         'badge': 'NEW',
       },
       {
-        'title': 'The New Beginning',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop',
-        'badge': 'NEW',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
       },
       {
-        'title': 'Fresh Start Romance',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=300&fit=crop',
-        'badge': 'NEW',
+        'title': 'The Wilson Sisters ',
+        'imageUrl': AppImages.m12,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': ' The Human Beast',
+        'imageUrl': AppImages.m11,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': ' The Mayan Mummies',
+        'imageUrl': AppImages.m9,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': ' The Guardian of the Threshold',
+        'imageUrl': AppImages.m13,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
+      },
+      {
+        'title': 'The Mark of Hell',
+        'imageUrl': AppImages.m8,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'badge': 'POPULAR',
       },
     ],
     'VIP': [
       {
-        'title': 'The CEO\'s Substitute Wife',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        'title': ' The Hyena of Terror',
+        'imageUrl': AppImages.m4,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'badge': 'VIP',
       },
       {
-        'title': 'Elite Romance',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'title': 'The Silent Echo ',
+        'imageUrl': AppImages.m3,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
         'badge': 'VIP',
       },
       {
-        'title': 'Premium Love Story',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
+        'title': ' Shadows of Awakening',
+        'imageUrl': AppImages.m2,
+        // 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
         'badge': 'VIP',
       },
     ],
     'Ranking': [
       {
-        'title': 'Return of that Mysterious Girl',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        'title': 'The Last Page ',
+        'imageUrl': AppImages.m1,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
         'badge': '#1',
       },
       {
-        'title': 'Top Rated Romance',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200&h=300&fit=crop',
-        'badge': '#2',
+        'title': 'The Silent Echo ',
+        'imageUrl': AppImages.m3,
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'badge': 'VIP',
       },
       {
-        'title': 'Highest Rated Drama',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?w=200&h=300&fit=crop',
-        'badge': '#3',
+        'title': ' Shadows of Awakening',
+        'imageUrl': AppImages.m2,
+        // 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
+        'badge': 'VIP',
       },
     ],
   };
@@ -325,96 +396,143 @@ class HomeController extends GetxController {
   final Map<String, List<Map<String, dynamic>>> rankingMovies = {
     'Most Popular': [
       {
-        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'title': ' Shadows of Awakening',
+        'imageUrl': AppImages.m2,
         'subtitle': 'The Wolf King love opera her coldest and the set...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
         'ranking': 1,
         'isHot': true,
       },
       {
-        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'title': 'The Silent Echo ',
+        'imageUrl': AppImages.m3,
         'subtitle': 'The Wolf King love opera her coldest and the set...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
         'ranking': 2,
         'isHot': true,
       },
       {
-        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
         'subtitle': 'The Wolf King love opera her coldest and the set...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'ranking': 3,
         'isHot': true,
       },
       {
-        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m12,
         'subtitle': 'The Wolf King love opera her coldest and the set...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
         'ranking': 4,
         'isHot': true,
       },
       {
-        'title': 'Lycan Princess Won\'t Be Your Luna',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
         'subtitle': 'The Wolf King love opera her coldest and the set...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
         'ranking': 5,
         'isHot': true,
       },
     ],
     'Hottest': [
       {
-        'title': 'The CEO\'s Secret Romance',
-        'subtitle': 'A billionaire falls for his assistant in this hot...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m12,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        'ranking': 4,
+        'isHot': true,
+      },
+      {
+        'title': ' Shadows of Awakening',
+        'imageUrl': AppImages.m2,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
         'ranking': 1,
         'isHot': true,
       },
       {
-        'title': 'Forbidden Love Story',
-        'subtitle': 'Two hearts that shouldn\'t be together but...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=300&fit=crop',
+        'title': 'The Silent Echo ',
+        'imageUrl': AppImages.m3,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
         'ranking': 2,
         'isHot': true,
       },
       {
-        'title': 'Passionate Nights',
-        'subtitle': 'A steamy romance that will keep you hooked...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'ranking': 3,
+        'isHot': true,
+      },
+      {
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'ranking': 5,
         'isHot': true,
       },
     ],
     'New Series': [
       {
-        'title': 'Fresh Start Romance',
-        'subtitle': 'A new beginning leads to unexpected love...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=300&fit=crop',
-        'ranking': 1,
-        'isHot': false,
-      },
-      {
-        'title': 'The New Chapter',
-        'subtitle': 'Starting over has never been this exciting...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=300&fit=crop',
-        'ranking': 2,
-        'isHot': false,
-      },
-      {
-        'title': 'Modern Love Tales',
-        'subtitle': 'Contemporary romance for the digital age...',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=300&fit=crop',
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
         'ranking': 3,
-        'isHot': false,
+        'isHot': true,
+      },
+      {
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m12,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+        'ranking': 4,
+        'isHot': true,
+      },
+      {
+        'title': 'The Stairs of Terror',
+        'imageUrl': AppImages.m13,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+        'ranking': 5,
+        'isHot': true,
+      },
+      {
+        'title': ' Shadows of Awakening',
+        'imageUrl': AppImages.m2,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+        'ranking': 1,
+        'isHot': true,
+      },
+      {
+        'title': 'The Silent Echo ',
+        'imageUrl': AppImages.m3,
+        'subtitle': 'The Wolf King love opera her coldest and the set...',
+        // 'imageUrl':
+        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+        'ranking': 2,
+        'isHot': true,
       },
     ],
     'Mystery': [

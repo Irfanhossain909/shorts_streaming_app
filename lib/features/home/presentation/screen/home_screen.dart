@@ -69,8 +69,8 @@ class HomeScreen extends StatelessWidget {
                       pinned: true,
                       floating: false,
                       delegate: _StickyHeaderDelegate(
-                        minHeight: 150.h,
-                        maxHeight: 150.h,
+                        minHeight: 160.h,
+                        maxHeight: 160.h,
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(

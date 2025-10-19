@@ -45,7 +45,7 @@ class VipMovieCard extends StatelessWidget {
                   // Movie poster with overlay
                   Container(
                     width: width ?? 80,
-                    height: height ?? 130,
+                    height: height ?? 120,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.r),
                       boxShadow: [
