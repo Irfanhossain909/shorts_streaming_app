@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //     Get.offAllNamed(AppRoutes.patientsHome);
       //   }
       // } else {
-      Get.offAllNamed(AppRoutes.signUp,);
+      // Get.offAllNamed(AppRoutes.signUp,);
     });
     super.initState();
   }
@@ -37,8 +37,9 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: AspectRatio(
           aspectRatio: 9 / 19.5,
-          child: LottieBuilder.asset(
-            'assets/animations/home_lotty_light.json',
+          child: Lottie.asset(
+            "assets/animations/home.json",
+            // 'assets/animations/home_lotty.json',
             fit: BoxFit.cover,
           ),
         ),
