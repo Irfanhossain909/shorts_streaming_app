@@ -174,8 +174,50 @@ class HomeController extends GetxController {
   // Coming Soon movies
   final List<Map<String, dynamic>> comingSoonMovies = [
     {
-      'title': ' The Guardian of the Threshold',
-      'imageUrl': AppImages.m13,
+      'title': 'Eternal Fog',
+      'imageUrl': AppImages.m1,
+
+      'subtitle': 'During the appointment ceremony...',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
+      'releaseDate': '04/24/2025',
+    },
+    {
+      'title': ' Paranormal Phenomeno',
+      'imageUrl': AppImages.m2,
+      'subtitle': 'During the appointment ceremony...',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
+      'releaseDate': '04/24/2025',
+    },
+    {
+      'title': ' The Stairs of Terror',
+      'imageUrl': AppImages.m3,
+      'subtitle': 'During the appointment ceremony...',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
+      'releaseDate': '04/24/2025',
+    },
+    {
+      'title': '  The Wilson Sisters',
+      'imageUrl': AppImages.m4,
+      'subtitle': 'During the appointment ceremony...',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
+      'releaseDate': '04/24/2025',
+    },
+    {
+      'title': ' The Human Beast',
+      'imageUrl': AppImages.m5,
+
+      'subtitle': 'During the appointment ceremony...',
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'releaseDate': '04/24/2025',
+    },
+    {
+      'title': ' The Mayan Mummies',
+      'imageUrl': AppImages.m6,
 
       'subtitle': 'Married First, Loved Later',
       // 'imageUrl':
@@ -184,7 +226,7 @@ class HomeController extends GetxController {
     },
     {
       'title': ' The Mayan Mummies',
-      'imageUrl': AppImages.m9,
+      'imageUrl': AppImages.m7,
 
       'subtitle': 'Reborn True Princess Returns',
       // 'imageUrl':
