@@ -26,36 +26,24 @@ class _SplashScreenState extends State<SplashScreen> {
       //     Get.offAllNamed(AppRoutes.patientsHome);
       //   }
       // } else {
-      // Get.offAllNamed(AppRoutes.signUp,);
+      Get.offAllNamed(AppRoutes.signUp,);
     });
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // বা transparent রাখতে পারো
+      backgroundColor: Colors.transparent, // বা transparent রাখতে পারো
       body: Center(
         child: AspectRatio(
           aspectRatio: 9 / 19.5,
           child: Lottie.asset(
-            "assets/animations/home.json",
-            // 'assets/animations/home_lotty.json',
+            "assets/animations/chepy_shorts_ss.json",
             fit: BoxFit.cover,
           ),
         ),
       ),
     );
-    // return Scaffold(
-    //   backgroundColor: Colors.transparent,
-    //   body: Center(
-    //     child: Lottie.asset(
-    //       // 'assets/animations/confetti.json',
-    //       'assets/animations/home_lotty.json',
-    //       // width: MediaQuery.of(context).size.width, // বা নির্দিষ্ট width
-    //       // height: MediaQuery.of(context).size.height, // বা নির্দিষ্ট height
-    //       fit: BoxFit.cover,
-    //     ),
-    //   ),
-    // );
+   
   }
 }
