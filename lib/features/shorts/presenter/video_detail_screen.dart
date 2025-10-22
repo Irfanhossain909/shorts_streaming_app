@@ -6,6 +6,7 @@ import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/shorts/model/bottom_card_btn_model.dart';
@@ -35,9 +36,11 @@ class VideoDetailScreen extends StatelessWidget {
           ),
 
           image: DecorationImage(
-            image: NetworkImage(
-              "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
-            ),
+            image: AssetImage(AppImages.m1),
+
+            // image: NetworkImage(
+            //   "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
+            // ),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               AppColors.black.withValues(alpha: 0.4),
@@ -76,7 +79,8 @@ class VideoDetailScreen extends StatelessWidget {
                         height: 120,
                         borderRadius: 8,
                         imageSrc:
-                            "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
+                            // "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
+                            AppImages.m1,
                       ),
                     ),
                     SizedBox(width: 10.w),
@@ -90,7 +94,7 @@ class VideoDetailScreen extends StatelessWidget {
                             Get.toNamed(AppRoutes.videoDetail);
                           },
                           child: CommonText(
-                            text: "Reborn True Princess Returns",
+                            text: "Eternal Fog",
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.white,

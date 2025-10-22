@@ -5,6 +5,7 @@ import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/features/shorts/model/bottom_card_btn_model.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_selection_button.dart';
 import 'package:testemu/features/shorts/widgets/episod_select_button.dart';
@@ -49,8 +50,8 @@ class ListBottomSheet extends StatelessWidget {
                     width: 84,
                     height: 120,
                     borderRadius: 8,
-                    imageSrc:
-                        "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
+                    imageSrc: AppImages.m1,
+                    // "https://cdn.pixabay.com/photo/2023/08/06/06/08/ai-generated-8172236_640.png",
                   ),
                 ),
                 SizedBox(width: 10.w),
@@ -64,7 +65,7 @@ class ListBottomSheet extends StatelessWidget {
                         Get.toNamed(AppRoutes.videoDetail);
                       },
                       child: CommonText(
-                        text: "Reborn True Princess Returns >",
+                        text: "Eternal Fog >",
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                         color: AppColors.white,
