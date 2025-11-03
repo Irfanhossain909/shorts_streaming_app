@@ -18,7 +18,6 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: CommonAppBar(
         title: "Your Profile",
-        isCenterTitle: false,
         isShowBackButton: false,
         titleFontSize: 24.sp,
 

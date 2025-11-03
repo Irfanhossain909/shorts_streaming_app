@@ -33,18 +33,20 @@ class MyListScree extends StatelessWidget {
               ),
             ),
             child: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(controller),
-                  20.height,
-                  CategoryFilter(
-                    categories: controller.myListCategories,
-                    selectedCategory: controller.selectedMyListCategory.value,
-                    onCategorySelected: controller.selectMyListCategory,
-                  ),
-                  20.height,
-                  _buildMoviesGrid(controller),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeader(controller),
+                    20.height,
+                    CategoryFilter(
+                      categories: controller.myListCategories,
+                      selectedCategory: controller.selectedMyListCategory.value,
+                      onCategorySelected: controller.selectMyListCategory,
+                    ),
+                    20.height,
+                    _buildMoviesGrid(controller),
+                  ],
+                ),
               ),
             ),
           );

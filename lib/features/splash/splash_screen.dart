@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
-import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
-import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //     Get.offAllNamed(AppRoutes.patientsHome);
       //   }
       // } else {
-      Get.offAllNamed(AppRoutes.signUp,);
+      Get.offAllNamed(AppRoutes.signIn,);
     });
     super.initState();
   }
@@ -38,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: AspectRatio(
           aspectRatio: 9 / 19.5,
           child: Lottie.asset(
+            
             "assets/animations/chepy_shorts_ss.json",
             fit: BoxFit.cover,
           ),

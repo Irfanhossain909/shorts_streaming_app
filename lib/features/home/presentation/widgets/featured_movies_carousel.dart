@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/card/featured_movie_card.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
 import 'dart:async';
 
 class FeaturedMoviesCarousel extends StatefulWidget {
@@ -27,11 +26,14 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
   Timer? _autoScrollTimer;
   Timer? _debounceTimer;
 
+  // Track bookmarked movies
+  final Set<String> _bookmarkedMovies = {};
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(
-      viewportFraction: 0.85, // Shows parts of adjacent cards
+      viewportFraction: 0.45, // Shows 3 cards at a time
       initialPage: 0,
     );
 
@@ -77,6 +79,20 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
     });
   }
 
+  // Handle bookmark toggle
+  void _toggleBookmark(String title) {
+    setState(() {
+      if (_bookmarkedMovies.contains(title)) {
+        _bookmarkedMovies.remove(title);
+      } else {
+        _bookmarkedMovies.add(title);
+      }
+    });
+
+    // Call the original bookmark tap handler
+    widget.onBookmarkTap(title);
+  }
+
   @override
   void dispose() {
     _autoScrollTimer?.cancel();
@@ -94,7 +110,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
     return Column(
       children: [
         SizedBox(
-          height: 220.h,
+          height: 288.h,
           child: PageView.builder(
             controller: _pageController,
             physics: const BouncingScrollPhysics(), // Smooth scrolling physics
@@ -103,25 +119,29 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
             itemBuilder: (context, index) {
               final movie = widget.movies[index];
               final isCenter = index == _currentIndex;
+              final title = movie['title'] ?? '';
+              final isBookmarked = _bookmarkedMovies.contains(title);
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOutCubic, // Smooth easing curve
+                width: isCenter ? 70.w : 60.w,
+                height: isCenter ? 120.h : 100.h,
                 // margin: EdgeInsets.symmetric(
-                //   horizontal: 8.w,
-                //   vertical: isCenter ? 0 : 8.h, // Equal height maintained
+                //   horizontal: 4.w,
+                //   vertical: isCenter ? 0 : 10.h,
                 // ),
                 child: Transform.scale(
-                  scale: isCenter ? 1.05 : 0.90, // Subtle scale difference
+                  scale: isCenter ? 1.0 : 0.85,
                   child: Opacity(
-                    opacity: isCenter ? 1.0 : 0.85, // Subtle opacity difference
+                    opacity: isCenter ? 1.0 : 0.7,
                     child: FeaturedMovieCard(
-                      title: movie['title'] ?? '',
+                      title: title,
                       duration: movie['duration'] ?? '',
                       imageUrl: movie['imageUrl'] ?? '',
-                      onWatchTap: () => widget.onWatchTap(movie['title'] ?? ''),
-                      onBookmarkTap: () =>
-                          widget.onBookmarkTap(movie['title'] ?? ''),
+                      isBookmarked: isBookmarked,
+                      onWatchTap: () => widget.onWatchTap(title),
+                      onBookmarkTap: () => _toggleBookmark(title),
                     ),
                   ),
                 ),
@@ -129,28 +149,6 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
             },
           ),
         ),
-
-        // // Animated dots indicator
-        // 16.height,
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: List.generate(
-        //     widget.movies.length,
-        //     (index) => AnimatedContainer(
-        //       duration: const Duration(milliseconds: 300),
-        //       curve: Curves.easeInOutCubic,
-        //       margin: EdgeInsets.symmetric(horizontal: 3.w),
-        //       width: _currentIndex == index ? 20.w : 8.w,
-        //       height: 8.h,
-        //       decoration: BoxDecoration(
-        //         color: _currentIndex == index
-        //             ? Colors.white
-        //             : Colors.white.withValues(alpha: 0.4),
-        //         borderRadius: BorderRadius.circular(4.r),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'dart:async';
 
 import 'package:testemu/core/constants/app_images.dart';
@@ -47,34 +48,34 @@ class HomeController extends GetxController {
   // Featured movies for carousel
   final List<Map<String, dynamic>> featuredMovies = [
     {
-      'title': 'ETHERION',
+      'title': 'Eternal Fog',
       'duration': 'in 50 min',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop',
+      'imageUrl': AppImages.m1,
+      // 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop',
     },
     {
-      'title': 'APEX LEGENDS',
+      'title': ' The Stairs of Terror',
       'duration': 'in 45 min',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&h=300&fit=crop',
+      'imageUrl': AppImages.m3,
+      // 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&h=300&fit=crop',
     },
     {
-      'title': 'CYBERNIGHT',
+      'title': 'The Human Beast',
       'duration': 'in 60 min',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=300&fit=crop',
+      'imageUrl': AppImages.m5,
+      // 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=300&fit=crop',
     },
     {
-      'title': 'SHADOWBORN',
+      'title': 'The Mayan Mummies',
       'duration': 'in 38 min',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=500&h=300&fit=crop',
+      'imageUrl': AppImages.m6,
+      // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=500&h=300&fit=crop',
     },
     {
-      'title': 'NEON DREAMS',
+      'title': ' The Guardian of the Threshold',
       'duration': 'in 55 min',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop',
+      'imageUrl': AppImages.m7,
+      // 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop',
     },
   ];
 
@@ -255,8 +256,8 @@ class HomeController extends GetxController {
   // Only on Thisflix movies
   final List<Map<String, dynamic>> onlyOnThisflixMovies = [
     {
-      'title': 'The Mark of Hell',
-      'imageUrl': AppImages.m8,
+      'title': ' Eternal Fog',
+      'imageUrl': AppImages.m1,
 
       'subtitle': 'Exclusive series',
       // 'imageUrl':
@@ -264,31 +265,35 @@ class HomeController extends GetxController {
       'views': '48.2K',
     },
     {
-      'title': 'Married First, Loved Later',
+      'title': ' Paranormal Phenomenon',
       'subtitle': 'Romance drama',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'imageUrl': AppImages.m2,
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
       'views': '69.3K',
     },
     {
-      'title': 'Married First, Loved Later',
+      'title': ' The Stairs of Terror',
       'subtitle': 'Romance drama',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'imageUrl': AppImages.m3,
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
       'views': '69.3K',
     },
     {
-      'title': 'Married First, Loved Later',
+      'title': ' The Wilson Sisters',
       'subtitle': 'Romance drama',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'imageUrl': AppImages.m4,
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
       'views': '69.3K',
     },
     {
-      'title': 'Married First, Loved Later',
+      'title': ' The Human Beast',
       'subtitle': 'Romance drama',
-      'imageUrl':
-          'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
+      'imageUrl': AppImages.m5,
+      // 'imageUrl':
+      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
       'views': '69.3K',
     },
   ];
@@ -644,21 +649,26 @@ class HomeController extends GetxController {
   }
 
   void onMovieTap(String title) {
-    Get.snackbar('Movie Selected', title);
+    Get.snackbar('Movie Selected', title, colorText: AppColors.background);
   }
 
   void onWatchTap(String title) {
-    Get.snackbar('Watch', 'Starting $title');
+    Get.snackbar('Watch', 'Starting $title', colorText: AppColors.background);
   }
 
   void onBookmarkTap(String title) {
-    Get.snackbar('Bookmark', 'Added $title to bookmarks');
+    Get.snackbar(
+      'Bookmark',
+      'Added $title to bookmarks',
+      colorText: AppColors.background,
+    );
   }
 
   void onRemindMeTap(String title) {
     Get.snackbar(
       'Reminder Set',
       'You will be notified when $title is available',
+      colorText: AppColors.background,
     );
   }
 
