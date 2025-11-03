@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
 import 'package:testemu/features/shorts/widgets/reel_button.dart';
@@ -217,17 +218,25 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
             child: Column(
               spacing: 16.h,
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: CommonImage(
-                      fill: BoxFit.cover,
-                      imageSrc:
-                          "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
-                      width: 56,
-                      height: 56,
+                InkWell(
+                  onTap: () {
+                    Get.bottomSheet(
+                      isScrollControlled: true,
+                      ListBottomSheet(),
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.white,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: CommonImage(
+                        fill: BoxFit.cover,
+                        imageSrc:
+                            "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                        width: 56,
+                        height: 56,
+                      ),
                     ),
                   ),
                 ),
@@ -236,14 +245,20 @@ class _ShortVideoPlayerState extends State<ShortVideoPlayer> {
                   imgPath: AppImages.listIc,
                   text: "List",
                   onTap: () {
-                    Get.bottomSheet(
-                      isScrollControlled: true,
-                      ListBottomSheet(),
-                    );
+                    // Get.bottomSheet(
+                    //   isScrollControlled: true,
+                    //   ListBottomSheet(),
+                    // );
                   },
                 ),
                 ReelButton(imgPath: AppImages.shareIc, text: "Share"),
-                ReelButton(imgPath: AppImages.download, text: "DownLoad"),
+                ReelButton(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.downloadMenu);
+                  },
+                  imgPath: AppImages.download,
+                  text: "DownLoad",
+                ),
               ],
             ),
           ),

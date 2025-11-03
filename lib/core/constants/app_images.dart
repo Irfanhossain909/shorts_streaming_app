@@ -114,5 +114,7 @@ class AppImages {
   static const String m3 = "$baseurl/m3.webp";
   static const String m2 = "$baseurl/m2.webp";
   static const String m1 = "$baseurl/m1.webp";
+
+  static const String markIcon = "assets/images/mark.svg";
   // static const String icFireIcon = "$baseurl/fire_icon.png";
 }

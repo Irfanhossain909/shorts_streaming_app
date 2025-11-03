@@ -6,6 +6,8 @@ import 'package:testemu/features/auth/forgot%20password/presentation/screen/veri
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.dart';
+import 'package:testemu/features/download/presenter/download_menu_screen.dart';
+import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
 import 'package:testemu/features/message/presentation/screen/message_screen.dart';
@@ -48,6 +50,8 @@ class AppRoutes {
   static const String home = "/home_screen.dart";
   static const String myListScreen = "/my-list-screen.dart";
   static const String videoDetail = "/video_detail_screen.dart";
+  static const String downloadMenu = "/download_menu.dart";
+  static const String downloadSesone = "/download_sesone.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -73,5 +77,7 @@ class AppRoutes {
     GetPage(name: home, page: () => const HomeScreen()),
     GetPage(name: myListScreen, page: () => const MyListScree()),
     GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
+    GetPage(name: downloadMenu, page: () => const DownloadMenuScreen()),
+    GetPage(name: downloadSesone, page: () => const DownloadSesoneListScreen()),
   ];
 }

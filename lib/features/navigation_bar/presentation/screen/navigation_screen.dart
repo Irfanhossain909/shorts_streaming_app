@@ -26,7 +26,10 @@ class NavigationScreen extends StatelessWidget {
                   index: controller.selectedIndex.value,
                   children: [
                     const HomeScreen(),
-                    const ShortsFeedScreen(),
+
+                    controller.selectedIndex.value == 1
+                        ? const ShortsFeedScreen()
+                        : Container(),
                     const MyListScree(),
                     const ProfileScreen(),
                   ],
