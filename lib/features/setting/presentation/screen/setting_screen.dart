@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
@@ -30,7 +33,13 @@ class SettingScreen extends StatelessWidget {
               leadPath: AppImages.icOfflineDownload,
             ),
             ProfileRow(title: "User Agreement", leadPath: AppImages.icLanguage),
-            ProfileRow(title: "Delete Account", leadPath: AppImages.icFaq),
+            ProfileRow(
+              onTap: () {
+                Get.toNamed(AppRoutes.deleteAccount);
+              },
+              title: "Delete Account",
+              leadPath: AppImages.icFaq,
+            ),
           ],
         ),
       ),

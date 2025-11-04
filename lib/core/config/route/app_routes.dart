@@ -20,7 +20,7 @@ import 'package:testemu/features/profile/presentation/screen/profile_screen.dart
 import 'package:testemu/features/setting/presentation/screen/privacy_policy_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/terms_of_services_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
@@ -42,7 +42,7 @@ class AppRoutes {
   static const String profile = "/profile_screen.dart";
   static const String editProfile = "/edit_profile.dart";
   static const String privacyPolicy = "/privacy_policy_screen.dart";
-  static const String termsOfServices = "/terms_of_services_screen.dart";
+  static const String deleteAccount = "/detele_account_screen.dart";
   static const String setting = "/setting_screen.dart";
   static const String navigation = "/navigation_screen.dart";
   static const String subscription = "/subscription_screen.dart";
@@ -69,7 +69,7 @@ class AppRoutes {
     GetPage(name: profile, page: () => const ProfileScreen()),
     GetPage(name: editProfile, page: () => EditProfile()),
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
-    GetPage(name: termsOfServices, page: () => const TermsOfServicesScreen()),
+    GetPage(name: deleteAccount, page: () => const DeleteAccountScreen()),
     GetPage(name: setting, page: () => const SettingScreen()),
     GetPage(name: navigation, page: () => const NavigationScreen()),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
