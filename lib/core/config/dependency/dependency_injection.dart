@@ -5,6 +5,7 @@ import 'package:testemu/features/auth/forgot%20password/presentation/controller/
 import 'package:testemu/features/auth/sign%20in/presentation/controller/sign_in_controller.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/controller/sign_up_controller.dart';
 import 'package:testemu/features/download/controller/download_episod_controller.dart';
+import 'package:testemu/features/download/controller/download_sesone_list_controller.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
@@ -24,5 +25,6 @@ class DependencyInjection extends Bindings {
     // Common Feature Controllers
     Get.lazyPut(() => ShowGoogleMapController(), fenix: true);
     Get.lazyPut(() => DownloadEpisodController(), fenix: true);
+    Get.lazyPut(() => DownloadSesoneListController(), fenix: true);
   }
 }

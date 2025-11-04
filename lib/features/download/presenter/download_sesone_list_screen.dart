@@ -9,56 +9,125 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/features/download/controller/download_sesone_list_controller.dart';
 
 class DownloadSesoneListScreen extends StatelessWidget {
   const DownloadSesoneListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 2.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset(width: 18.w, AppImages.markIcon),
-            ),
+    return GetBuilder<DownloadSesoneListController>(
+      init: DownloadSesoneListController(),
+      builder: (controller) {
+        return Scaffold(
+          appBar: CommonAppBar(
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 2.0),
+                child: IconButton(
+                  onPressed: () {
+                    controller.valueManupolate();
+                  },
+                  icon: SvgPicture.asset(width: 18.w, AppImages.markIcon),
+                ),
+              ),
+            ],
+            isCenterTitle: false,
+            title: "Downloaded",
+            isShowBackButton: false,
           ),
-        ],
-        isCenterTitle: false,
-        title: "Downloaded",
-        isShowBackButton: false,
-      ),
 
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: downloadItems.length,
-              itemBuilder: (context, index) {
-                final item = downloadItems[index];
-                return MovieCardD(
-                  imagePath: item.imagePath,
-                  title: item.name,
-                  description: item.description,
-                  size: item.size,
-                );
-              },
-            ),
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: downloadItems.length,
+                  itemBuilder: (context, index) {
+                    final item = downloadItems[index];
+                    return Obx(() {
+                      return MovieCardD(
+                        imagePath: item.imagePath,
+                        title: item.name,
+                        description: item.description,
+                        size: item.size,
+                        isMarkShowAll: controller.value.value,
+                        isSelected: controller.selectedItems.contains(index),
+                        onTap: () {
+                          if (controller.value.value) {
+                            controller.toggleSelection(index);
+                          } else {
+                            Get.toNamed(AppRoutes.downloadEpisodList);
+                          }
+                        },
+                      );
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+          bottomNavigationBar: Obx(() {
+            return controller.value.value
+                ? SafeArea(
+                    child: Container(
+                      color: Colors.black, // eta tumar bg color hishebe daw
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CommonText(
+                              text: "Select All",
+                              style: GoogleFonts.poppins(
+                                color: AppColors.white,
+                                fontSize: 14.sp,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+
+                          // Vertical Divider
+                          Container(
+                            width: 1,
+                            height: 24, // divider height adjust koro
+                            color: AppColors.white.withValues(alpha: 0.5),
+                          ),
+
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                // Get.toNamed(AppRoutes.downloadSesone);
+                              },
+                              child: CommonText(
+                                text: "Delete",
+                                style: GoogleFonts.poppins(
+                                  color: AppColors.red,
+                                  fontSize: 14.sp,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SizedBox();
+          }),
+        );
+      },
     );
   }
 }
 
-class MovieCardD extends StatelessWidget {
+class MovieCardD extends StatefulWidget {
   final String? imagePath;
   final String? title;
   final String? description;
   final String? size;
   final VoidCallback? onTap;
+  final bool isMarkShowAll;
+  final bool isSelected;
+
   const MovieCardD({
     super.key,
     this.imagePath,
@@ -66,24 +135,55 @@ class MovieCardD extends StatelessWidget {
     this.description,
     this.size,
     this.onTap,
+    this.isMarkShowAll = false,
+    this.isSelected = false,
   });
 
+  @override
+  State<MovieCardD> createState() => _MovieCardDState();
+}
+
+class _MovieCardDState extends State<MovieCardD> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: () {
-          Get.toNamed(AppRoutes.downloadEpisodList);
-        },
+        onTap: widget.onTap,
         child: Row(
           spacing: 8,
           children: [
+            if (widget.isMarkShowAll)
+              InkWell(
+                onTap: widget.onTap,
+                child: widget.isSelected
+                    ? Container(
+                        width: 18.w,
+                        height: 18.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.red,
+                          borderRadius: BorderRadius.circular(100.r),
+                        ),
+                        child: Icon(
+                          Icons.done,
+                          size: 12,
+                          color: AppColors.black,
+                        ),
+                      )
+                    : Container(
+                        width: 18.w,
+                        height: 18.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.r),
+                          border: Border.all(color: AppColors.white),
+                        ),
+                      ),
+              ),
             CommonImage(
               borderRadius: 8.r,
               width: 82.w,
               height: 103.h,
-              imageSrc: imagePath ?? AppImages.m1,
+              imageSrc: widget.imagePath ?? AppImages.m1,
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width - 130,
@@ -92,7 +192,7 @@ class MovieCardD extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: title ?? "Reborn True Princess Returns",
+                    text: widget.title ?? "Reborn True Princess Returns",
                     style: GoogleFonts.poppins(
                       fontSize: 12.sp,
                       color: AppColors.white,
@@ -102,7 +202,7 @@ class MovieCardD extends StatelessWidget {
 
                   CommonText(
                     text:
-                        description ??
+                        widget.description ??
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
                     maxLines: 3,
                     textAlign: TextAlign.justify,
@@ -115,7 +215,7 @@ class MovieCardD extends StatelessWidget {
                   ),
                   Spacer(),
                   CommonText(
-                    text: size ?? "26.23 MB",
+                    text: widget.size ?? "26.23 MB",
                     style: GoogleFonts.poppins(
                       fontSize: 10.sp,
                       color: AppColors.white.withValues(alpha: 0.5),
