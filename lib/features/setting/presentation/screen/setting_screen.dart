@@ -29,6 +29,9 @@ class SettingScreen extends StatelessWidget {
               color: AppColors.background,
             ),
             ProfileRow(
+              onTap: () {
+                Get.toNamed(AppRoutes.privacyPolicy);
+              },
               title: "Privacy Policy",
               leadPath: AppImages.icOfflineDownload,
             ),

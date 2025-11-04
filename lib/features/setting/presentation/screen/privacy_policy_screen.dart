@@ -1,46 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:get/get.dart';
-import 'package:testemu/core/component/other_widgets/common_loader.dart';
-import 'package:testemu/core/component/screen/error_screen.dart';
-import 'package:testemu/core/utils/enum/enum.dart';
-import '../controller/privacy_policy_controller.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/component/text/common_text.dart';
-import 'package:testemu/core/constants/app_string.dart';
-
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Section stats here
-      appBar: AppBar(
-        centerTitle: true,
-        title: const CommonText(
-          text: AppString.privacyPolicy,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+      appBar: CommonAppBar(title: "Privacy Policy"),
+      body: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: Column(
+          spacing: 36.h,
+          children: [
+            70.height,
+            CommonText(
+              text: "Privacy Policy",
+              style: GoogleFonts.poppins(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.activeTrackColor,
+              ),
+            ),
+            CommonText(
+              maxLines: 4,
+              text:
+                  " Hey the, creepy fan! Quick heads up: if you delete your account, you’ll miss out on some awesome shows and will not be able to get your data back (including downloaded episodes or subscriptions). Are you sure you want to do this? It you have any concerns you can chat with our support group. We would hate to see you go! ",
+              style: GoogleFonts.poppins(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.activeTrackColor.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
         ),
-      ),
-
-      /// Body Section stats here
-      body: GetBuilder<PrivacyPolicyController>(
-        builder: (controller) => switch (controller.status) {
-          /// Loading bar here
-          Status.loading => const CommonLoader(),
-
-          /// Error Handle here
-          Status.error => ErrorScreen(
-            onTap: PrivacyPolicyController.instance.getPrivacyPolicyRepo(),
-          ),
-
-          /// Show main data here
-          Status.completed => SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-            child: Html(data: controller.data.content),
-          ),
-        },
       ),
     );
   }
