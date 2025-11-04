@@ -32,7 +32,13 @@ class SettingScreen extends StatelessWidget {
               title: "Privacy Policy",
               leadPath: AppImages.icOfflineDownload,
             ),
-            ProfileRow(title: "User Agreement", leadPath: AppImages.icLanguage),
+            ProfileRow(
+              onTap: () {
+                Get.toNamed(AppRoutes.userAgreement);
+              },
+              title: "User Agreement",
+              leadPath: AppImages.icLanguage,
+            ),
             ProfileRow(
               onTap: () {
                 Get.toNamed(AppRoutes.deleteAccount);

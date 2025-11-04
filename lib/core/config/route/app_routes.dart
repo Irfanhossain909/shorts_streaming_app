@@ -21,6 +21,7 @@ import 'package:testemu/features/setting/presentation/screen/privacy_policy_scre
 import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
+import 'package:testemu/features/setting/presentation/screen/user_agreement_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
@@ -52,6 +53,7 @@ class AppRoutes {
   static const String videoDetail = "/video_detail_screen.dart";
   static const String downloadMenu = "/download_menu.dart";
   static const String downloadSesone = "/download_sesone.dart";
+  static const String userAgreement = "/user_agreement.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -79,5 +81,6 @@ class AppRoutes {
     GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
     GetPage(name: downloadMenu, page: () => const DownloadMenuScreen()),
     GetPage(name: downloadSesone, page: () => const DownloadSesoneListScreen()),
+    GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
   ];
 }
