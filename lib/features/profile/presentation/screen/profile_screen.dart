@@ -195,6 +195,9 @@ class ProfileScreen extends StatelessWidget {
                   ),
 
                   ProfileRow(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.downloadSesone);
+                    },
                     title: "Offline Download",
                     leadPath: AppImages.icOfflineDownload,
                   ),
