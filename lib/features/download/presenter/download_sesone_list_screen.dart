@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 
@@ -56,68 +58,75 @@ class MovieCardD extends StatelessWidget {
   final String? title;
   final String? description;
   final String? size;
+  final VoidCallback? onTap;
   const MovieCardD({
     super.key,
     this.imagePath,
     this.title,
     this.description,
     this.size,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        spacing: 8,
-        children: [
-          CommonImage(
-            borderRadius: 8.r,
-            width: 82.w,
-            height: 103.h,
-            imageSrc: imagePath ?? AppImages.m1,
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 130,
-            height: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CommonText(
-                  text: title ?? "Reborn True Princess Returns",
-                  style: GoogleFonts.poppins(
-                    fontSize: 12.sp,
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-
-                CommonText(
-                  text:
-                      description ??
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
-                  maxLines: 3,
-                  textAlign: TextAlign.justify,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    fontSize: 10.sp,
-                    color: AppColors.white.withValues(alpha: 0.6),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Spacer(),
-                CommonText(
-                  text: size ?? "26.23 MB",
-                  style: GoogleFonts.poppins(
-                    fontSize: 10.sp,
-                    color: AppColors.white.withValues(alpha: 0.5),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(AppRoutes.downloadEpisodList);
+        },
+        child: Row(
+          spacing: 8,
+          children: [
+            CommonImage(
+              borderRadius: 8.r,
+              width: 82.w,
+              height: 103.h,
+              imageSrc: imagePath ?? AppImages.m1,
             ),
-          ),
-        ],
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 130,
+              height: 100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonText(
+                    text: title ?? "Reborn True Princess Returns",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12.sp,
+                      color: AppColors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  CommonText(
+                    text:
+                        description ??
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
+                    maxLines: 3,
+                    textAlign: TextAlign.justify,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      color: AppColors.white.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Spacer(),
+                  CommonText(
+                    text: size ?? "26.23 MB",
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      color: AppColors.white.withValues(alpha: 0.5),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

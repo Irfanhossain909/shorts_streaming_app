@@ -6,6 +6,7 @@ import 'package:testemu/features/auth/forgot%20password/presentation/screen/veri
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.dart';
+import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
@@ -54,6 +55,7 @@ class AppRoutes {
   static const String downloadMenu = "/download_menu.dart";
   static const String downloadSesone = "/download_sesone.dart";
   static const String userAgreement = "/user_agreement.dart";
+  static const String downloadEpisodList = "/download_episod_list.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -82,5 +84,6 @@ class AppRoutes {
     GetPage(name: downloadMenu, page: () => const DownloadMenuScreen()),
     GetPage(name: downloadSesone, page: () => const DownloadSesoneListScreen()),
     GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
+    GetPage(name: downloadEpisodList, page: () => const DownloadEpisodListScreen()),
   ];
 }
