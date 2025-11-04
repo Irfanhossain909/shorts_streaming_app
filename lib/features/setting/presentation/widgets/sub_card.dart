@@ -5,25 +5,33 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 
 class SubCard extends StatelessWidget {
-  const SubCard({
-    super.key,
-  });
+  const SubCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        border: Border.all(color: AppColors.background.withValues(alpha: 0.6)),
         borderRadius: BorderRadius.circular(12.w),
         gradient: LinearGradient(
-          colors: [Color(0xff981c2c), Color(0xffBF3838)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF981C2C), // top shadow
+            Color(0xFF981C2C),
+            Color(0xFF981C2C).withValues(alpha: .6), // bottom shadow
+          ],
+          stops: [
+            0.0,
+            0.7, // 70% red
+            1.0, // 30% black
+          ],
         ),
       ),
       padding: EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 12.h,
+        spacing: 4.h,
         children: [
           CommonText(
             text: "Weekly pass pro",

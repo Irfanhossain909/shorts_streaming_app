@@ -8,64 +8,69 @@ class EpisodSelectBtn extends StatelessWidget {
   final bool isAvilable;
   final bool isLock;
   final String? text;
+  final VoidCallback? onPressed;
   const EpisodSelectBtn({
     super.key,
     this.text,
     this.isRunning = false,
     this.isAvilable = false,
     this.isLock = false,
+    this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        isRunning
-            ? Container(
-                decoration: BoxDecoration(
-                  color: AppColors.buttonColor2.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(6.r),
-                  border: Border.all(
-                    color: AppColors.white.withValues(alpha: 0.5),
+    return InkWell(
+      onTap: onPressed,
+      child: Stack(
+        children: [
+          isRunning
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.buttonColor2.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(6.r),
+                    border: Border.all(
+                      color: AppColors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.waves,
+                    size: 18.w,
+                    color: AppColors.activeTrackColor,
+                  ),
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    color: isLock
+                        ? AppColors.buttonColor2.withValues(alpha: 0.5)
+                        : Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(6.r),
+                    border: Border.all(
+                      color: AppColors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: CommonText(
+                    text: text ?? "no text",
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isLock ? AppColors.white : AppColors.white,
                   ),
                 ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.waves,
-                  size: 18.w,
-                  color: AppColors.activeTrackColor,
-                ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: isLock
-                      ? AppColors.buttonColor2.withValues(alpha: 0.5)
-                      : Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(6.r),
-                  border: Border.all(
-                    color: AppColors.white.withValues(alpha: 0.5),
+          isLock
+              ? Positioned(
+                  top: 6.w,
+                  right: 4.w,
+                  child: Icon(
+                    Icons.lock_outline,
+                    size: 14.w,
+                    color: AppColors.white,
                   ),
-                ),
-                alignment: Alignment.center,
-                child: CommonText(
-                  text: text ?? "no text",
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color: isLock ? AppColors.white : AppColors.white,
-                ),
-              ),
-        isLock
-            ? Positioned(
-                top: 6.w,
-                right: 4.w,
-                child: Icon(
-                  Icons.lock_outline,
-                  size: 14.w,
-                  color: AppColors.white,
-                ),
-              )
-            : SizedBox(),
-      ],
+                )
+              : SizedBox(),
+        ],
+      ),
     );
   }
 }
