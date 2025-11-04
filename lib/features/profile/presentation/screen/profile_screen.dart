@@ -198,7 +198,7 @@ class ProfileScreen extends StatelessWidget {
                     title: "Offline Download",
                     leadPath: AppImages.icOfflineDownload,
                   ),
-                  ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
+                  // ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
                   ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
                   CommonText(
                     text: "More Setting",
@@ -207,7 +207,13 @@ class ProfileScreen extends StatelessWidget {
                     color: AppColors.background,
                   ),
                   ProfileRow(title: "Feedback", leadPath: AppImages.icFeedback),
-                  ProfileRow(title: "Settings", leadPath: AppImages.icSetting),
+                  ProfileRow(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.setting);
+                    },
+                    title: "Settings",
+                    leadPath: AppImages.icSetting,
+                  ),
                   ProfileRow(
                     leadColor: AppColors.red,
                     title: "Log out",
@@ -228,34 +234,44 @@ class ProfileRow extends StatelessWidget {
   final String? title;
   final String? leadPath;
   final Color? leadColor;
-  const ProfileRow({super.key, this.title, this.leadPath, this.leadColor});
+  final VoidCallback? onTap;
+  const ProfileRow({
+    super.key,
+    this.title,
+    this.leadPath,
+    this.leadColor,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 12.w,
-      children: [
-        CommonImage(
-          imageSrc: leadPath ?? AppImages.add,
-          width: 20.w,
-          height: 20.h,
-          imageColor: leadColor ?? AppColors.background,
-        ),
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        spacing: 12.w,
+        children: [
+          CommonImage(
+            imageSrc: leadPath ?? AppImages.add,
+            width: 20.w,
+            height: 20.h,
+            imageColor: leadColor ?? AppColors.background,
+          ),
 
-        CommonText(
-          text: title ?? "no title",
-          fontSize: 18.sp,
-          color: AppColors.background,
-          fontWeight: FontWeight.w500,
-        ),
+          CommonText(
+            text: title ?? "no title",
+            fontSize: 18.sp,
+            color: AppColors.background,
+            fontWeight: FontWeight.w500,
+          ),
 
-        Spacer(),
-        Icon(
-          Icons.arrow_forward_ios_outlined,
-          size: 18.w,
-          color: AppColors.background,
-        ),
-      ],
+          Spacer(),
+          Icon(
+            Icons.arrow_forward_ios_outlined,
+            size: 18.w,
+            color: AppColors.background,
+          ),
+        ],
+      ),
     );
   }
 }
