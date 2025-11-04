@@ -9,7 +9,9 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/download/controller/download_sesone_list_controller.dart';
+import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
 
 class DownloadSesoneListScreen extends StatelessWidget {
   const DownloadSesoneListScreen({super.key});
@@ -95,7 +97,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                // Get.toNamed(AppRoutes.downloadSesone);
+                                deteleDialog(context);
                               },
                               child: CommonText(
                                 text: "Delete",
@@ -115,6 +117,100 @@ class DownloadSesoneListScreen extends StatelessWidget {
           }),
         );
       },
+    );
+  }
+
+  Future<dynamic> deteleDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.background,
+        contentPadding: EdgeInsets.only(
+          top: 16,
+          left: 16,
+          right: 16,
+          bottom: 8,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        content: Stack(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                34.height, // space for close button
+
+                Text(
+                  "Confirm to delete from download",
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.black.withValues(alpha: .1),
+                          borderRadius: BorderRadius.circular(36.r),
+                        ),
+
+                        alignment: Alignment.center,
+
+                        child: CommonText(
+                          top: 8.h,
+                          bottom: 8.h,
+                          text: "Cancel",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.sp,
+                            color: AppColors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          showMiddleToast(context, "Delete Successful");
+                          Get.back();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.buton,
+                            borderRadius: BorderRadius.circular(36.r),
+                          ),
+
+                          alignment: Alignment.center,
+
+                          child: CommonText(
+                            top: 8.h,
+                            bottom: 8.h,
+                            text: "Confirm",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12.sp,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              top: -10,
+              right: -10,
+              child: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
