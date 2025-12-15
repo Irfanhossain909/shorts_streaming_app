@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as getx;
 import 'package:mime/mime.dart';
 import '../../../core/config/api/api_end_point.dart';
+import '../../../core/config/route/app_routes.dart';
 import '../../constants/app_string.dart';
 import '../../utils/log/api_log.dart';
 import '../storage/storage_services.dart';
@@ -12,38 +14,40 @@ class ApiService {
   static final Dio _dio = _getMyDio();
 
   ApiService._();
+  static final ApiService _instance = ApiService._();
+  static ApiService get instance => _instance;
 
   /// ========== [ HTTP METHODS ] ========== ///
-  static Future<ApiResponseModel> post(
+   Future<ApiResponseModel> post(
     String url, {
     dynamic body,
     Map<String, String>? header,
   }) => _request(url, "POST", body: body, header: header);
 
-  static Future<ApiResponseModel> get(
+   Future<ApiResponseModel> get(
     String url, {
     Map<String, String>? header,
   }) => _request(url, "GET", header: header);
 
-  static Future<ApiResponseModel> put(
+   Future<ApiResponseModel> put(
     String url, {
     dynamic body,
     Map<String, String>? header,
   }) => _request(url, "PUT", body: body, header: header);
 
-  static Future<ApiResponseModel> patch(
+   Future<ApiResponseModel> patch(
     String url, {
     dynamic body,
     Map<String, String>? header,
   }) => _request(url, "PATCH", body: body, header: header);
 
-  static Future<ApiResponseModel> delete(
+   Future<ApiResponseModel> delete(
     String url, {
     dynamic body,
     Map<String, String>? header,
   }) => _request(url, "DELETE", body: body, header: header);
 
-  static Future<ApiResponseModel> multipart(
+   Future<ApiResponseModel> multipart(
     String url, {
     Map<String, String> header = const {},
     Map<String, String> body = const {},
@@ -81,7 +85,7 @@ class ApiService {
   }
 
   /// ========== [ API REQUEST HANDLER ] ========== ///
-  static Future<ApiResponseModel> _request(
+   Future<ApiResponseModel> _request(
     String url,
     String method, {
     dynamic body,
@@ -99,14 +103,14 @@ class ApiService {
     }
   }
 
-  static ApiResponseModel _handleResponse(Response response) {
+   ApiResponseModel _handleResponse(Response response) {
     if (response.statusCode == 201) {
       return ApiResponseModel(200, response.data);
     }
     return ApiResponseModel(response.statusCode, response.data);
   }
 
-  static ApiResponseModel _handleError(dynamic error) {
+   ApiResponseModel _handleError(dynamic error) {
     try {
       return _handleDioException(error);
     } catch (e) {
@@ -114,7 +118,7 @@ class ApiService {
     }
   }
 
-  static ApiResponseModel _handleDioException(DioException error) {
+   ApiResponseModel _handleDioException(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
@@ -128,12 +132,22 @@ class ApiService {
         );
 
       case DioExceptionType.connectionError:
+        // Navigate to No Internet screen
+        _navigateToNoInternet();
         return ApiResponseModel(503, {
           "message": AppString.noInternetConnection,
         });
 
       default:
         return ApiResponseModel(400, {});
+    }
+  }
+
+  /// Navigate to No Internet Screen
+   void _navigateToNoInternet() {
+    // Check if already on no internet screen to avoid duplicate navigation
+    if (getx.Get.currentRoute != AppRoutes.noInternet) {
+      getx.Get.toNamed(AppRoutes.noInternet);
     }
   }
 }
@@ -157,7 +171,7 @@ Dio _getMyDio() {
           ..receiveTimeout = const Duration(seconds: 30)
           ..baseUrl = options.baseUrl.startsWith("http")
               ? ""
-              : ApiEndPoint.baseUrl;
+              : ApiEndPoint.instance.baseUrl;
         handler.next(options);
       },
       onResponse: (response, handler) {

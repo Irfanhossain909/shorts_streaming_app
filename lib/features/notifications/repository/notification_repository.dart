@@ -4,8 +4,8 @@ import 'package:testemu/core/services/api/api_service.dart';
 import '../data/model/notification_model.dart';
 
 Future<List<NotificationModel>> notificationRepository(int page) async {
-  var response = await ApiService.get(
-    "${ApiEndPoint.notifications}?page=$page",
+  var response = await ApiService.instance.get(
+    "${ApiEndPoint.instance.notifications}?page=$page",
   );
 
   if (response.statusCode == 200) {

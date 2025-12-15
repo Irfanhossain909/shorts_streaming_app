@@ -26,6 +26,7 @@ import 'package:testemu/features/setting/presentation/screen/user_agreement_scre
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
+import 'package:testemu/core/component/screen/no_internet.dart';
 
 class AppRoutes {
   static const String test = "/test_screen.dart";
@@ -56,6 +57,7 @@ class AppRoutes {
   static const String downloadSesone = "/download_sesone.dart";
   static const String userAgreement = "/user_agreement.dart";
   static const String downloadEpisodList = "/download_episod_list.dart";
+  static const String noInternet = "/no_internet.dart";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -85,5 +87,6 @@ class AppRoutes {
     GetPage(name: downloadSesone, page: () => const DownloadSesoneListScreen()),
     GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
     GetPage(name: downloadEpisodList, page: () => const DownloadEpisodListScreen()),
+    GetPage(name: noInternet, page: () => const NoInternet()),
   ];
 }

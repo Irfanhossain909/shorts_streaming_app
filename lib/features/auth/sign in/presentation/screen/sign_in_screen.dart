@@ -111,12 +111,18 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
 
-                  CommonButtonPro(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.navigation);
-                    },
-                    text: "Sign In",
-                  ),
+                  Obx(() {
+                    return controller.isLoading.value
+                        ? const CircularProgressIndicator(
+                            color: AppColors.white,
+                          )
+                        : CommonButtonPro(
+                            onTap: () {
+                              controller.signInUser(formKey: formKey);
+                            },
+                            text: "Sign In",
+                          );
+                  }),
                   24.height,
                   CommonText(
                     text: "Or",

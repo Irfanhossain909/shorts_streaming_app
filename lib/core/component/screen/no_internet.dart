@@ -11,26 +11,150 @@ class NoInternet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(AppString.noInternet)),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Center(child: Icon(Icons.wifi_off, size: 100)),
-            const CommonText(text: AppString.noInternet, fontSize: 18, top: 16),
-            const CommonText(text: AppString.checkInternet, top: 8, bottom: 20),
-            CommonButton(
-              onTap: () => Get.back(),
-              titleText: AppString.back,
-              buttonWidth: 80,
-              buttonHeight: 40,
-              buttonColor: AppColors.black,
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        // Allow back navigation
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.black,
+        appBar: AppBar(
+          title: const Text(AppString.noInternet),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Animated WiFi Icon
+              TweenAnimationBuilder(
+                tween: Tween<double>(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 800),
+                builder: (context, double value, child) {
+                  return Opacity(
+                    opacity: value,
+                    child: Transform.scale(
+                      scale: value,
+                      child: Container(
+                        padding: const EdgeInsets.all(30),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.wifi_off_rounded,
+                          size: 100,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 40),
+              // Title
+              const CommonText(
+                text: AppString.noInternet,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.white,
+              ),
+              const SizedBox(height: 16),
+              // Description
+              const CommonText(
+                text: AppString.checkInternet,
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              CommonText(
+                text: "Please check your connection and try again",
+                fontSize: 14,
+                color: AppColors.white.withOpacity(0.6),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              // Retry Button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CommonButton(
+                    onTap: () {
+                      // Go back and retry
+                      Get.back();
+                    },
+                    titleText: "Try Again",
+                    buttonWidth: 120,
+                    buttonHeight: 48,
+                    buttonColor: AppColors.primaryColor,
+                  ),
+                  const SizedBox(width: 16),
+                  // Back Button
+                  CommonButton(
+                    onTap: () => Get.back(),
+                    titleText: AppString.back,
+                    buttonWidth: 100,
+                    buttonHeight: 48,
+                    buttonColor: AppColors.textSecondary,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              // Tips
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CommonText(
+                      text: "Quick Tips:",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.white,
+                      bottom: 12,
+                    ),
+                    _buildTipItem("Turn off airplane mode"),
+                    _buildTipItem("Turn on mobile data or Wi-Fi"),
+                    _buildTipItem("Check if you have signal"),
+                    _buildTipItem("Restart your router if using Wi-Fi"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTipItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.check_circle_outline,
+            size: 20,
+            color: AppColors.primaryColor,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: CommonText(
+              text: text,
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
       ),
     );
   }

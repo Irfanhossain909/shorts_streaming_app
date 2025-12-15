@@ -2,10 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/utils/app_utils.dart';
+import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/auth/repository/auth_repository.dart';
 
 class SignInController extends GetxController {
+  /// Auth Repository instance
+  AuthRepository authRepository = AuthRepository.instance;
+
   /// Sign in Button Loading variable
-  bool isLoading = false;
+  RxBool isLoading = false.obs;
 
   /// Sign in form key , help for Validation
 
@@ -19,55 +25,21 @@ class SignInController extends GetxController {
 
   /// Sign in Api call here
 
-  Future<void> signInUser() async {
-    // if (!formKey.currentState!.validate()) return;
-    Get.toNamed(AppRoutes.profile);
-    return;
-
-    // isLoading = true;
-    // update();
-
-    // Map<String, String> body = {
-    //   "email": emailController.text,
-    //   "password": passwordController.text,
-    // };
-
-    // var response = await ApiService.post(
-    //   ApiEndPoint.signIn,
-    //   body: body,
-    // ).timeout(const Duration(seconds: 30));
-
-    // if (response.statusCode == 200) {
-    //   var data = response.data;
-
-    //   LocalStorage.token = data['data']["accessToken"];
-    //   LocalStorage.userId = data['data']["attributes"]["_id"];
-    //   LocalStorage.myImage = data['data']["attributes"]["image"];
-    //   LocalStorage.myName = data['data']["attributes"]["fullName"];
-
-    //   LocalStorage.myEmail = data['data']["attributes"]["email"];
-    //   LocalStorage.isLogIn = true;
-
-    //   LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
-    //   LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
-    //   LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
-    //   LocalStorage.setString(LocalStorageKeys.myImage, LocalStorage.myImage);
-    //   LocalStorage.setString(LocalStorageKeys.myName, LocalStorage.myName);
-    //   LocalStorage.setString(LocalStorageKeys.myEmail, LocalStorage.myEmail);
-
-    //   // if (LocalStorage.myRole == 'consultant') {
-    //   //   Get.offAllNamed(AppRoutes.doctorHome);
-    //   // } else {
-    //   //   Get.offAllNamed(AppRoutes.patientsHome);
-    //   // }
-
-    //   emailController.clear();
-    //   passwordController.clear();
-    // } else {
-    //   Get.snackbar(response.statusCode.toString(), response.message);
+  Future<void> signInUser({GlobalKey<FormState>? formKey}) async {
+    // if (formKey?.currentState?.validate() ?? false) {
+    //   return;
     // }
-
-    // isLoading = false;
-    // update();
+    isLoading.value = true;
+    final response = await authRepository.login(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    if (response) {
+      // Get.toNamed(AppRoutes.home);
+      Utils.successSnackBar(Get.context!, "Login Successful", "Welcome back!");
+    } else {
+      errorLog(response, source: "Sign In");
+    }
+    isLoading.value = false;
   }
 }

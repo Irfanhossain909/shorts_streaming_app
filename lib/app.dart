@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: themeData,
         transitionDuration: const Duration(milliseconds: 300),
         initialRoute: AppRoutes.splash,
-        // initialRoute: AppRoutes.signUp,
+        // initialRoute: AppRoutes.noInternet,
         getPages: AppRoutes.routes,
       ),
     );

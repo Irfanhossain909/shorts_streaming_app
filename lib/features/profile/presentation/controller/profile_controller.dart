@@ -53,8 +53,8 @@ class ProfileController extends GetxController {
       "phone": numberController.text,
     };
 
-    var response = await ApiService.multipart(
-      ApiEndPoint.user,
+    var response = await ApiService.instance.multipart(
+      ApiEndPoint.instance.user,
       body: body,
       imagePath: image,
       imageName: "image",
@@ -73,10 +73,10 @@ class ProfileController extends GetxController {
       LocalStorage.setString("myName", LocalStorage.myName);
       LocalStorage.setString("myEmail", LocalStorage.myEmail);
 
-      Utils.successSnackBar("Successfully Profile Updated", response.message);
+      // Utils.successSnackBar("Successfully Profile Updated", response.message);
       Get.toNamed(AppRoutes.profile);
     } else {
-      Utils.errorSnackBar(response.statusCode, response.message);
+      // Utils.errorSnackBar(response.statusCode, response.message);
     }
 
     isLoading = false;

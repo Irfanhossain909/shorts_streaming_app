@@ -10,7 +10,7 @@ class SocketServices {
   ///<<<============ Connect with socket ====================>>>
   static void connectToSocket() {
     _socket = io.io(
-      ApiEndPoint.socketUrl,
+      ApiEndPoint.instance.socketUrl,
       io.OptionBuilder()
           .setTransports(['websocket'])
           .enableAutoConnect()
