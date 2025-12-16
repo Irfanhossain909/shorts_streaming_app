@@ -12,15 +12,16 @@ class ApiEndPoint {
   final String socketUrl = _getSocketUrl();
 
   // Auth endpoints
-  final String signUp = "users/sign-up";
-  final String verifyEmail = "users/verify-email";
+  final String signUp = "/users/register";
+  final String verifyEmail = "/auth/verify-email";
   final String signIn = "/auth/login";
-  final String forgotPassword = "users/forget-password";
-  final String verifyOtp = "users/verify-otp";
-  final String resetPassword = "users/reset-password";
-  final String changePassword = "users/change-password";
+  final String resendOtp = "/auth/resend-otp";
+  final String forgotPassword = "/auth/forget-password";
+  // final String verifyOtp = "users/verify-otp";
+  final String resetPassword = "/auth/reset-password";
+  // final String changePassword = "users/change-password";
 
-  // App endpoints
+  // // App endpoints
   final String user = "users";
   final String notifications = "notifications";
   final String privacyPolicies = "privacy-policies";

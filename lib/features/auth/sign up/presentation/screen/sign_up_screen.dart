@@ -5,7 +5,6 @@ import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
@@ -73,7 +72,7 @@ class SignUpScreen extends StatelessWidget {
                   24.height,
 
                   CommonTextField(
-                    controller: controller.emailController,
+                    controller: controller.nameController,
                     borderColor: AppColors.background,
                     borderRadius: 30.w,
                     textColor: AppColors.background,
@@ -95,7 +94,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   20.height,
                   CommonTextField(
-                    controller: controller.emailController,
+                    controller: controller.passwordController,
                     borderColor: AppColors.background,
                     borderRadius: 30.w,
                     textColor: AppColors.background,
@@ -106,7 +105,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   20.height,
                   CommonTextField(
-                    controller: controller.passwordController,
+                    controller: controller.confirmPasswordController,
                     borderColor: AppColors.background,
                     textColor: AppColors.background,
                     hintTextColor: AppColors.background,
@@ -117,12 +116,20 @@ class SignUpScreen extends StatelessWidget {
                     validator: OtherHelper.passwordValidator,
                   ),
                   24.height,
-                  CommonButtonPro(
-                    text: "Sign Up",
-                    onTap: () {
-                      Get.toNamed(AppRoutes.verifyEmail);
-                    },
-                  ),
+                  Obx(() {
+                    return controller.isLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : CommonButtonPro(
+                            text: "Sign Up",
+                            onTap: () {
+                              controller.signUpUser();
+                            },
+                          );
+                  }),
 
                   24.height,
                   CommonText(

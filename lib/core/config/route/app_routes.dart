@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:testemu/core/config/route/binding/app_binding.dart';
+import 'package:testemu/core/config/route/binding/auth_binding.dart';
 import 'package:testemu/features/auth/change_password/presentation/screen/change_password_screen.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/forgot_password.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/verify_screen.dart';
+import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
-import 'package:testemu/features/auth/sign%20up/presentation/screen/verify_user.dart';
 import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
@@ -62,31 +62,79 @@ class AppRoutes {
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
-    GetPage(name: signUp, page: () => SignUpScreen()),
-    GetPage(name: verifyUser, page: () => const VerifyUser()),
-    GetPage(name: signIn, page: () => SignInScreen()),
-    GetPage(name: forgotPassword, page: () => ForgotPasswordScreen()),
-    GetPage(name: verifyEmail, page: () => const VerifyScreen()),
-    GetPage(name: createPassword, page: () => CreatePassword()),
-    GetPage(name: changePassword, page: () => ChangePasswordScreen()),
-    GetPage(name: notifications, page: () => const NotificationScreen()),
-    GetPage(name: chat, page: () => const ChatListScreen()),
-    GetPage(name: message, page: () => const MessageScreen()),
-    GetPage(name: profile, page: () => const ProfileScreen()),
-    GetPage(name: editProfile, page: () => EditProfile()),
+    GetPage(name: signUp, binding: AuthBinding(), page: () => SignUpScreen()),
+    // GetPage(name: verifyUser, page: () => const VerifyUser()),
+    GetPage(name: signIn, binding: AuthBinding(), page: () => SignInScreen()),
+    GetPage(
+      name: forgotPassword,
+      binding: AuthBinding(),
+      page: () => ForgotPasswordScreen(),
+    ),
+    GetPage(
+      name: verifyEmail,
+      binding: AuthBinding(),
+      page: () => VerifyScreen(),
+    ),
+    // GetPage(name: createPassword, page: () => CreatePassword()),
+    GetPage(
+      name: changePassword,
+      binding: AuthBinding(),
+      page: () => ChangePasswordScreen(),
+    ),
+    GetPage(
+      name: notifications,
+      binding: AppBinding(),
+      page: () => const NotificationScreen(),
+    ),
+    GetPage(
+      name: chat,
+      binding: AppBinding(),
+      page: () => const ChatListScreen(),
+    ),
+    GetPage(
+      name: message,
+      binding: AppBinding(),
+      page: () => const MessageScreen(),
+    ),
+    GetPage(
+      name: profile,
+      binding: AppBinding(),
+      page: () => const ProfileScreen(),
+    ),
+    GetPage(
+      name: editProfile,
+      binding: AppBinding(),
+      page: () => EditProfile(),
+    ),
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
     GetPage(name: deleteAccount, page: () => const DeleteAccountScreen()),
     GetPage(name: setting, page: () => const SettingScreen()),
-    GetPage(name: navigation, page: () => const NavigationScreen()),
+    GetPage(
+      name: navigation,
+      binding: AppBinding(),
+      page: () => const NavigationScreen(),
+    ),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
     GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
-    GetPage(name: home, page: () => const HomeScreen()),
+    GetPage(name: home, binding: AppBinding(), page: () => const HomeScreen()),
     GetPage(name: myListScreen, page: () => const MyListScree()),
     GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
-    GetPage(name: downloadMenu, page: () => const DownloadMenuScreen()),
-    GetPage(name: downloadSesone, page: () => const DownloadSesoneListScreen()),
+    GetPage(
+      name: downloadMenu,
+      binding: AppBinding(),
+      page: () => const DownloadMenuScreen(),
+    ),
+    GetPage(
+      name: downloadSesone,
+      binding: AppBinding(),
+      page: () => const DownloadSesoneListScreen(),
+    ),
     GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
-    GetPage(name: downloadEpisodList, page: () => const DownloadEpisodListScreen()),
+    GetPage(
+      name: downloadEpisodList,
+      binding: AppBinding(),
+      page: () => const DownloadEpisodListScreen(),
+    ),
     GetPage(name: noInternet, page: () => const NoInternet()),
   ];
 }

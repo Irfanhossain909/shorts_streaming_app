@@ -5,7 +5,6 @@ import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
@@ -85,7 +84,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 50.height,
 
                 CommonTextField(
-                  controller: controller.passwordController,
+                  controller: controller.emailController,
                   borderColor: AppColors.background,
                   textColor: AppColors.background,
                   hintTextColor: AppColors.background,
@@ -97,11 +96,14 @@ class ForgotPasswordScreen extends StatelessWidget {
                 24.height,
 
                 ///  Submit Button here
-                CommonButtonPro(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.verifyEmail);
-                  },
-                  text: "Get Verification Code",
+                Obx(() {
+                    return controller.isLoadingEmail.value ? const Center(child: CircularProgressIndicator(color: Colors.white),) : CommonButtonPro(
+                      onTap: () {
+                        controller.forgotPasswordRepo();
+                      },
+                      text: "Get Verification Code",
+                    );
+                  }
                 ),
               ],
             ),

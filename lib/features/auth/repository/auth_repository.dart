@@ -23,7 +23,7 @@ class AuthRepository {
         body: body,
       );
       appLog(response.data, source: "Login Response");
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         String accessToken = response.data["data"]["accessToken"];
         await LocalStorage.setString(LocalStorageKeys.token, accessToken);
         appLog("Access Token stored successfully");
@@ -50,131 +50,127 @@ class AuthRepository {
     }
   }
 
-  // Future<bool> resendPhoneOtp({required String phone}) async {
-  //   Map<String, String> body = {"phone": phone};
-  //   try {
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.resendPhone,
-  //       data: body,
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     }
-  //     if (response.statusCode == 400) {
-  //       AppSnackBar.error(
-  //         "${response.data["message"] ?? "Something went wrong"}",
-  //       );
-  //     }
-  //   } catch (e) {
-  //     AppPrint.appError(e, title: "ResendOtp");
-  //   }
-  //   return false;
-  // }
+  Future<bool> resendOtp({required String email}) async {
+    Map<String, String> body = {"email": email};
+    try {
+      final response = await apiService.post(
+        ApiEndPoint.instance.resendOtp,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something went wrong"}",
+          "Resend Otp",
+        );
+      }
+    } catch (e) {
+      errorLog(e, source: "ResendOtp");
+    }
+    return false;
+  }
 
-  // Future<bool> forgetPassword({required String phone}) async {
-  //   Map<String, String> body = {"phone": phone};
-  //   try {
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.forgotPassword,
-  //       data: body,
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     }
-  //     if (response.statusCode == 400) {
-  //       AppSnackBar.error(
-  //         "${response.data["message"] ?? "Something went wrong"}",
-  //       );
-  //     }
-  //   } catch (e) {
-  //     AppPrint.appError(e, title: "ResendOtp");
-  //   }
-  //   return false;
-  // }
+  Future<bool> forgetPassword({required String email}) async {
+    Map<String, String> body = {"email": email};
+    try {
+      final response = await apiService.post(
+        ApiEndPoint.instance.forgotPassword,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something went wrong"}",
+          "Resend Otp",
+        );
+      }
+    } catch (e) {
+      errorLog(e, source: "ResendOtp");
+    }
+    return false;
+  }
 
-  // Future<bool> signUp({
-  //   required String phone,
-  //   required String name,
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      Map<String, String> body = {
+        "name": name,
+        "email": email,
+        "password": password,
+      };
+
+      final response = await apiService.post(
+        ApiEndPoint.instance.signUp,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on DioException catch (error) {
+      if (error.response?.data["message"].runtimeType != null) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${error.response?.data["message"] ?? "Something was wrong"}",
+          "Sign Up",
+        );
+      }
+      return false;
+    } catch (e) {
+      errorLog(e, source: "Sign Up");
+      return false;
+    }
+  }
+
+  Future<bool> emailVerify({required String email, required int otp}) async {
+    Map<String, dynamic> body = {"email": email, "oneTimeCode": otp};
+    try {
+      final response = await apiService.post(
+        ApiEndPoint.instance.verifyEmail,
+        body: body,
+      );
+      if (response.statusCode == 200 && response.data["data"] != null) {
+        String accessToken = response.data["data"]["accessToken"];
+        await LocalStorage.setString(LocalStorageKeys.token, accessToken);
+        appLog("Access Token stored successfully");
+        return true;
+      } else if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something was wrong"}",
+          "Verify Email",
+        );
+      } else {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something was wrong"}",
+          "Verify Email",
+        );
+      }
+
+      return false;
+    } catch (e) {
+      errorLog(e, source: "Verify Email");
+    }
+    return false;
+  }
+
+  // Future<dynamic> forgetPassEmailVerify({
   //   required String email,
-  //   required String country,
-  //   required String password,
-  //   String? referenceId, // <-- optional
-  //   required String role,
-  // }) async {
-  //   try {
-  //     Map<String, String> body = {
-  //       "firstName": name,
-  //       "phone": phone,
-  //       "email": email,
-  //       "country": country,
-  //       "password": password,
-  //       "role": role,
-  //     };
-
-  //     // >>> Add referenceId only if not empty <<<
-  //     if (referenceId != null && referenceId.trim().isNotEmpty) {
-  //       body["referenceId"] = referenceId;
-  //     }
-
-  //     appInPutUnfocused();
-
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.signUp,
-  //       data: body,
-  //     );
-
-  //     AppPrint.apiResponse(response);
-
-  //     if (response.statusCode == 200) {
-  //       appInPutUnfocused();
-  //       return true;
-  //     } else {
-  //       appInPutUnfocused();
-  //       return false;
-  //     }
-  //   } on DioException catch (error) {
-  //     if (error.response?.data["message"].runtimeType != null) {
-  //       AppSnackBar.error(
-  //         "${error.response?.data["message"] ?? "Something was wrong"}",
-  //       );
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     errorLog("signUp", e);
-  //     return false;
-  //   }
-  // }
-
-  // Future<bool> phoneVerify({required String phone, required String otp}) async {
-  //   Map<String, dynamic> body = {"phone": phone, "oneTimeCode": otp};
-  //   try {
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.verifyPhone,
-  //       data: body,
-  //     );
-  //     if (response.statusCode == 200 && response.data["data"] != null) {
-  //       String accessToken = response.data["data"]["accessToken"];
-  //       storageServices.setToken(accessToken);
-  //       AppPrint.apiResponse(storageServices.getToken(), title: "Store Token");
-  //       return true;
-  //     } else if (response.statusCode == 400) {
-  //       AppSnackBar.error(response.data["message"]);
-  //     } else {
-  //       AppPrint.apiResponse("Error: Access Token not found!");
-  //     }
-
-  //     return false;
-  //   } catch (e) {
-  //     AppPrint.appError(e.toString(), title: "phone Verify");
-  //   }
-  //   return false;
-  // }
-
-  // Future<dynamic> forgetPassphoneVerify({
-  //   required String phone,
   //   required String otp,
   // }) async {
-  //   Map<String, dynamic> body = {"phone": phone, "oneTimeCode": otp};
+  //   Map<String, dynamic> body = {"email": email, "oneTimeCode": otp};
   //   try {
   //     var response = await nonAuthApi.sendRequest.post(
   //       AppApiEndPoint.instance.verifyPhone,

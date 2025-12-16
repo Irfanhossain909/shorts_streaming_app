@@ -4,31 +4,18 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import '../controller/forget_password_controller.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_string.dart';
+import '../controller/verify_controller.dart';
 
-class VerifyScreen extends StatefulWidget {
-  const VerifyScreen({super.key});
+class VerifyScreen extends StatelessWidget {
+  VerifyScreen({super.key});
 
-  @override
-  State<VerifyScreen> createState() => _VerifyScreenState();
-}
-
-class _VerifyScreenState extends State<VerifyScreen> {
   final formKey = GlobalKey<FormState>();
-
-  /// init State here
-  @override
-  void initState() {
-    ForgetPasswordController.instance.startTimer();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +32,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       ),
 
       /// Body Section
-      body: GetBuilder<ForgetPasswordController>(
+      body: GetBuilder<VerifyController>(
         builder: (controller) => SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
           child: Form(
@@ -85,7 +72,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         textAlign: TextAlign.center,
 
                         text:
-                            "We’ve sent a verification code to your email/phone. Enter the code below to continue and secure your account.",
+                            "We've sent a verification code to your email/phone. Enter the code below to continue and secure your account.",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.background,
@@ -98,8 +85,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   child: CommonText(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,
-                    text:
-                        "${AppString.codeHasBeenSendTo} ${controller.emailController.text}",
+                    text: "${AppString.codeHasBeenSendTo} ${controller.email}",
                     fontSize: 14.sp,
                   ),
                 ),
@@ -110,7 +96,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   textStyle: TextStyle(color: AppColors.background),
                   controller: controller.otpController,
                   validator: (value) {
-                    if (value != null && value.length == 6) {
+                    if (value != null && value.length == 4) {
                       return null;
                     } else {
                       return AppString.otpIsInValid;
@@ -134,7 +120,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     activeColor: AppColors.white,
                     inactiveColor: AppColors.white,
                   ),
-                  length: 6,
+                  length: 4,
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.disabled,
                   enableActiveFill: true,
@@ -144,14 +130,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 GestureDetector(
                   onTap: controller.time == '00:00'
                       ? () {
-                          controller.startTimer();
-                          controller.forgotPasswordRepo();
+                          controller.resendOtpRepo();
                         }
                       : () {},
                   child: CommonText(
                     color: AppColors.background,
                     text: controller.time == '00:00'
-                        ? "If you didn’t receive a ${AppString.resendCode}"
+                        ? "If you didn't receive a ${AppString.resendCode}"
                         : "${AppString.resendCodeIn} ${controller.time} ${AppString.minute}",
 
                     fontSize: controller.time == '00:00' ? 14.sp : 18.sp,
@@ -160,12 +145,17 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 24.height,
 
                 ///  Submit Button here
-                CommonButtonPro(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.createPassword);
-                  },
-                  text: "Get Verification Code",
-                ),
+                Obx(() {
+                  return controller.isLoadingVerify.value
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : CommonButtonPro(
+                          onTap: () {
+                            controller.verifyOtpRepo();
+                            // Get.toNamed(AppRoutes.createPassword);
+                          },
+                          text: "Get Verification Code",
+                        );
+                }),
               ],
             ),
           ),
