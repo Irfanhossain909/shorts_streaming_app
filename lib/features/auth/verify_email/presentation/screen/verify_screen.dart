@@ -96,7 +96,7 @@ class VerifyScreen extends StatelessWidget {
                   textStyle: TextStyle(color: AppColors.background),
                   controller: controller.otpController,
                   validator: (value) {
-                    if (value != null && value.length == 4) {
+                    if (value != null && value.length == 6) {
                       return null;
                     } else {
                       return AppString.otpIsInValid;
@@ -120,7 +120,7 @@ class VerifyScreen extends StatelessWidget {
                     activeColor: AppColors.white,
                     inactiveColor: AppColors.white,
                   ),
-                  length: 4,
+                  length: 6,
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.disabled,
                   enableActiveFill: true,

@@ -133,7 +133,7 @@ class AuthRepository {
     }
   }
 
-  Future<bool> emailVerify({required String email, required int otp}) async {
+  Future<dynamic> emailVerify({required String email, required int otp}) async {
     Map<String, dynamic> body = {"email": email, "oneTimeCode": otp};
     try {
       final response = await apiService.post(
@@ -141,10 +141,14 @@ class AuthRepository {
         body: body,
       );
       if (response.statusCode == 200 && response.data["data"] != null) {
-        String accessToken = response.data["data"]["accessToken"];
-        await LocalStorage.setString(LocalStorageKeys.token, accessToken);
-        appLog("Access Token stored successfully");
-        return true;
+        if (response.data['data']["verifyToken"] != null) {
+          return response.data['data']["verifyToken"];
+        } else {
+          String accessToken = response.data["data"]["accessToken"];
+          await LocalStorage.setString(LocalStorageKeys.token, accessToken);
+          appLog("Access Token stored successfully");
+          return true;
+        }
       } else if (response.statusCode == 400) {
         Utils.errorSnackBar(
           Get.context!,

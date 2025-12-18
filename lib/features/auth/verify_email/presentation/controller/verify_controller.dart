@@ -62,12 +62,13 @@ class VerifyController extends GetxController {
   /// Verify OTP Api Call
   Future<void> verifyOtpRepo() async {
     isLoadingVerify.value = true;
-    if (type == 2) {
+    if (type == 1) {
       final response = await authRepository.emailVerify(
         email: email ?? "",
         otp: int.parse(otpController.text),
       );
-      if (response) {
+      // response can be either true (bool) or verifyToken (String)
+      if (response != false && response != null) {
         Get.offAllNamed(AppRoutes.signIn);
       } else {
         Utils.errorSnackBar(Get.context!, "Error", "Something went wrong");
@@ -78,8 +79,22 @@ class VerifyController extends GetxController {
         email: email ?? "",
         otp: int.parse(otpController.text),
       );
-      if (response) {
-        Get.offAllNamed(AppRoutes.signIn);
+      // response can be either true (bool) or verifyToken (String)
+      if (response != false && response != null) {
+        // If it's a string (verifyToken), show it, otherwise just show success
+        if (response is String) {
+          Utils.successSnackBar(
+            Get.context!,
+            "Success",
+            "Verify Token: $response",
+          );
+        } else {
+          Utils.successSnackBar(
+            Get.context!,
+            "Success",
+            "Email verified successfully",
+          );
+        }
       } else {
         Utils.errorSnackBar(Get.context!, "Error", "Something went wrong");
       }
