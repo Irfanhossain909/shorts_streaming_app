@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/config/route/binding/app_binding.dart';
 import 'package:testemu/core/config/route/binding/auth_binding.dart';
 import 'package:testemu/features/auth/change_password/presentation/screen/change_password_screen.dart';
+import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/forgot_password.dart';
 import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
@@ -75,7 +76,11 @@ class AppRoutes {
       binding: AuthBinding(),
       page: () => VerifyScreen(),
     ),
-    // GetPage(name: createPassword, page: () => CreatePassword()),
+    GetPage(
+      binding: AuthBinding(),
+      name: createPassword,
+      page: () => CreatePassword(),
+    ),
     GetPage(
       name: changePassword,
       binding: AuthBinding(),

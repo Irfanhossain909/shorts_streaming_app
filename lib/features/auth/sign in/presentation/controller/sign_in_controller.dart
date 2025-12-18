@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
@@ -34,8 +35,7 @@ class SignInController extends GetxController {
       password: passwordController.text,
     );
     if (response) {
-      // Get.toNamed(AppRoutes.home);
-      Utils.successSnackBar(Get.context!, "Login Successful", "Welcome back!");
+      Get.toNamed(AppRoutes.navigation);
     } else {
       errorLog(response, source: "Sign In");
     }

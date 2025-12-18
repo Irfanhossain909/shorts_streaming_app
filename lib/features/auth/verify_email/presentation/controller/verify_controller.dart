@@ -83,10 +83,11 @@ class VerifyController extends GetxController {
       if (response != false && response != null) {
         // If it's a string (verifyToken), show it, otherwise just show success
         if (response is String) {
-          Utils.successSnackBar(
-            Get.context!,
-            "Success",
-            "Verify Token: $response",
+          Get.toNamed(
+            AppRoutes.createPassword,
+            arguments: {
+              "verifyToken": response,
+            },
           );
         } else {
           Utils.successSnackBar(

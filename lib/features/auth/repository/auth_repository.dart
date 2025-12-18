@@ -26,6 +26,8 @@ class AuthRepository {
       if (response.statusCode == 200) {
         String accessToken = response.data["data"]["accessToken"];
         await LocalStorage.setString(LocalStorageKeys.token, accessToken);
+
+        await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
         appLog("Access Token stored successfully");
 
         return true;
@@ -170,70 +172,50 @@ class AuthRepository {
     return false;
   }
 
-  // Future<dynamic> forgetPassEmailVerify({
-  //   required String email,
-  //   required String otp,
-  // }) async {
-  //   Map<String, dynamic> body = {"email": email, "oneTimeCode": otp};
-  //   try {
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.verifyPhone,
-  //       data: body,
-  //     );
-  //     if (response.statusCode == 200 && response.data["data"] != null) {
-  //       String resetToken = response.data["data"]["resetToken"];
-  //       // storageServices.setToken(accessToken);
-  //       // AppPrint.apiResponse(storageServices.getToken(), title: "Store Token");
-  //       return resetToken;
-  //     } else if (response.statusCode == 400) {
-  //       AppSnackBar.error(response.data["message"]);
-  //     } else {
-  //       AppPrint.apiResponse("Error: Access Token not found!");
-  //     }
+  Future<bool> resetPassword({
+    required String newPassword,
+    required String confirmPassword,
+    required String resetToken,
+  }) async {
+    try {
+      Map body = {
+        "newPassword": newPassword,
+        "confirmPassword": confirmPassword,
+      };
+      var response = await apiService.post(
+        ApiEndPoint.instance.resetPassword,
+        body: body,
+        header: {"Accept": "application/json", "token": resetToken},
+      );
 
-  //     return false;
-  //   } catch (e) {
-  //     AppPrint.appError(e.toString(), title: "phone Verify");
-  //   }
-  //   return false;
-  // }
-
-  // Future<bool> resetPassword({
-  //   required String newPassword,
-  //   required String confirmPassword,
-  //   required String resetToken,
-  // }) async {
-  //   try {
-  //     appInPutUnfocused();
-  //     Map body = {
-  //       "newPassword": newPassword,
-  //       "confirmPassword": confirmPassword,
-  //     };
-  //     var response = await nonAuthApi.sendRequest.post(
-  //       AppApiEndPoint.instance.resetPassword,
-  //       data: body,
-  //       options: Options(
-  //         receiveTimeout: const Duration(minutes: 2),
-  //         sendTimeout: const Duration(minutes: 2),
-  //         headers: {"Accept": "application/json", "Authorization": resetToken},
-  //       ),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       AppPrint.appLog("confirm password repository response :: $response");
-  //       return true;
-  //     }
-  //     return false;
-  //   } on DioException catch (error) {
-  //     if (error.response?.data["message"].runtimeType != Null) {
-  //       AppSnackBar.error(
-  //         "${error.response?.data["message"] ?? "Something was wrong"}",
-  //       );
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     errorLog("resetPassword", e);
-  //     return false;
-  //   }
-  // }
+      if (response.statusCode == 200) {
+        Utils.successSnackBar(
+          Get.context!,
+          "Success",
+          "Password reset successfully",
+        );
+        return true;
+      }
+      if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something was wrong"}",
+          "Reset Password",
+        );
+      }
+      return false;
+    } on DioException catch (error) {
+      if (error.response?.data["message"].runtimeType != Null) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${error.response?.data["message"] ?? "Something was wrong"}",
+          "Reset Password",
+        );
+      }
+      return false;
+    } catch (e) {
+      errorLog(e, source: "resetPassword");
+      return false;
+    }
+  }
 }
