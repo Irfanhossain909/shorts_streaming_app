@@ -33,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
           aspectRatio: 9 / 19.5,
           child: Lottie.asset(
             "assets/animations/chepy_shorts_ss.json",
+            repeat: false,
             fit: BoxFit.cover,
           ),
         ),

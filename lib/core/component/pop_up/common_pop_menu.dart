@@ -122,15 +122,16 @@ logOutPopUp() {
                         child: CommonButton(
                           titleText: AppString.no,
                           borderWidth: 1.5,
-                          borderColor: AppColors.primaryColor,
+                          borderColor: AppColors.buton,
                           buttonColor: AppColors.transparent,
-                          titleColor: AppColors.primaryColor,
+                          titleColor: AppColors.buttonColor2,
                           onTap: () => Get.back(),
                         ),
                       ),
                       SizedBox(width: 16.w),
                       Expanded(
                         child: CommonButton(
+                          isGradient: true,
                           titleText: AppString.yes,
                           onTap: () {
                             LocalStorage.removeAllPrefData();
@@ -138,6 +139,17 @@ logOutPopUp() {
                           },
                         ),
                       ),
+                      // Expanded(
+                      //   child: CommonButton(
+                      //     buttonColor: AppColors.buttonColor2,
+                      //     isGradient: true,
+                      //     titleText: AppString.yes,
+                      //     onTap: () {
+                      //       LocalStorage.removeAllPrefData();
+                      //       Get.back();
+                      //     },
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

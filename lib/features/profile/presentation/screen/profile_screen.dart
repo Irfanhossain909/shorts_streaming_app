@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/pop_up/common_pop_menu.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -218,6 +219,9 @@ class ProfileScreen extends StatelessWidget {
                     leadPath: AppImages.icSetting,
                   ),
                   ProfileRow(
+                    onTap: () {
+                      logOutPopUp();
+                    },
                     leadColor: AppColors.red,
                     title: "Log out",
                     leadPath: AppImages.icLogout,
