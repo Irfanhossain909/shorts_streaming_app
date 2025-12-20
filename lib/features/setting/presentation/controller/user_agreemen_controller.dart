@@ -1,11 +1,10 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
-import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/setting/repository/profile_repository.dart';
 
 import '../../data/model/html_model.dart';
 
-class PrivacyPolicyController extends GetxController {
+class UserAgreementController extends GetxController {
   ProfileRepository profileRepository = ProfileRepository.instance;
 
   /// Api status check here
@@ -14,27 +13,31 @@ class PrivacyPolicyController extends GetxController {
   ///  HTML model initialize here
   HtmlModel data = HtmlModel.fromJson({});
 
-  /// Privacy Policy Controller instance create here
-  static PrivacyPolicyController get instance =>
-      Get.put(PrivacyPolicyController());
+  /// Terms of services Controller instance create here
+  static UserAgreementController get instance =>
+      Get.put(UserAgreementController());
 
-  /// Privacy Policy Api call here
-  Future<void> getPrivacyPolicyRepo() async {
+  ///  Terms of services Api call here
+  Future<void> getUserAgreementRepo() async {
     status = Status.loading;
     update();
-    final response = await profileRepository.getPrivacyPolicy();
+
+    var response = await profileRepository.getUserAgreement();
+
     if (response != null) {
-      appLog(response['data'].toString(), source: "Get Privacy Policy");
       data = HtmlModel.fromJson({'_id': '', 'content': response['data']});
+      status = Status.completed;
+      update();
+    } else {
+      status = Status.error;
+      update();
     }
-    status = Status.completed;
-    update();
   }
 
   /// Controller on Init here
   @override
   void onInit() {
-    getPrivacyPolicyRepo();
+    getUserAgreementRepo();
     super.onInit();
   }
 }

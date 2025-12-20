@@ -20,6 +20,7 @@ class ApiEndPoint {
   // final String verifyOtp = "users/verify-otp";
   final String resetPassword = "/auth/reset-password";
   // final String changePassword = "users/change-password";
+  final String settings = "/settings";
 
   // // App endpoints
   final String user = "users";
@@ -28,6 +29,8 @@ class ApiEndPoint {
   final String termsOfServices = "terms-and-conditions";
   final String chats = "chats";
   final String messages = "messages";
+  final String userAgreement = "user-agreement";
+  final String deleteAccount = "delete-account";
 }
 
 // Helper function to get domain based on environment
