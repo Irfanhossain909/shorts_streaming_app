@@ -6,14 +6,12 @@ import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/controller/create_password_controller.dart';
-import '../controller/forget_password_controller.dart';
 
 class CreatePassword extends StatelessWidget {
   CreatePassword({super.key});

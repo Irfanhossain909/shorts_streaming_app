@@ -4,7 +4,6 @@ import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/services/storage/storage_services.dart';
-import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 
 class ProfileController extends GetxController {

@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/other_widgets/no_data.dart';
-import 'package:testemu/core/constants/app_colors.dart';
-import '../controller/notifications_controller.dart';
+
 import '../../data/model/notification_model.dart';
+import '../controller/notifications_controller.dart';
 import '../widgets/notification_item.dart';
 
 class NotificationScreen extends StatelessWidget {
