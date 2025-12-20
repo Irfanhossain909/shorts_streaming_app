@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/features/setting/data/model/subscription_model.dart';
 
 class SubCard extends StatelessWidget {
-  const SubCard({super.key});
+  final SubscriptionData subscription;
+  const SubCard({super.key, required this.subscription});
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +36,13 @@ class SubCard extends StatelessWidget {
         spacing: 4.h,
         children: [
           CommonText(
-            text: "Weekly pass pro",
+            text: subscription.name ?? "",
             fontSize: 30.sp,
             fontWeight: FontWeight.w600,
             color: AppColors.background,
           ),
           CommonText(
-            text: "Unlock all the series for one week",
+            text: subscription.description ?? "",
             fontSize: 12.sp,
             fontWeight: FontWeight.w400,
             color: AppColors.background,
@@ -54,7 +56,8 @@ class SubCard extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: CommonText(
-              text: r"renew at $ 199.00/week",
+              text:
+                  "renew at \$${subscription.price ?? 0} ${subscription.duration ?? ""}",
               fontSize: 10.sp,
               fontWeight: FontWeight.w400,
               color: AppColors.background,

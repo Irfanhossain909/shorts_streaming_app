@@ -9,6 +9,7 @@ import 'package:testemu/features/download/controller/download_sesone_list_contro
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
+import 'package:testemu/features/setting/presentation/controller/subscription_controller.dart';
 
 class DependencyInjection extends Bindings {
   @override
@@ -26,5 +27,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => ShowGoogleMapController(), fenix: true);
     Get.lazyPut(() => DownloadEpisodController(), fenix: true);
     Get.lazyPut(() => DownloadSesoneListController(), fenix: true);
+    Get.lazyPut(() => SubscriptionController(), fenix: true);
   }
 }

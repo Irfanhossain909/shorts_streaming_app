@@ -7,6 +7,7 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/features/setting/data/model/subscription_model.dart';
 import 'package:testemu/features/setting/presentation/widgets/sub_card.dart';
 import 'package:testemu/features/shorts/model/bottom_card_btn_model.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_selection_button.dart';
@@ -214,7 +215,14 @@ class SubscriptionBottomSheet extends StatelessWidget {
                   itemCount: 3,
                   itemBuilder: (context, index) => Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: SubCard(),
+                    child: SubCard(
+                      subscription: SubscriptionData(
+                        name: "Test",
+                        description: "Test",
+                        price: 100,
+                        duration: "Test",
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -248,8 +256,6 @@ class SubscriptionBottomSheet extends StatelessWidget {
                   ],
                 ),
               ),
-
-             
             ],
           ),
         ),

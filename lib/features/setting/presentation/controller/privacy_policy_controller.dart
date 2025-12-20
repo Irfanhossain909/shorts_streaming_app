@@ -1,12 +1,11 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
-import 'package:testemu/core/utils/log/app_log.dart';
-import 'package:testemu/features/setting/repository/profile_repository.dart';
+import 'package:testemu/features/setting/repository/setting_repository.dart';
 
 import '../../data/model/html_model.dart';
 
 class PrivacyPolicyController extends GetxController {
-  ProfileRepository profileRepository = ProfileRepository.instance;
+  SettingRepository settingRepository = SettingRepository.instance;
 
   /// Api status check here
   Status status = Status.completed;
@@ -22,13 +21,15 @@ class PrivacyPolicyController extends GetxController {
   Future<void> getPrivacyPolicyRepo() async {
     status = Status.loading;
     update();
-    final response = await profileRepository.getPrivacyPolicy();
+    final response = await settingRepository.getPrivacyPolicy();
     if (response != null) {
-      appLog(response['data'].toString(), source: "Get Privacy Policy");
       data = HtmlModel.fromJson({'_id': '', 'content': response['data']});
+      status = Status.completed;
+      update();
+    } else {
+      status = Status.error;
+      update();
     }
-    status = Status.completed;
-    update();
   }
 
   /// Controller on Init here

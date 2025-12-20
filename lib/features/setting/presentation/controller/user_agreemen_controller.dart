@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
-import 'package:testemu/features/setting/repository/profile_repository.dart';
+import 'package:testemu/features/setting/repository/setting_repository.dart';
 
 import '../../data/model/html_model.dart';
 
 class UserAgreementController extends GetxController {
-  ProfileRepository profileRepository = ProfileRepository.instance;
+  SettingRepository settingRepository = SettingRepository.instance;
 
   /// Api status check here
   Status status = Status.completed;
@@ -22,7 +22,7 @@ class UserAgreementController extends GetxController {
     status = Status.loading;
     update();
 
-    var response = await profileRepository.getUserAgreement();
+    var response = await settingRepository.getUserAgreement();
 
     if (response != null) {
       data = HtmlModel.fromJson({'_id': '', 'content': response['data']});

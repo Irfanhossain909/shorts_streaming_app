@@ -1,14 +1,15 @@
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/setting/data/model/subscription_model.dart';
 
-class ProfileRepository {
-  ProfileRepository._();
+class SettingRepository {
+  SettingRepository._();
   ApiService apiService = ApiService.instance;
   ApiEndPoint apiEndPoint = ApiEndPoint.instance;
 
-  static final ProfileRepository _instance = ProfileRepository._();
-  static ProfileRepository get instance => _instance;
+  static final SettingRepository _instance = SettingRepository._();
+  static SettingRepository get instance => _instance;
 
   Future<dynamic> getPrivacyPolicy() async {
     try {
@@ -41,6 +42,36 @@ class ProfileRepository {
     } catch (e) {
       errorLog(e, source: "Get User Agreement");
       return null;
+    }
+  }
+
+  Future<SubscriptionModel> getSubscription() async {
+    try {
+      final response = await apiService.get(apiEndPoint.subscription);
+      if (response.statusCode == 200) {
+        SubscriptionModel subscriptionModel = SubscriptionModel.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        return subscriptionModel;
+      } else {
+        errorLog(response.data, source: "Get Subscription");
+        return SubscriptionModel(
+          success: false,
+          message: "Something went wrong",
+          statusCode: 500,
+          data: [],
+          meta: Meta(),
+        );
+      }
+    } catch (e) {
+      errorLog(e, source: "Get Subscription");
+      return SubscriptionModel(
+        success: false,
+        message: "Something went wrong",
+        statusCode: 500,
+        data: [],
+        meta: Meta(),
+      );
     }
   }
 }

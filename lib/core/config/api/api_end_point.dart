@@ -21,6 +21,7 @@ class ApiEndPoint {
   final String resetPassword = "/auth/reset-password";
   // final String changePassword = "users/change-password";
   final String settings = "/settings";
+  final String subscription = "/package/users-package";
 
   // // App endpoints
   final String user = "users";
