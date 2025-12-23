@@ -107,10 +107,10 @@ class MyListScree extends StatelessWidget {
         itemBuilder: (context, index) {
           final movie = controller.movies[index];
           return MovieCard(
-            title: movie['title'],
-            imageUrl: movie['imageUrl'],
-            badge: movie['badge'],
-            onTap: () => controller.onMovieTap(movie['title']),
+            title: movie.title,
+            imageUrl: movie.thumbnail ?? '',
+            badge: movie.genre,
+            onTap: () => controller.onMovieTap(movie.title),
           );
         },
       ),

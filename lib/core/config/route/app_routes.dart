@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
+import 'package:testemu/core/component/screen/no_internet.dart';
 import 'package:testemu/core/config/route/binding/app_binding.dart';
 import 'package:testemu/core/config/route/binding/auth_binding.dart';
 import 'package:testemu/features/auth/change_password/presentation/screen/change_password_screen.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/forgot_password.dart';
-import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
+import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
 import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
@@ -19,15 +20,14 @@ import 'package:testemu/features/notifications/presentation/screen/notifications
 import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
 import 'package:testemu/features/profile/presentation/screen/edit_profile.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
 import 'package:testemu/features/setting/presentation/screen/privacy_policy_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
 import 'package:testemu/features/setting/presentation/screen/user_agreement_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
-import 'package:testemu/core/component/screen/no_internet.dart';
 
 class AppRoutes {
   static const String test = "/test_screen.dart";
@@ -121,7 +121,7 @@ class AppRoutes {
     ),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
     GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
-    GetPage(name: home, binding: AppBinding(), page: () => const HomeScreen()),
+    GetPage(name: home, binding: AppBinding(), page: () => HomeScreen()),
     GetPage(name: myListScreen, page: () => const MyListScree()),
     GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
     GetPage(

@@ -22,6 +22,9 @@ class ApiEndPoint {
   // final String changePassword = "users/change-password";
   final String settings = "/settings";
   final String subscription = "/package/users-package";
+  final String getCategories = "/category";
+  final String getTrailers = "/trailer/all-trailers";
+  final String getAllMovies = "/movies/get-movies-for-user";
 
   // // App endpoints
   final String user = "users";

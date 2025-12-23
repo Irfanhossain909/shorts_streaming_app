@@ -11,122 +11,122 @@ import 'package:testemu/features/home/presentation/widgets/featured_movies_carou
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
 import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
-import 'package:testemu/features/home/presentation/widgets/popular_movie_section.dart';
 import 'package:testemu/features/home/presentation/widgets/ranking_section.dart';
 import 'package:testemu/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:testemu/features/home/presentation/widgets/vip_movies_section.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      builder: (controller) {
-        return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.red2,
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.transparent,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            child: SafeArea(
-              child: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [
-                    SliverToBoxAdapter(
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.red2,
+              Colors.transparent,
+              Colors.transparent,
+              Colors.transparent,
+              Colors.transparent,
+              Colors.transparent,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverToBoxAdapter(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header Section
+                      HomeHeader(controller: controller),
+                      20.height,
+
+                      // Popular Movie Section
+                      // const PopularMovieSection(),
+                      // 20.height,
+
+                      // Featured Movies Carousel
+                      FeaturedMoviesCarousel(
+                        controller: controller,
+                        onWatchTap: controller.onWatchTap,
+                        onBookmarkTap: controller.onBookmarkTap,
+                      ),
+                    ],
+                  ),
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  floating: false,
+                  delegate: _StickyHeaderDelegate(
+                    minHeight: 160.h,
+                    maxHeight: 160.h,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+
+                            Colors.black,
+                            Colors.black,
+                            Colors.black,
+                            Colors.black,
+                            Colors.black,
+                            Colors.black,
+                            Colors.black,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header Section
-                          HomeHeader(controller: controller),
-                          20.height,
+                          25.height,
+                          // Search Bar
+                          const SearchBarWidget(),
+                          10.height,
 
-                          // Popular Movie Section
-                          const PopularMovieSection(),
-                          20.height,
-
-                          // Featured Movies Carousel
-                          FeaturedMoviesCarousel(
-                            movies: controller.featuredMovies,
-                            onWatchTap: controller.onWatchTap,
-                            onBookmarkTap: controller.onBookmarkTap,
+                          Obx(
+                            () => CategoryFilter(
+                              categories: controller.categories
+                                  .map((e) => e.name)
+                                  .toList(),
+                              selectedCategory:
+                                  controller.selectedCategory.value,
+                              onCategorySelected: controller.selectCategory,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      floating: false,
-                      delegate: _StickyHeaderDelegate(
-                        minHeight: 160.h,
-                        maxHeight: 160.h,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.transparent,
-
-                                Colors.black,
-                                Colors.black,
-                                Colors.black,
-                                Colors.black,
-                                Colors.black,
-                                Colors.black,
-                                Colors.black,
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              25.height,
-                              // Search Bar
-                              const SearchBarWidget(),
-                              10.height,
-
-                              CategoryFilter(
-                                categories: controller.categories,
-                                selectedCategory:
-                                    controller.selectedCategory.value,
-                                onCategorySelected: controller.selectCategory,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ];
-                },
-                body: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      30.height,
-
-                      // Conditional content based on selected category
-                      _buildCategoryContent(controller),
-
-                      30.height,
-                    ],
                   ),
                 ),
+              ];
+            },
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  30.height,
+
+                  // Conditional content based on selected category
+                  _buildCategoryContent(controller),
+
+                  30.height,
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

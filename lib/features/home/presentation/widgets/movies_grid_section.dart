@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
 class MoviesGridSection extends StatelessWidget {
@@ -11,17 +13,24 @@ class MoviesGridSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Regular category content
-        10.height,
+    return Obx(() {
+      final List<Movie> movies =
+          controller.filteredMoviesBySelectedCategory.isNotEmpty
+          ? controller.filteredMoviesBySelectedCategory
+          : controller.movies;
 
-        _buildMoviesGrid(),
-      ],
-    );
+      return Column(
+        children: [
+          // Regular category content
+          10.height,
+
+          _buildMoviesGrid(movies),
+        ],
+      );
+    });
   }
 
-  Widget _buildMoviesGrid() {
+  Widget _buildMoviesGrid(List<Movie> movies) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: GridView.builder(
@@ -33,14 +42,14 @@ class MoviesGridSection extends StatelessWidget {
           mainAxisSpacing: 16.h,
           childAspectRatio: 0.50,
         ),
-        itemCount: controller.movies.length,
+        itemCount: movies.length,
         itemBuilder: (context, index) {
-          final movie = controller.movies[index];
+          final movie = movies[index];
           return MovieCard(
-            title: movie['title'],
-            imageUrl: movie['imageUrl'],
-            badge: movie['badge'],
-            onTap: () => controller.onMovieTap(movie['title']),
+            title: movie.title,
+            imageUrl: movie.thumbnail ?? '',
+            badge: movie.genre,
+            onTap: () => controller.onMovieTap(movie.title),
           );
         },
       ),

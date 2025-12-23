@@ -1,10 +1,16 @@
-import 'package:get/get.dart';
-import 'package:testemu/core/constants/app_colors.dart';
 import 'dart:async';
 
+import 'package:get/get.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/features/home/model/banner_model.dart';
+import 'package:testemu/features/home/model/category_model.dart';
+import 'package:testemu/features/home/model/movie_model.dart';
+import 'package:testemu/features/home/repository/category_repository.dart';
 
 class HomeController extends GetxController {
+  CategoryRepository categoryRepository = CategoryRepository.instance;
+
   // Observable variables
   var selectedCategory = 'Popular'.obs;
   var selectedMyListCategory = 'Recently Watched'.obs;
@@ -18,16 +24,11 @@ class HomeController extends GetxController {
   Timer? _debounceTimer;
 
   // Categories
-  final List<String> categories = [
-    'Popular',
-    'New',
-    'VIP',
-    'Ranking',
-    'Mystery',
-    'Romance',
-    'Fantasy',
-    'Library',
-  ];
+  final List<Category> categories = RxList<Category>();
+  final List<Movie> movies = RxList<Movie>();
+  final RxBool isLoading = false.obs;
+  final RxBool isError = false.obs;
+  final RxString errorMessage = ''.obs;
 
   final List<String> libraryMovies = ['All', 'Featured', 'Movie'];
   final List<String> libraryMovies2 = [
@@ -44,6 +45,17 @@ class HomeController extends GetxController {
 
   // Ranking sub-filters
   final List<String> rankingFilters = ['Most Popular', 'Hottest', 'New Series'];
+
+  // Banners List
+  final List<Trailer> bannersList = RxList<Trailer>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    getCategories();
+    getTrailers();
+    getMovies();
+  }
 
   // Featured movies for carousel
   final List<Map<String, dynamic>> featuredMovies = [
@@ -613,8 +625,23 @@ class HomeController extends GetxController {
   };
 
   // Current filtered movies based on selected category
-  List<Map<String, dynamic>> get movies {
+  List<Map<String, dynamic>> get currentMovies {
     return categoryMovies[selectedCategory.value] ?? [];
+  }
+
+  // Movies filtered from backend list based on selected category name
+  List<Movie> get filteredMoviesBySelectedCategory {
+    if (selectedCategory.value.isEmpty) {
+      return movies;
+    }
+    return movies
+        .where(
+          (movie) =>
+              movie.category != null &&
+              movie.category!.toLowerCase() ==
+                  selectedCategory.value.toLowerCase(),
+        )
+        .toList();
   }
 
   // Current VIP movies based on selected filter
@@ -682,6 +709,86 @@ class HomeController extends GetxController {
     });
   }
 
+  //--- Get Categories ---//
+
+  Future<void> getCategories() async {
+    isLoading.value = true;
+    try {
+      final result = await categoryRepository.getCategories();
+      result.fold(
+        (l) {
+          isError.value = true;
+          errorMessage.value = l;
+        },
+        (r) {
+          isError.value = false;
+          categories.assignAll(r);
+
+          // If selectedCategory isn't coming from backend yet, default to first
+          if (r.isNotEmpty) {
+            final firstName = r.first.name;
+            if (firstName.isNotEmpty) {
+              selectedCategory.value = firstName;
+            }
+          }
+        },
+      );
+    } catch (e) {
+      isError.value = true;
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //--- Get Trailers ---//
+
+  Future<void> getTrailers() async {
+    isLoading.value = true;
+    try {
+      final result = await categoryRepository.getTrailers();
+      result.fold(
+        (l) {
+          isError.value = true;
+          errorMessage.value = l;
+        },
+        (r) {
+          isError.value = false;
+          bannersList.assignAll(r);
+        },
+      );
+    } catch (e) {
+      isError.value = true;
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //--- Get Movies ---//
+  Future<void> getMovies() async {
+    isLoading.value = true;
+    try {
+      final result = await categoryRepository.getAllMovies();
+      result.fold(
+        (l) {
+          isError.value = true;
+          errorMessage.value = l;
+        },
+        (r) {
+          isError.value = false;
+          movies.assignAll(r);
+        },
+      );
+    } catch (e) {
+      isError.value = true;
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //--- onClose ---//
   @override
   void onClose() {
     _debounceTimer?.cancel();
