@@ -14,10 +14,8 @@ class MoviesGridSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final List<Movie> movies =
-          controller.filteredMoviesBySelectedCategory.isNotEmpty
-          ? controller.filteredMoviesBySelectedCategory
-          : controller.movies;
+      // Always use filtered movies (real data from backend)
+      final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
 
       return Column(
         children: [

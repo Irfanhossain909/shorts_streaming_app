@@ -53,7 +53,7 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       id: json['_id'] ?? '',
-      name: json['name'] ?? '',
+      name: (json['name'] ?? '').toString().trim(),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       version: json['__v'] ?? 0,

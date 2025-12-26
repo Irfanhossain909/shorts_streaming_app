@@ -24,7 +24,9 @@ class CategoryFilter extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemBuilder: (context, index) {
           final category = categories[index];
-          final isSelected = category == selectedCategory;
+          final isSelected =
+              category.trim().toLowerCase() ==
+              selectedCategory.trim().toLowerCase();
 
           return GestureDetector(
             onTap: () => onCategorySelected(category),

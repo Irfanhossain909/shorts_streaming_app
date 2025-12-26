@@ -166,7 +166,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
                       child: FeaturedMovieCard(
                         title: title,
                         duration: trailer.duration,
-                        imageUrl: trailer.thumbnailUrl,
+                        imageUrl: "https://${trailer.thumbnailUrl}",
                         isBookmarked: isBookmarked,
                         onWatchTap: () => widget.onWatchTap(title),
                         onBookmarkTap: () => _toggleBookmark(title),

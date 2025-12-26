@@ -3,16 +3,18 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
+import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 
 class HomeController extends GetxController {
   CategoryRepository categoryRepository = CategoryRepository.instance;
 
   // Observable variables
-  var selectedCategory = 'Popular'.obs;
+  var selectedCategory = 'popular'.obs;
   var selectedMyListCategory = 'Recently Watched'.obs;
   var selectedLibraryCategory = 'Most Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
@@ -631,15 +633,38 @@ class HomeController extends GetxController {
 
   // Movies filtered from backend list based on selected category name
   List<Movie> get filteredMoviesBySelectedCategory {
-    if (selectedCategory.value.isEmpty) {
+    if (selectedCategory.value.isEmpty || categories.isEmpty) {
       return movies;
     }
+
+    // Find the selected category from categories list
+    final selectedCategoryLower = selectedCategory.value.trim().toLowerCase();
+    Category? selectedCategoryObj;
+    try {
+      selectedCategoryObj = categories.firstWhere(
+        (cat) => cat.name.trim().toLowerCase() == selectedCategoryLower,
+      );
+    } catch (e) {
+      selectedCategoryObj = null;
+    }
+
+    // If category found, filter by categoryId (more reliable)
+    if (selectedCategoryObj != null) {
+      return movies
+          .where(
+            (movie) =>
+                movie.categoryId != null &&
+                movie.categoryId == selectedCategoryObj!.id,
+          )
+          .toList();
+    }
+
+    // Fallback: filter by category name (case-insensitive)
     return movies
         .where(
           (movie) =>
               movie.category != null &&
-              movie.category!.toLowerCase() ==
-                  selectedCategory.value.toLowerCase(),
+              movie.category!.trim().toLowerCase() == selectedCategoryLower,
         )
         .toList();
   }
@@ -656,7 +681,8 @@ class HomeController extends GetxController {
 
   // Methods
   void selectCategory(String category) {
-    selectedCategory.value = category;
+    appLog('selectCategory: $category');
+    selectedCategory.value = category.trim().toLowerCase();
     update();
   }
 
@@ -676,7 +702,8 @@ class HomeController extends GetxController {
   }
 
   void onMovieTap(String title) {
-    Get.snackbar('Movie Selected', title, colorText: AppColors.background);
+    Get.to(() => VideoDetailScreen());
+    //Get.snackbar('Movie Selected', title, colorText: AppColors.background);
   }
 
   void onWatchTap(String title) {
@@ -726,9 +753,9 @@ class HomeController extends GetxController {
 
           // If selectedCategory isn't coming from backend yet, default to first
           if (r.isNotEmpty) {
-            final firstName = r.first.name;
+            final firstName = r.first.name.trim();
             if (firstName.isNotEmpty) {
-              selectedCategory.value = firstName;
+              selectedCategory.value = firstName.toLowerCase();
             }
           }
         },

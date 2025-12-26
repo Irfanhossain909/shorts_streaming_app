@@ -118,7 +118,7 @@ class HomeScreen extends StatelessWidget {
                   30.height,
 
                   // Conditional content based on selected category
-                  _buildCategoryContent(controller),
+                  Obx(() => _buildCategoryContent(controller)),
 
                   30.height,
                 ],
@@ -131,16 +131,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildCategoryContent(HomeController controller) {
-    switch (controller.selectedCategory.value) {
-      case 'VIP':
+    switch (controller.selectedCategory.value.trim().toLowerCase()) {
+      case 'vip':
         return VipMoviesSection(controller: controller);
-      case 'New':
+      case 'new':
         return ComingSoonSection(controller: controller);
-      case 'Ranking':
+      case 'ranking':
         return RankingSection(controller: controller);
-      case 'Library':
+      case 'library':
         return LibrarySection(controller: controller);
-      case 'Fantasy':
+      case 'fantasy':
         return FantasySection(controller: controller);
       default:
         return MoviesGridSection(controller: controller);
