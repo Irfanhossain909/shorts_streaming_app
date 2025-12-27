@@ -40,7 +40,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
   void initState() {
     super.initState();
     _pageController = PageController(
-      viewportFraction: 0.85, // Shows more of each card, reducing side spacing
+      viewportFraction: 0.45, // Shows 3 cards at a time
       initialPage: 0,
     );
 
@@ -125,6 +125,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
       }
 
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 20.w),
@@ -140,34 +141,36 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
             height: 288.h,
             child: PageView.builder(
               controller: _pageController,
-              physics: const BouncingScrollPhysics(),
+              physics:
+                  const BouncingScrollPhysics(), // Smooth scrolling physics
               onPageChanged: _onPageChanged,
               itemCount: widget.controller.bannersList.length,
-              padEnds: false, // Remove default padding
               itemBuilder: (context, index) {
                 final trailer = widget.controller.bannersList[index];
                 final isCenter = index == _currentIndex;
                 final title = trailer.title;
                 final isBookmarked = _bookmarkedMovies.contains(title);
 
-                return Center(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOutCubic,
-                    width: 120.w,
-                    height: double.infinity,
-                    child: Transform.scale(
-                      scale: isCenter ? 1.0 : 0.85,
-                      child: Opacity(
-                        opacity: isCenter ? 1.0 : 0.7,
-                        child: FeaturedMovieCard(
-                          title: title,
-                          duration: trailer.duration,
-                          imageUrl: "https://${trailer.thumbnailUrl}",
-                          isBookmarked: isBookmarked,
-                          onWatchTap: () => widget.onWatchTap(title),
-                          onBookmarkTap: () => _toggleBookmark(title),
-                        ),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOutCubic, // Smooth easing curve
+                  width: isCenter ? 70.w : 60.w,
+                  height: isCenter ? 120.h : 100.h,
+                  // margin: EdgeInsets.symmetric(
+                  //   horizontal: 4.w,
+                  //   vertical: isCenter ? 0 : 10.h,
+                  // ),
+                  child: Transform.scale(
+                    scale: isCenter ? 1.0 : 0.85,
+                    child: Opacity(
+                      opacity: isCenter ? 1.0 : 0.7,
+                      child: FeaturedMovieCard(
+                        title: title,
+                        duration: trailer.duration,
+                        imageUrl: "https://${trailer.thumbnailUrl}",
+                        isBookmarked: isBookmarked,
+                        onWatchTap: () => widget.onWatchTap(title),
+                        onBookmarkTap: () => _toggleBookmark(title),
                       ),
                     ),
                   ),
