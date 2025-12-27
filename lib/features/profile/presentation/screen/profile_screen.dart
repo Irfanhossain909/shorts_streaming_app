@@ -203,7 +203,13 @@ class ProfileScreen extends StatelessWidget {
                     leadPath: AppImages.icOfflineDownload,
                   ),
                   // ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
-                  ProfileRow(title: "FAQs", leadPath: AppImages.icFaq),
+                  ProfileRow(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.faqsScreen);
+                    },
+                    title: "FAQs",
+                    leadPath: AppImages.icFaq,
+                  ),
                   CommonText(
                     text: "More Setting",
                     fontSize: 20.sp,

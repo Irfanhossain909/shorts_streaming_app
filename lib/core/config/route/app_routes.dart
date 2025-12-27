@@ -19,6 +19,7 @@ import 'package:testemu/features/navigation_bar/presentation/screen/navigation_s
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
 import 'package:testemu/features/profile/presentation/screen/edit_profile.dart';
+import 'package:testemu/features/profile/presentation/screen/faqs_screen.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
 import 'package:testemu/features/setting/presentation/screen/privacy_policy_screen.dart';
@@ -61,7 +62,7 @@ class AppRoutes {
   static const String userAgreement = "/user_agreement.dart";
   static const String downloadEpisodList = "/download_episod_list.dart";
   static const String noInternet = "/no_internet.dart";
-
+  static const String faqsScreen = "/faqs_screen.dart";
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
@@ -127,6 +128,7 @@ class AppRoutes {
     GetPage(name: myListScreen, page: () => const MyListScree()),
     GetPage(name: videoDetail, page: () => VideoDetailScreen()),
     GetPage(name: videoPlayer, page: () => const VideoPlayerScreen()),
+    GetPage(name: faqsScreen, page: () => const FaqsScreen()),
     GetPage(
       name: downloadMenu,
       binding: AppBinding(),
