@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
@@ -45,9 +47,12 @@ class MoviesGridSection extends StatelessWidget {
           final movie = movies[index];
           return MovieCard(
             title: movie.title,
-            imageUrl: movie.thumbnail ?? '',
+            imageUrl: OtherHelper.getImageUrl(
+              movie.thumbnail,
+              defaultAsset: AppImages.m1,
+            ),
             badge: movie.genre,
-            onTap: () => controller.onMovieTap(movie.title),
+            onTap: () => controller.onMovieTap(movie.id),
           );
         },
       ),

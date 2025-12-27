@@ -10,6 +10,8 @@ import 'package:testemu/features/home/presentation/controller/home_controller.da
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 import 'package:testemu/features/setting/presentation/controller/subscription_controller.dart';
+import 'package:testemu/features/shorts/controller/video_details_controller.dart';
+import 'package:testemu/features/shorts/controller/video_player_controller.dart';
 
 class DependencyInjection extends Bindings {
   @override
@@ -28,5 +30,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => DownloadEpisodController(), fenix: true);
     Get.lazyPut(() => DownloadSesoneListController(), fenix: true);
     Get.lazyPut(() => SubscriptionController(), fenix: true);
+    Get.lazyPut(() => VideoDetailsController(), fenix: true);
+    Get.lazyPut(() => VideoPlayerController(), fenix: true);
   }
 }

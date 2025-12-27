@@ -25,6 +25,8 @@ class ApiEndPoint {
   final String getCategories = "/category";
   final String getTrailers = "/trailer/all-trailers";
   final String getAllMovies = "/movies/get-movies-for-user";
+  final String getVideoDetails = "/movies/get-movies-with-seasons/";
+  final String getSeasonVideoDetailsById = "/video/all-season-videos-by/";
 
   // // App endpoints
   final String user = "users";

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 
 import '../../constants/app_colors.dart';
@@ -132,5 +134,43 @@ class OtherHelper {
   static String formatTime(TimeOfDay time) {
     return "${time.hour > 12 ? (time.hour - 12).toString().padLeft(2, '0') : (time.hour == 0 ? 12 : time.hour).toString().padLeft(2, '0')}:"
         "${time.minute.toString().padLeft(2, '0')} ${time.hour >= 12 ? "PM" : "AM"}";
+  }
+
+  /// Constructs a proper image URL from a thumbnail path
+  /// Handles:
+  /// - Full URLs (returns as-is)
+  /// - Absolute paths starting with '/' (prepends base URL)
+  /// - Relative paths (prepends base URL with '/')
+  /// - Local asset paths (returns as-is for asset loading)
+  /// - Null/empty values (returns default asset path)
+  static String getImageUrl(String? thumbnail, {String? defaultAsset}) {
+    // Return default asset if thumbnail is null or empty
+    if (thumbnail == null || thumbnail.isEmpty) {
+      return defaultAsset ?? AppImages.m1;
+    }
+
+    // If it's already a full URL, return as-is
+    if (thumbnail.startsWith('http://') || thumbnail.startsWith('https://')) {
+      return thumbnail;
+    }
+
+    // If it's a local asset path, return as-is
+    if (thumbnail.startsWith('assets/')) {
+      return thumbnail;
+    }
+
+    // Get base image URL and ensure it ends with '/'
+    String baseUrl = ApiEndPoint.instance.imageUrl;
+    if (!baseUrl.endsWith('/')) {
+      baseUrl += '/';
+    }
+
+    // Remove leading '/' from thumbnail if present (we'll add it back)
+    String path = thumbnail.startsWith('/')
+        ? thumbnail.substring(1)
+        : thumbnail;
+
+    // Construct full URL
+    return '$baseUrl$path';
   }
 }

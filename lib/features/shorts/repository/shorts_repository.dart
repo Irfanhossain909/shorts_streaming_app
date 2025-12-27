@@ -1,0 +1,63 @@
+import 'package:testemu/core/config/api/api_end_point.dart';
+import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/shorts/model/season_video_details_model.dart';
+import 'package:testemu/features/shorts/model/video_details_model.dart';
+
+class ShortsRepository {
+  ShortsRepository._();
+  static final ShortsRepository _instance = ShortsRepository._();
+  static ShortsRepository get instance => _instance;
+  ApiService apiService = ApiService.instance;
+  ApiEndPoint apiEndPoint = ApiEndPoint.instance;
+
+  Future<MovieDetailData?> getVideoDetails(String videoId) async {
+    try {
+      final response = await apiService.get(
+        '${apiEndPoint.getVideoDetails}$videoId',
+      );
+      if (response.statusCode == 200) {
+        // Parse the full response first
+        final movieDetailResponse = MovieDetailResponse.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        // Return the nested data
+        return movieDetailResponse.data;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      errorLog(e, source: 'Get Video Details');
+      return null;
+    }
+  }
+
+  Future<SeasonVideoResponse> getSeasonVideoDetailsById(String seasonId) async {
+    try {
+      final response = await apiService.get(
+        '${apiEndPoint.getSeasonVideoDetailsById}$seasonId',
+      );
+      if (response.statusCode == 200) {
+        final seasonVideoResponse = SeasonVideoResponse.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        return seasonVideoResponse;
+      } else {
+        return SeasonVideoResponse(
+          success: false,
+          message: response.message,
+          statusCode: response.statusCode,
+          data: [],
+        );
+      }
+    } catch (e) {
+      errorLog(e, source: 'Get Season Video Details');
+      return SeasonVideoResponse(
+        success: false,
+        message: '',
+        statusCode: 0,
+        data: [],
+      );
+    }
+  }
+}

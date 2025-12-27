@@ -27,6 +27,7 @@ import 'package:testemu/features/setting/presentation/screen/subscription_screen
 import 'package:testemu/features/setting/presentation/screen/user_agreement_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
+import 'package:testemu/features/shorts/presenter/video_player_screen.dart';
 import 'package:testemu/features/splash/splash_screen.dart';
 
 class AppRoutes {
@@ -54,6 +55,7 @@ class AppRoutes {
   static const String home = "/home_screen.dart";
   static const String myListScreen = "/my-list-screen.dart";
   static const String videoDetail = "/video_detail_screen.dart";
+  static const String videoPlayer = "/video_player_screen.dart";
   static const String downloadMenu = "/download_menu.dart";
   static const String downloadSesone = "/download_sesone.dart";
   static const String userAgreement = "/user_agreement.dart";
@@ -123,7 +125,8 @@ class AppRoutes {
     GetPage(name: shortScreen, page: () => const ShortsFeedScreen()),
     GetPage(name: home, binding: AppBinding(), page: () => HomeScreen()),
     GetPage(name: myListScreen, page: () => const MyListScree()),
-    GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
+    GetPage(name: videoDetail, page: () => VideoDetailScreen()),
+    GetPage(name: videoPlayer, page: () => const VideoPlayerScreen()),
     GetPage(
       name: downloadMenu,
       binding: AppBinding(),

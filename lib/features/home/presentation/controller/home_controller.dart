@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
@@ -8,7 +9,6 @@ import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
-import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 
 class HomeController extends GetxController {
   CategoryRepository categoryRepository = CategoryRepository.instance;
@@ -701,8 +701,8 @@ class HomeController extends GetxController {
     update();
   }
 
-  void onMovieTap(String title) {
-    Get.to(() => VideoDetailScreen());
+  void onMovieTap(String videoId) {
+    Get.toNamed(AppRoutes.videoDetail, arguments: {'videoId': videoId});
     //Get.snackbar('Movie Selected', title, colorText: AppColors.background);
   }
 
