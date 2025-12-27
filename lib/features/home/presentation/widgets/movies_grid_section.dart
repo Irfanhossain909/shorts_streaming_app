@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
+import 'package:testemu/core/component/other_widgets/section_header.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
+import 'package:testemu/features/home/presentation/widgets/featured_movies_carousel.dart';
 
 class MoviesGridSection extends StatelessWidget {
   final HomeController controller;
@@ -21,8 +23,16 @@ class MoviesGridSection extends StatelessWidget {
 
       return Column(
         children: [
+          // Featured Movies Carousel
+          FeaturedMoviesCarousel(
+            controller: controller,
+            onWatchTap: controller.onWatchTap,
+            onBookmarkTap: controller.onBookmarkTap,
+          ),
           // Regular category content
-          10.height,
+          20.height,
+          SectionHeader(title: 'You  Might Like'),
+          20.height,
 
           _buildMoviesGrid(movies),
         ],
