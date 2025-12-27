@@ -169,7 +169,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
                         duration: trailer.duration,
                         imageUrl: "https://${trailer.thumbnailUrl}",
                         isBookmarked: isBookmarked,
-                        onWatchTap: () => widget.onWatchTap(title),
+                        onWatchTap: () => widget.onWatchTap(trailer.videoUrl),
                         onBookmarkTap: () => _toggleBookmark(title),
                       ),
                     ),

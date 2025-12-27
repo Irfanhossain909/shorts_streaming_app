@@ -21,6 +21,7 @@ class VideoDetailsController extends GetxController {
   var seasonVideoIsSuccess = false.obs;
   var seasonVideoIsEmpty = false.obs;
   var seasonVideoIsNotEmpty = false.obs;
+  var selectedSeasonId = Rx<String?>(null);
   @override
   void onInit() {
     videoId = Get.arguments['videoId'];
@@ -48,7 +49,11 @@ class VideoDetailsController extends GetxController {
   void getVideoDetailsSuccess(MovieDetailData? response) {
     isSuccess.value = true;
     data.value = response;
-    getSeasonVideoDetails(response?.seasons.first.id ?? '');
+    // Set initial selected season
+    if (response?.seasons.isNotEmpty ?? false) {
+      selectedSeasonId.value = response!.seasons.first.id;
+      getSeasonVideoDetails(selectedSeasonId.value ?? '');
+    }
   }
 
   void getVideoDetailsError() {
@@ -102,6 +107,13 @@ class VideoDetailsController extends GetxController {
       Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': sanitizedUrl});
     } else {
       appLog('Video URL is empty after sanitization', source: 'VideoUrl');
+    }
+  }
+
+  void onSeasonChanged(String? seasonId) {
+    if (seasonId != null && seasonId.isNotEmpty) {
+      selectedSeasonId.value = seasonId;
+      getSeasonVideoDetails(seasonId);
     }
   }
 
