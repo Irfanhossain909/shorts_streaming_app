@@ -14,12 +14,11 @@ import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/controller/create_password_controller.dart';
 
 class CreatePassword extends StatelessWidget {
-  CreatePassword({super.key});
-
-  final formKey = GlobalKey<FormState>();
+  const CreatePassword({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       appBar: CommonAppBar(
         title: "",

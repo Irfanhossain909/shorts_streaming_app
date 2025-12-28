@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
@@ -9,9 +10,9 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:get/get.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/widget/already_accunt_rich_text.dart';
+
 import '../controller/sign_up_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -79,7 +80,7 @@ class SignUpScreen extends StatelessWidget {
                     hintTextColor: AppColors.background,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.fullName,
-                    validator: OtherHelper.emailValidator,
+                    validator: OtherHelper.validator,
                   ),
                   20.height,
                   CommonTextField(
@@ -101,7 +102,8 @@ class SignUpScreen extends StatelessWidget {
                     hintTextColor: AppColors.background,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.password,
-                    validator: OtherHelper.emailValidator,
+                    validator: OtherHelper.passwordValidator,
+                    isPassword: true,
                   ),
                   20.height,
                   CommonTextField(
@@ -112,7 +114,7 @@ class SignUpScreen extends StatelessWidget {
                     borderRadius: 30.w,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     isPassword: true,
-                    hintText: AppString.newPassword,
+                    hintText: AppString.confirmPassword,
                     validator: OtherHelper.passwordValidator,
                   ),
                   24.height,

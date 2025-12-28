@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
-import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
+import 'package:testemu/core/utils/extensions/extension.dart';
+
 import '../controller/verify_controller.dart';
 
 class VerifyScreen extends StatelessWidget {
-  VerifyScreen({super.key});
-
-  final formKey = GlobalKey<FormState>();
+  const VerifyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Section
       appBar: CommonAppBar(
