@@ -79,7 +79,7 @@ class SignUpScreen extends StatelessWidget {
                     hintTextColor: AppColors.background,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.fullName,
-                    validator: OtherHelper.emailValidator,
+                    keyboardType: TextInputType.name,
                   ),
                   20.height,
                   CommonTextField(
@@ -90,7 +90,7 @@ class SignUpScreen extends StatelessWidget {
                     hintTextColor: AppColors.background,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.email,
-                    validator: OtherHelper.emailValidator,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   20.height,
                   CommonTextField(
@@ -99,9 +99,10 @@ class SignUpScreen extends StatelessWidget {
                     borderRadius: 30.w,
                     textColor: AppColors.background,
                     hintTextColor: AppColors.background,
+                    isPassword: true,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     hintText: AppString.password,
-                    validator: OtherHelper.emailValidator,
+                    keyboardType: TextInputType.visiblePassword,
                   ),
                   20.height,
                   CommonTextField(
@@ -112,8 +113,9 @@ class SignUpScreen extends StatelessWidget {
                     borderRadius: 30.w,
                     fillColor: AppColors.background.withValues(alpha: 0.3),
                     isPassword: true,
+
                     hintText: AppString.newPassword,
-                    validator: OtherHelper.passwordValidator,
+                    keyboardType: TextInputType.visiblePassword,
                   ),
                   24.height,
                   Obx(() {
