@@ -10,7 +10,6 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:testemu/core/utils/helpers/other_helper.dart';
 
 import '../controller/forget_password_controller.dart';
 
