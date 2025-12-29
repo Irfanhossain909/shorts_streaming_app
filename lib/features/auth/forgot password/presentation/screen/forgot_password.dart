@@ -91,7 +91,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   borderRadius: 30.w,
                   fillColor: AppColors.background.withValues(alpha: 0.3),
                   hintText: AppString.email,
-                  validator: OtherHelper.passwordValidator,
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 24.height,
 
