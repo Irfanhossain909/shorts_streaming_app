@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
@@ -9,17 +10,15 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:get/get.dart';
-import 'package:testemu/core/utils/helpers/other_helper.dart';
+
 import '../controller/forget_password_controller.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  ForgotPasswordScreen({super.key});
-
-  final formKey = GlobalKey<FormState>();
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return GetBuilder<ForgetPasswordController>(
       builder: (controller) => Scaffold(
         /// App Bar Section

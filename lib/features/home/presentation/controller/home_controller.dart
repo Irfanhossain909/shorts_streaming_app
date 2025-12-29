@@ -706,8 +706,9 @@ class HomeController extends GetxController {
     //Get.snackbar('Movie Selected', title, colorText: AppColors.background);
   }
 
-  void onWatchTap(String title) {
-    Get.snackbar('Watch', 'Starting $title', colorText: AppColors.background);
+  void onWatchTap(String videoUrl) {
+    appLog('onWatchTap: $videoUrl');
+    Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 
   void onBookmarkTap(String title) {

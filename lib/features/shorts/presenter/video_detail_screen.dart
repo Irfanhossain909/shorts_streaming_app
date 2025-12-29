@@ -170,11 +170,96 @@ class VideoDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CommonText(
-                        text: "Episode",
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.white,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CommonText(
+                            text: "Episode",
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.white,
+                          ),
+                          SizedBox(width: 10.w),
+                          Obx(() {
+                            final seasons =
+                                videoDetailsController.data.value?.seasons ??
+                                [];
+                            final selectedId =
+                                videoDetailsController.selectedSeasonId.value;
+
+                            if (seasons.isEmpty) {
+                              return SizedBox.shrink();
+                            }
+
+                            return Container(
+                              padding: EdgeInsets.symmetric(vertical: 6.h),
+                              height: 40.h,
+                              decoration: BoxDecoration(
+                                color: AppColors.red,
+                                borderRadius: BorderRadius.circular(40.r),
+                              ),
+                              child: DropdownButton<String>(
+                                value: selectedId ?? seasons.first.id,
+                                selectedItemBuilder: (BuildContext context) {
+                                  return seasons.map((season) {
+                                    final displayText =
+                                        season.seasonTitle?.isNotEmpty == true
+                                        ? season.seasonTitle!
+                                        : (season.seasonNumber != null
+                                              ? "Season ${season.seasonNumber}"
+                                              : "Season");
+                                    return CommonText(
+                                      text: displayText,
+                                      color: AppColors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w700,
+                                    );
+                                  }).toList();
+                                },
+                                items: seasons.map((season) {
+                                  final displayText =
+                                      season.seasonTitle?.isNotEmpty == true
+                                      ? season.seasonTitle!
+                                      : (season.seasonNumber != null
+                                            ? "Season ${season.seasonNumber}"
+                                            : "Season");
+                                  return DropdownMenuItem<String>(
+                                    value: season.id,
+                                    child: CommonText(text: displayText),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    videoDetailsController.onSeasonChanged(
+                                      value,
+                                    );
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  size: 24.w,
+                                  color: AppColors.white,
+                                ),
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                iconSize: 24.w,
+                                iconEnabledColor: AppColors.white,
+                                iconDisabledColor: AppColors.white.withValues(
+                                  alpha: 0.5,
+                                ),
+                                dropdownColor: AppColors.red,
+                                underline: Container(),
+                                borderRadius: BorderRadius.circular(10.r),
+                                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                       GestureDetector(
                         onTap: () {
@@ -192,40 +277,50 @@ class VideoDetailScreen extends StatelessWidget {
                   SizedBox(height: 10.h),
 
                   /// Horizontal ListView for episodes
-                  SizedBox(
-                    height: 40.h, // Fixed height for the horizontal scroll
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          videoDetailsController
-                              .seasonVideoData
-                              .value
-                              ?.length ??
-                          0,
-                      itemBuilder: (context, index) {
-                        final season = videoDetailsController
-                            .seasonVideoData
-                            .value?[index];
-                        return Container(
-                          width: 70.w, // Fixed width for each button
-                          margin: EdgeInsets.only(
-                            right: 8.w,
-                          ), // Spacing between buttons
-                          child: EpisodSelectBtn(
-                            isRunning: index == 0,
-                            isAvilable: index > 0 && index <= 4,
-                            isLock: index > 4,
-                            text: season?.episodeNumber.toString(),
-                            onPressed: () {
-                              videoDetailsController.onSeasonTap(
-                                season?.videoUrl ?? '',
-                              );
-                            },
+                  Obx(() {
+                    final episodes =
+                        videoDetailsController.seasonVideoData.value ?? [];
+                    if (episodes.isEmpty) {
+                      return SizedBox(
+                        height: 40.h,
+                        child: Center(
+                          child: CommonText(
+                            text: "No episodes available",
+                            fontSize: 12.sp,
+                            color: AppColors.white.withValues(alpha: 0.7),
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      );
+                    }
+
+                    return SizedBox(
+                      height: 40.h, // Fixed height for the horizontal scroll
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: episodes.length,
+                        itemBuilder: (context, index) {
+                          final episode = episodes[index];
+                          return Container(
+                            width: 70.w, // Fixed width for each button
+                            margin: EdgeInsets.only(
+                              right: 8.w,
+                            ), // Spacing between buttons
+                            child: EpisodSelectBtn(
+                              isRunning: index == 0,
+                              isAvilable: index > 0 && index <= 4,
+                              isLock: index > 4,
+                              text: episode.episodeNumber.toString(),
+                              onPressed: () {
+                                videoDetailsController.onSeasonTap(
+                                  episode.videoUrl,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }),
                   SizedBox(height: 20.h),
                   CommonText(
                     text: "You could like",

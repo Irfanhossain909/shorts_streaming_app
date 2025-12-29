@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
-import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
+import 'package:testemu/core/utils/extensions/extension.dart';
+
 import '../controller/verify_controller.dart';
 
 class VerifyScreen extends StatelessWidget {
-  VerifyScreen({super.key});
-
-  final formKey = GlobalKey<FormState>();
+  const VerifyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Section
       appBar: CommonAppBar(
@@ -92,38 +92,41 @@ class VerifyScreen extends StatelessWidget {
                 24.height,
 
                 /// OTP Filed here
-                PinCodeTextField(
-                  textStyle: TextStyle(color: AppColors.background),
-                  controller: controller.otpController,
-                  validator: (value) {
-                    if (value != null && value.length == 6) {
-                      return null;
-                    } else {
-                      return AppString.otpIsInValid;
-                    }
-                  },
-                  autoDisposeControllers: false,
-                  cursorColor: AppColors.white,
-                  appContext: (context),
-                  autoFocus: true,
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(8),
-                    fieldHeight: 60.h,
-                    fieldWidth: 60.w,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: PinCodeTextField(
+                    textStyle: TextStyle(color: AppColors.background),
+                    controller: controller.otpController,
+                    validator: (value) {
+                      if (value != null && value.length == 6) {
+                        return null;
+                      } else {
+                        return AppString.otpIsInValid;
+                      }
+                    },
+                    autoDisposeControllers: false,
+                    cursorColor: AppColors.white,
+                    appContext: (context),
+                    autoFocus: true,
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(8),
+                      fieldHeight: 60.h,
+                      fieldWidth: 55.w, // Reduced from 60.w to prevent overflow
 
-                    activeFillColor: AppColors.white.withValues(alpha: .4),
-                    selectedFillColor: AppColors.white.withValues(alpha: .4),
-                    inactiveFillColor: AppColors.white.withValues(alpha: .4),
-                    borderWidth: 0.5.w,
-                    selectedColor: AppColors.white,
-                    activeColor: AppColors.white,
-                    inactiveColor: AppColors.white,
+                      activeFillColor: AppColors.white.withValues(alpha: .4),
+                      selectedFillColor: AppColors.white.withValues(alpha: .4),
+                      inactiveFillColor: AppColors.white.withValues(alpha: .4),
+                      borderWidth: 0.5.w,
+                      selectedColor: AppColors.white,
+                      activeColor: AppColors.white,
+                      inactiveColor: AppColors.white,
+                    ),
+                    length: 6,
+                    keyboardType: TextInputType.number,
+                    autovalidateMode: AutovalidateMode.disabled,
+                    enableActiveFill: true,
                   ),
-                  length: 6,
-                  keyboardType: TextInputType.number,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  enableActiveFill: true,
                 ),
 
                 /// Resent OTP or show Timer

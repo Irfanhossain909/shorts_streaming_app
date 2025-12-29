@@ -7,7 +7,6 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/home/presentation/widgets/coming_soon_section.dart';
 import 'package:testemu/features/home/presentation/widgets/fantasy_section.dart';
-import 'package:testemu/features/home/presentation/widgets/featured_movies_carousel.dart';
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
 import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
@@ -48,18 +47,6 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       // Header Section
                       HomeHeader(controller: controller),
-                      20.height,
-
-                      // Popular Movie Section
-                      // const PopularMovieSection(),
-                      // 20.height,
-
-                      // Featured Movies Carousel
-                      FeaturedMoviesCarousel(
-                        controller: controller,
-                        onWatchTap: controller.onWatchTap,
-                        onBookmarkTap: controller.onBookmarkTap,
-                      ),
                     ],
                   ),
                 ),
@@ -89,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          25.height,
+                          10.height,
                           // Search Bar
                           const SearchBarWidget(),
                           10.height,
@@ -115,7 +102,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  30.height,
+                  10.height,
 
                   // Conditional content based on selected category
                   Obx(() => _buildCategoryContent(controller)),

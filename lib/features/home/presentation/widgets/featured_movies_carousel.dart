@@ -125,11 +125,12 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
       }
 
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 20.w),
             child: CommonText(
-              text: 'Featured Movies',
+              text: 'Trailers Coming Soon',
               fontSize: 20.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.white,
@@ -168,7 +169,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
                         duration: trailer.duration,
                         imageUrl: "https://${trailer.thumbnailUrl}",
                         isBookmarked: isBookmarked,
-                        onWatchTap: () => widget.onWatchTap(title),
+                        onWatchTap: () => widget.onWatchTap(trailer.videoUrl),
                         onBookmarkTap: () => _toggleBookmark(title),
                       ),
                     ),

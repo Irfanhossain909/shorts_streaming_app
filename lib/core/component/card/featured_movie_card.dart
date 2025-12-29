@@ -114,53 +114,54 @@ class FeaturedMovieCard extends StatelessWidget {
           //         ),
           //       ),
           //     ),
-          //     // const Spacer(),
-          //     // Watch button (right)
-          //     // GestureDetector(
-          //     //   onTap: onWatchTap,
-          //     //   child: Container(
-          //     //     padding: EdgeInsets.symmetric(
-          //     //       horizontal: 12.w,
-          //     //       vertical: 6.h,
-          //     //     ),
-          //     //     decoration: BoxDecoration(
-          //     //       color: AppColors.red,
-          //     //       borderRadius: BorderRadius.circular(50.r),
-          //     //       gradient: LinearGradient(
-          //     //         begin: Alignment.centerLeft,
-          //     //         end: Alignment.centerRight,
-          //     //         colors: [AppColors.red2, AppColors.red],
-          //     //       ),
-          //     //     ),
-          //     //     child: Row(
-          //     //       mainAxisSize: MainAxisSize.min,
-          //     //       children: [
-          //     //         Text(
-          //     //           'Watch',
-          //     //           style: TextStyle(
-          //     //             color: AppColors.white,
-          //     //             fontSize: 14.sp,
-          //     //             fontWeight: FontWeight.w500,
-          //     //             letterSpacing: 0.5,
-          //     //           ),
-          //     //         ),
-          //     //         4.width,
-          //     //         Container(
-          //     //           padding: EdgeInsets.all(2.w),
-          //     //           decoration: BoxDecoration(
-          //     //             color: AppColors.white.withValues(alpha: 0.3),
-          //     //             shape: BoxShape.circle,
-          //     //           ),
-          //     //           child: Icon(
-          //     //             Icons.play_arrow_rounded,
-          //     //             color: AppColors.white,
-          //     //             size: 12.sp,
-          //     //           ),
-          //     //         ),
-          //     //       ],
-          //     //     ),
-          //     //   ),
-          //     // ),
+          const Spacer(),
+          // Watch labelLarge (right)
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: GestureDetector(
+              onTap: onWatchTap,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: AppColors.red,
+                  borderRadius: BorderRadius.circular(50.r),
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [AppColors.red2, AppColors.red],
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Watch',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    4.width,
+                    Container(
+                      padding: EdgeInsets.all(2.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.3),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        color: AppColors.white,
+                        size: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           //   ],
           // ),
         ],

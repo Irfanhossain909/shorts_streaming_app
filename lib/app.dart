@@ -1,4 +1,3 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,
         navigatorKey: Get.key,
-        locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
+        //locale: DevicePreview.locale(context),
+        //builder: DevicePreview.appBuilder,
         defaultTransition: Transition.fadeIn,
         theme: themeData,
         transitionDuration: const Duration(milliseconds: 300),
