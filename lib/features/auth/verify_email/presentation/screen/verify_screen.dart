@@ -92,38 +92,41 @@ class VerifyScreen extends StatelessWidget {
                 24.height,
 
                 /// OTP Filed here
-                PinCodeTextField(
-                  textStyle: TextStyle(color: AppColors.background),
-                  controller: controller.otpController,
-                  validator: (value) {
-                    if (value != null && value.length == 6) {
-                      return null;
-                    } else {
-                      return AppString.otpIsInValid;
-                    }
-                  },
-                  autoDisposeControllers: false,
-                  cursorColor: AppColors.white,
-                  appContext: (context),
-                  autoFocus: true,
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(8),
-                    fieldHeight: 60.h,
-                    fieldWidth: 60.w,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: PinCodeTextField(
+                    textStyle: TextStyle(color: AppColors.background),
+                    controller: controller.otpController,
+                    validator: (value) {
+                      if (value != null && value.length == 6) {
+                        return null;
+                      } else {
+                        return AppString.otpIsInValid;
+                      }
+                    },
+                    autoDisposeControllers: false,
+                    cursorColor: AppColors.white,
+                    appContext: (context),
+                    autoFocus: true,
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(8),
+                      fieldHeight: 60.h,
+                      fieldWidth: 55.w, // Reduced from 60.w to prevent overflow
 
-                    activeFillColor: AppColors.white.withValues(alpha: .4),
-                    selectedFillColor: AppColors.white.withValues(alpha: .4),
-                    inactiveFillColor: AppColors.white.withValues(alpha: .4),
-                    borderWidth: 0.5.w,
-                    selectedColor: AppColors.white,
-                    activeColor: AppColors.white,
-                    inactiveColor: AppColors.white,
+                      activeFillColor: AppColors.white.withValues(alpha: .4),
+                      selectedFillColor: AppColors.white.withValues(alpha: .4),
+                      inactiveFillColor: AppColors.white.withValues(alpha: .4),
+                      borderWidth: 0.5.w,
+                      selectedColor: AppColors.white,
+                      activeColor: AppColors.white,
+                      inactiveColor: AppColors.white,
+                    ),
+                    length: 6,
+                    keyboardType: TextInputType.number,
+                    autovalidateMode: AutovalidateMode.disabled,
+                    enableActiveFill: true,
                   ),
-                  length: 6,
-                  keyboardType: TextInputType.number,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  enableActiveFill: true,
                 ),
 
                 /// Resent OTP or show Timer
