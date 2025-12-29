@@ -11,6 +11,7 @@ class VideoPlayerController extends GetxController {
   final hasError = false.obs;
   final errorMessage = ''.obs;
   final isIframe = false.obs;
+  final isPlaying = false.obs;
 
   WebViewController? webViewController;
 
@@ -48,17 +49,25 @@ class VideoPlayerController extends GetxController {
           },
           onPageFinished: (_) {
             isLoading.value = false;
+            hasError.value = false;
+            isPlaying.value = true; // 🔥 important
           },
           onWebResourceError: (error) {
+            if (isPlaying.value) {
+              log('Ignoring WebView error: ${error.description}');
+              return;
+            }
+
             hasError.value = true;
-            errorMessage.value = error.description;
+            errorMessage.value =
+                'Network problem. Please check your connection.';
             isLoading.value = false;
           },
         ),
       )
       ..loadRequest(Uri.parse(url));
 
-    /// 🔥🔥 CRITICAL FOR ANDROID
+    /// 🔥 ANDROID REQUIRED
     if (webViewController!.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
 

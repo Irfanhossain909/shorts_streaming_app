@@ -114,7 +114,6 @@ class FeaturedMovieCard extends StatelessWidget {
           //         ),
           //       ),
           //     ),
-          const Spacer(),
           // Watch labelLarge (right)
           Positioned(
             bottom: 10,
