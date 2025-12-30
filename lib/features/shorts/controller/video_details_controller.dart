@@ -108,6 +108,7 @@ class VideoDetailsController extends GetxController {
     appLog('Sanitized VideoUrl: $sanitizedUrl', source: 'VideoUrl');
     if (listOfVideos.value != null &&
         (listOfVideos.value?.isNotEmpty ?? false)) {
+      appLog('List of Videos is not empty', source: 'List of Videos');
       Get.toNamed(
         AppRoutes.videoPlayer,
         arguments: {'index': index, 'listOfVideos': listOfVideos.value!},
