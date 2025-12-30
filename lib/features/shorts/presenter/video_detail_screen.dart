@@ -40,6 +40,7 @@ class VideoDetailScreen extends StatelessWidget {
     return Scaffold(
       body: Obx(() {
         final data = videoDetailsController.data.value;
+        final seasonVideoData = videoDetailsController.seasonVideoData.value;
         if (data == null) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -194,8 +195,11 @@ class VideoDetailScreen extends StatelessWidget {
                             }
 
                             return Container(
-                              padding: EdgeInsets.symmetric(vertical: 6.h),
-                              height: 40.h,
+                              padding: EdgeInsets.symmetric(
+                                vertical: 4.h,
+                                horizontal: 4.w,
+                              ),
+                              height: 32.h,
                               decoration: BoxDecoration(
                                 color: AppColors.red,
                                 borderRadius: BorderRadius.circular(40.r),
@@ -208,13 +212,13 @@ class VideoDetailScreen extends StatelessWidget {
                                         season.seasonTitle?.isNotEmpty == true
                                         ? season.seasonTitle!
                                         : (season.seasonNumber != null
-                                              ? "Season ${season.seasonNumber}"
-                                              : "Season");
+                                              ? "Series ${season.seasonNumber}"
+                                              : "Series");
                                     return CommonText(
                                       text: displayText,
                                       color: AppColors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
                                     );
                                   }).toList();
                                 },
@@ -223,11 +227,14 @@ class VideoDetailScreen extends StatelessWidget {
                                       season.seasonTitle?.isNotEmpty == true
                                       ? season.seasonTitle!
                                       : (season.seasonNumber != null
-                                            ? "Season ${season.seasonNumber}"
-                                            : "Season");
+                                            ? "Series ${season.seasonNumber}"
+                                            : "Series");
                                   return DropdownMenuItem<String>(
                                     value: season.id,
-                                    child: CommonText(text: displayText),
+                                    child: CommonText(
+                                      text: displayText,
+                                      color: AppColors.white,
+                                    ),
                                   );
                                 }).toList(),
                                 onChanged: (value) {
@@ -237,21 +244,13 @@ class VideoDetailScreen extends StatelessWidget {
                                     );
                                   }
                                 },
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  size: 24.w,
-                                  color: AppColors.white,
-                                ),
+                                icon: const SizedBox.shrink(),
                                 style: TextStyle(
                                   color: AppColors.white,
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w700,
                                 ),
-                                iconSize: 24.w,
-                                iconEnabledColor: AppColors.white,
-                                iconDisabledColor: AppColors.white.withValues(
-                                  alpha: 0.5,
-                                ),
+                                iconSize: 0,
                                 dropdownColor: AppColors.red,
                                 underline: Container(),
                                 borderRadius: BorderRadius.circular(10.r),
@@ -266,7 +265,7 @@ class VideoDetailScreen extends StatelessWidget {
                           Get.back();
                         },
                         child: CommonText(
-                          text: "Episode 1 >",
+                          text: "Episode ${seasonVideoData?.length} >",
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w300,
                           color: AppColors.white,
@@ -274,7 +273,7 @@ class VideoDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 20.h),
 
                   /// Horizontal ListView for episodes
                   Obx(() {
@@ -313,6 +312,7 @@ class VideoDetailScreen extends StatelessWidget {
                               onPressed: () {
                                 videoDetailsController.onSeasonTap(
                                   episode.videoUrl,
+                                  index,
                                 );
                               },
                             ),

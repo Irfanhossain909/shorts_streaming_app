@@ -16,23 +16,57 @@ class VideoPlayerScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            /// ================= CONTENT =================
+            /// 🔥 SINGLE WEBVIEW (ALWAYS ONE)
             Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                );
-              }
-
               if (controller.hasError.value) {
                 return _errorUI(controller);
               }
 
-              /// 🔥 ONLY WEBVIEW
-              return WebViewWidget(controller: controller.webViewController!);
+              return Center(
+                child: controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : WebViewWidget(controller: controller.webViewController),
+              );
             }),
 
-            /// ================= BACK BUTTON =================
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: Get.height * 0.8.h,
+              child: PageView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: controller.videos.length,
+                onPageChanged: controller.loadVideo,
+                itemBuilder: (_, __) => const SizedBox.expand(),
+              ),
+            ),
+
+            /// 🔥 GESTURE OVERLAY
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: Get.height * 0.9.h,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+
+                onTap: () {
+                  controller.togglePlayPause();
+                },
+
+                onDoubleTapDown: (details) {
+                  final width = MediaQuery.of(context).size.width;
+                  if (details.globalPosition.dx < width / 2) {
+                    controller.seekBackward();
+                  } else {
+                    controller.seekForward();
+                  }
+                },
+              ),
+            ),
+
+            /// BACK BUTTON
             Positioned(
               top: 12.h,
               left: 12.w,
@@ -66,16 +100,14 @@ class VideoPlayerScreen extends StatelessWidget {
           const Icon(Icons.error_outline, color: Colors.white, size: 60),
           const SizedBox(height: 12),
           Text(
-            controller.errorMessage.value.isEmpty
-                ? 'Failed to load video'
-                : controller.errorMessage.value,
+            controller.errorMessage.value,
             style: const TextStyle(color: Colors.white),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: controller.retry,
-            child: const Text('Retry'),
+            onPressed: () => Get.back(),
+            child: const Text('Back'),
           ),
         ],
       ),
