@@ -20,7 +20,10 @@ class VideoPlayerController extends GetxController {
     super.onInit();
 
     final args = Get.arguments as Map<String, dynamic>?;
-
+    final listOfVideos = args?['listOfVideos'] ?? [];
+    final index = args?['index'] ?? 0;
+    log('=============> Index: $index');
+    log('=============> List of Videos: $listOfVideos');
     final videoUrl = args?['videoUrl'] ?? '';
 
     log('=============> Original VideoUrl: $videoUrl');
@@ -32,7 +35,7 @@ class VideoPlayerController extends GetxController {
       return;
     }
 
-    _initIframe(videoUrl);
+    videoUrl.isEmpty ? _initIframe(listOfVideos[index]) : _initIframe(videoUrl);
   }
 
   /// ================= IFRAME INIT =================

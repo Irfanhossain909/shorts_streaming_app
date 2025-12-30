@@ -22,6 +22,7 @@ class VideoDetailsController extends GetxController {
   var seasonVideoIsEmpty = false.obs;
   var seasonVideoIsNotEmpty = false.obs;
   var selectedSeasonId = Rx<String?>(null);
+  var listOfVideos = Rx<List<String>?>(null);
   @override
   void onInit() {
     videoId = Get.arguments['videoId'];
@@ -88,6 +89,8 @@ class VideoDetailsController extends GetxController {
   void getSeasonVideoDetailsSuccess(List<SeasonVideo>? response) {
     seasonVideoIsSuccess.value = true;
     seasonVideoData.value = response;
+    listOfVideos.value = response?.map((e) => e.videoUrl).toList();
+    appLog('List of Videos: ${listOfVideos.value}', source: 'List of Videos');
   }
 
   void getSeasonVideoDetailsError() {
@@ -98,13 +101,22 @@ class VideoDetailsController extends GetxController {
     seasonVideoIsEmpty.value = true;
   }
 
-  void onSeasonTap(String videoUrl) {
+  void onSeasonTap(String videoUrl, int index) {
     // Sanitize URL before passing
     String sanitizedUrl = _sanitizeUrl(videoUrl);
     appLog('Original VideoUrl: $videoUrl', source: 'VideoUrl');
     appLog('Sanitized VideoUrl: $sanitizedUrl', source: 'VideoUrl');
-    if (sanitizedUrl.isNotEmpty) {
-      Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': sanitizedUrl});
+    if (listOfVideos.value != null &&
+        (listOfVideos.value?.isNotEmpty ?? false)) {
+      Get.toNamed(
+        AppRoutes.videoPlayer,
+        arguments: {'index': index, 'listOfVideos': listOfVideos.value!},
+      );
+    } else if (videoUrl.isNotEmpty) {
+      Get.toNamed(
+        AppRoutes.videoPlayer,
+        arguments: {'videoUrl': videoUrl, 'index': index},
+      );
     } else {
       appLog('Video URL is empty after sanitization', source: 'VideoUrl');
     }
