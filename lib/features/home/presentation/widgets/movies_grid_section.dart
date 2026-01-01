@@ -27,7 +27,8 @@ class MoviesGridSection extends StatelessWidget {
           FeaturedMoviesCarousel(
             controller: controller,
             onWatchTap: controller.onWatchTap,
-            onBookmarkTap: controller.onBookmarkTap,
+            onBookmarkTap: (title, id, referenceType) async =>
+                controller.onBookmarkTap(title, id, referenceType),
           ),
           // Regular category content
           20.height,

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/card/featured_movie_card.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
@@ -13,7 +14,7 @@ import 'package:testemu/features/home/presentation/controller/home_controller.da
 class FeaturedMoviesCarousel extends StatefulWidget {
   final HomeController controller;
   final Function(String) onWatchTap;
-  final Function(String) onBookmarkTap;
+  final Function(String, String, ReferenceType) onBookmarkTap;
 
   const FeaturedMoviesCarousel({
     super.key,
@@ -96,7 +97,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
   }
 
   // Handle bookmark toggle
-  void _toggleBookmark(String title) {
+  void _toggleBookmark(String title, String id) {
     setState(() {
       if (_bookmarkedMovies.contains(title)) {
         _bookmarkedMovies.remove(title);
@@ -106,7 +107,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
     });
 
     // Call the original bookmark tap handler
-    widget.onBookmarkTap(title);
+    widget.onBookmarkTap(title, id, ReferenceType.Trailer);
   }
 
   @override
@@ -170,7 +171,7 @@ class _FeaturedMoviesCarouselState extends State<FeaturedMoviesCarousel>
                         imageUrl: "https://${trailer.thumbnailUrl}",
                         isBookmarked: isBookmarked,
                         onWatchTap: () => widget.onWatchTap(trailer.videoUrl),
-                        onBookmarkTap: () => _toggleBookmark(title),
+                        onBookmarkTap: () => _toggleBookmark(title, trailer.id),
                       ),
                     ),
                   ),

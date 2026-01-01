@@ -5,6 +5,7 @@ import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
+import 'package:testemu/features/home/model/remainder_model.dart';
 
 class CategoryRepository {
   CategoryRepository._();
@@ -77,6 +78,54 @@ class CategoryRepository {
       }
     } catch (e) {
       errorLog(e, source: 'Movie Repository');
+      return Left(e.toString());
+    }
+  }
+
+  //--- Get Reminders ---//
+
+  Future<Either<String, List<Reminder>>> getReminders() async {
+    try {
+      final apiResponse = await apiService.get(apiEndPoint.getReminders);
+      if (apiResponse.statusCode == 200) {
+        final response = ReminderResponse.fromJson(
+          apiResponse.data as Map<String, dynamic>,
+        );
+        final reminders = response.data;
+        return Right(reminders);
+      } else {
+        errorLog(apiResponse.data, source: 'Reminder Repository');
+        return Left(apiResponse.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Reminder Repository');
+      return Left(e.toString());
+    }
+  }
+
+  //--- Toggle Bookmark ---//
+
+  Future<Either<String, void>> toggleBookmark(
+    String referenceId,
+    String referenceType,
+  ) async {
+    try {
+      Map<String, String> body = {
+        "referenceId": referenceId,
+        "referenceType": referenceType,
+      };
+      final apiResponse = await apiService.post(
+        apiEndPoint.toggleBookmark,
+        body: body,
+      );
+      if (apiResponse.statusCode == 200) {
+        return Right(null);
+      } else {
+        errorLog(apiResponse.data, source: 'Toggle Bookmark Repository');
+        return Left(apiResponse.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Toggle Bookmark Repository');
       return Left(e.toString());
     }
   }

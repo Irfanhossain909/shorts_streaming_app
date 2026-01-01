@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
+import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
 
 class HomeController extends GetxController {
@@ -31,7 +33,7 @@ class HomeController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isError = false.obs;
   final RxString errorMessage = ''.obs;
-
+  final List<Reminder> reminders = RxList<Reminder>();
   final List<String> libraryMovies = ['All', 'Featured', 'Movie'];
   final List<String> libraryMovies2 = [
     'All',
@@ -57,6 +59,7 @@ class HomeController extends GetxController {
     getCategories();
     getTrailers();
     getMovies();
+    getReminders();
   }
 
   // Featured movies for carousel
@@ -711,11 +714,30 @@ class HomeController extends GetxController {
     Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 
-  void onBookmarkTap(String title) {
-    Get.snackbar(
-      'Bookmark',
-      'Added $title to bookmarks',
-      colorText: AppColors.background,
+  Future<void> onBookmarkTap(
+    String title,
+    String id,
+    ReferenceType referenceType,
+  ) async {
+    final result = await categoryRepository.toggleBookmark(
+      id,
+      referenceType.name,
+    );
+    result.fold(
+      (l) {
+        Get.snackbar(
+          'Bookmark',
+          'Added $title to bookmarks',
+          colorText: AppColors.background,
+        );
+      },
+      (r) {
+        Get.snackbar(
+          'Bookmark',
+          'Removed $title from bookmarks',
+          colorText: AppColors.background,
+        );
+      },
     );
   }
 
@@ -806,6 +828,29 @@ class HomeController extends GetxController {
         (r) {
           isError.value = false;
           movies.assignAll(r);
+        },
+      );
+    } catch (e) {
+      isError.value = true;
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //--- Get Reminders ---//
+  Future<void> getReminders() async {
+    isLoading.value = true;
+    try {
+      final result = await categoryRepository.getReminders();
+      result.fold(
+        (l) {
+          isError.value = true;
+          errorMessage.value = l;
+        },
+        (r) {
+          isError.value = false;
+          reminders.assignAll(r);
         },
       );
     } catch (e) {
