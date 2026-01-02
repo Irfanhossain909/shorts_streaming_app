@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -26,6 +27,13 @@ class HomeController extends GetxController {
 
   // Debounce timer for smooth state updates
   Timer? _debounceTimer;
+
+  // Carousel state
+  late PageController carouselPageController;
+  final RxInt carouselCurrentIndex = 0.obs;
+  Timer? _autoScrollTimer;
+  final RxBool isUserScrolling = false.obs;
+  final RxSet<String> bookmarkedMovies = <String>{}.obs;
 
   // Categories
   final List<Category> categories = RxList<Category>();
@@ -56,6 +64,14 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Initialize carousel
+    carouselPageController = PageController(
+      viewportFraction: 0.45,
+      initialPage: 0,
+    );
+    carouselPageController.addListener(_onPageControllerChanged);
+    _startAutoScroll();
+
     getCategories();
     getTrailers();
     getMovies();
@@ -861,10 +877,81 @@ class HomeController extends GetxController {
     }
   }
 
+  //--- Carousel Methods ---//
+  void _onPageControllerChanged() {
+    if (!carouselPageController.hasClients) return;
+
+    if (!carouselPageController.position.isScrollingNotifier.value) {
+      final page = carouselPageController.page?.round() ?? 0;
+      if (carouselCurrentIndex.value != page) {
+        final oldIndex = carouselCurrentIndex.value;
+        carouselCurrentIndex.value = page;
+        // Only update the specific cards that changed (old center and new center)
+        update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+      }
+    }
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!isUserScrolling.value && bannersList.isNotEmpty) {
+        final nextIndex = (carouselCurrentIndex.value + 1) % bannersList.length;
+        carouselPageController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic,
+        );
+      }
+    });
+  }
+
+  void onCarouselPageChanged(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (carouselCurrentIndex.value != index) {
+        final oldIndex = carouselCurrentIndex.value;
+        carouselCurrentIndex.value = index;
+        // Only update the specific cards that changed (old center and new center)
+        // This minimizes rebuilds
+        update(['carousel_index_$oldIndex', 'carousel_index_$index']);
+      }
+    });
+  }
+
+  void onCarouselScrollStart() {
+    isUserScrolling.value = true;
+  }
+
+  void onCarouselScrollEnd() {
+    // Reset after a delay to allow auto-scroll to resume
+    Future.delayed(const Duration(seconds: 2), () {
+      isUserScrolling.value = false;
+    });
+  }
+
+  void toggleCarouselBookmark(String title, String id) {
+    final wasBookmarked = bookmarkedMovies.contains(title);
+    if (wasBookmarked) {
+      bookmarkedMovies.remove(title);
+    } else {
+      bookmarkedMovies.add(title);
+    }
+    // Only update the specific card whose bookmark changed
+    // Find the index of the card with this title
+    final index = bannersList.indexWhere((trailer) => trailer.title == title);
+    if (index != -1) {
+      update(['carousel_bookmark_$index']);
+    }
+    // Call the original bookmark tap handler
+    onBookmarkTap(title, id, ReferenceType.Trailer);
+  }
+
   //--- onClose ---//
   @override
   void onClose() {
     _debounceTimer?.cancel();
+    _autoScrollTimer?.cancel();
+    carouselPageController.removeListener(_onPageControllerChanged);
+    carouselPageController.dispose();
     super.onClose();
   }
 }
