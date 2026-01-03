@@ -12,6 +12,7 @@ class AppImages {
   static const String facebook = "$baseurl/facebook.png";
   static const String apple = "$baseurl/apple.png";
   static const String map = "$baseurl/map.png";
+  static const String defaultProfile = "assets/images/defult_image.png";
 
   // New images
   static const String add = "$baseurl/add.png";

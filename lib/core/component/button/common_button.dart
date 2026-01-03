@@ -31,7 +31,7 @@ class CommonButton extends StatefulWidget {
     this.borderWidth = 1,
     this.isLoading = false,
     this.buttonWidth = double.infinity,
-    this.borderColor = AppColors.primaryColor,
+    this.borderColor = AppColors.red2,
     this.isGradient = true,
     super.key,
   });
