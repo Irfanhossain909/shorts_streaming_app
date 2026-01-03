@@ -26,7 +26,6 @@ class FeaturedMovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 220.h,
-      // margin: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
@@ -49,21 +48,6 @@ class FeaturedMovieCard extends StatelessWidget {
               fill: BoxFit.cover,
             ),
           ),
-
-          // // Gradient overlay
-          // Container(
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(24.r),
-          //     gradient: LinearGradient(
-          //       begin: Alignment.topCenter,
-          //       end: Alignment.bottomCenter,
-          //       colors: [
-          //         AppColors.black.withValues(alpha: 0.2),
-          //         AppColors.black.withValues(alpha: 0.8),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Positioned(
             bottom: 10,
             left: 10,
@@ -82,40 +66,12 @@ class FeaturedMovieCard extends StatelessWidget {
                 ),
                 child: Icon(
                   isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                  color: isBookmarked ? AppColors.white : AppColors.white,
+                  color: AppColors.white,
                   size: 20.sp,
                 ),
               ),
             ),
           ),
-
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     // Bookmark button (left)
-          //     SizedBox(),
-          //     GestureDetector(
-          //       onTap: onBookmarkTap,
-          //       child: Container(
-          //         width: 32.w,
-          //         height: 32.w,
-          //         decoration: BoxDecoration(
-          //           color: AppColors.white.withValues(alpha: 0.15),
-          //           borderRadius: BorderRadius.circular(16.r),
-          //           border: Border.all(
-          //             color: AppColors.white.withValues(alpha: 0.3),
-          //             width: 1.5,
-          //           ),
-          //         ),
-          //         child: Icon(
-          //           Icons.bookmark_border,
-          //           color: AppColors.white,
-          //           size: 20.sp,
-          //         ),
-          //       ),
-          //     ),
-          const Spacer(),
-          // Watch labelLarge (right)
           Positioned(
             bottom: 10,
             right: 10,
@@ -126,7 +82,7 @@ class FeaturedMovieCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.red,
                   borderRadius: BorderRadius.circular(50.r),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [AppColors.red2, AppColors.red],
@@ -162,8 +118,6 @@ class FeaturedMovieCard extends StatelessWidget {
               ),
             ),
           ),
-          //   ],
-          // ),
         ],
       ),
     );

@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/utils/log/app_log.dart' as AppPrint;
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/profile/model/faqs_model.dart';
+import 'package:testemu/features/profile/model/profile_model.dart';
 
 class ProfileRepository {
   static ProfileRepository? _instance;
@@ -22,6 +29,91 @@ class ProfileRepository {
       throw Exception(response.message);
     } catch (e) {
       errorLog(e, source: "getFaqs");
+      throw Exception(e);
+    }
+  }
+
+  Future<bool> editProfile({String? firstName, String? image}) async {
+    try {
+      // -------------------------------
+      // MAIN DATA BODY
+      // -------------------------------
+      final Map<String, dynamic> data = {};
+
+      void addIfValid(String key, dynamic value) {
+        if (value != null && value.toString().isNotEmpty) {
+          data[key] = value;
+        }
+      }
+
+      // BASIC FIELDS
+      addIfValid("name", firstName);
+
+      addIfValid("image", image);
+
+      // -------------------------------
+      // FORM DATA (Multipart if image)
+      // -------------------------------
+      FormData formData = FormData.fromMap(data);
+
+      // IMAGE FILE
+      if (image != null && image.isNotEmpty) {
+        try {
+          final file = File(image);
+          if (await file.exists()) {
+            final fileName = file.path.split('/').last;
+            final mimeType = lookupMimeType(file.path);
+
+            formData.files.add(
+              MapEntry(
+                "image",
+                await MultipartFile.fromFile(
+                  file.path,
+                  filename: fileName,
+                  contentType: MediaType.parse(
+                    mimeType ?? "application/octet-stream",
+                  ),
+                ),
+              ),
+            );
+          }
+        } catch (e) {
+          errorLog("❌ Image error: $e");
+        }
+      }
+
+      // -------------------------------
+      // API CALL
+      // -------------------------------
+      final response = await apiService.patch(
+        apiEndPoint.editProfile,
+        body: formData,
+      );
+
+      if (response.isSuccess) {
+        AppPrint.appLog("✅ Profile updated successfully");
+        return true;
+      } else {
+        AppPrint.appLog("❌ Profile update failed");
+        return false;
+      }
+    } catch (e) {
+      AppPrint.appLog(e);
+      return false;
+    }
+  }
+
+  Future<ProfileModelData?> getProfile() async {
+    try {
+      final response = await apiService.get(apiEndPoint.editProfile);
+      if (response.isSuccess) {
+        final data = response.data['data'] as Map<String, dynamic>? ?? {};
+        final result = ProfileModelData.fromJson(data);
+        return result;
+      }
+      throw Exception(response.message);
+    } catch (e) {
+      errorLog(e, source: "getProfile");
       throw Exception(e);
     }
   }

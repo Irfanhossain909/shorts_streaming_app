@@ -32,7 +32,7 @@ class NavigationScreen extends StatelessWidget {
                         ? const ShortsFeedScreen()
                         : Container(),
                     const MyListScree(),
-                    const ProfileScreen(),
+                    ProfileScreen(),
                   ],
                 ),
               ),

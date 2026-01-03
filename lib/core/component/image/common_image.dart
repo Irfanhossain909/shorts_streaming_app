@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+
 import '../../constants/app_images.dart';
 import '../../utils/log/error_log.dart';
 
@@ -46,11 +47,36 @@ class CommonImage extends StatelessWidget {
   }
 
   Widget _buildNetworkImage() {
+    final actualWidth = size ?? width;
+    final actualHeight = size ?? height;
+
+    // Helper function to safely convert to int only if finite
+    int? safeToInt(double? value) {
+      if (value == null) return null;
+      if (!value.isFinite) return null;
+      return value.toInt();
+    }
+
+    // Optimize cache size for carousel images - limit to 300px for better performance
+    // This reduces memory usage and improves raster thread performance
+    int? getOptimizedCacheSize(double? value) {
+      if (value == null) return null;
+      if (!value.isFinite) return null;
+      final intValue = value.toInt();
+      // Limit cache size to 300px max to reduce GPU load
+      return intValue > 300 ? 300 : intValue;
+    }
+
     return CachedNetworkImage(
-      height: size ?? height,
-      width: size ?? width,
+      height: actualHeight,
+      width: actualWidth,
       imageUrl: imageSrc,
       fit: fill,
+      // Use optimized cache sizes to reduce memory and GPU load
+      memCacheWidth: getOptimizedCacheSize(actualWidth),
+      memCacheHeight: getOptimizedCacheSize(actualHeight),
+      maxWidthDiskCache: safeToInt(actualWidth),
+      maxHeightDiskCache: safeToInt(actualHeight),
       imageBuilder: (context, imageProvider) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
@@ -58,10 +84,12 @@ class CommonImage extends StatelessWidget {
         ),
       ),
       progressIndicatorBuilder: (context, url, downloadProgress) =>
-          CircularProgressIndicator(value: downloadProgress.progress,color: AppColors.red2),
+          CircularProgressIndicator(
+            value: downloadProgress.progress,
+            color: AppColors.red2,
+          ),
       errorWidget: (context, url, error) {
         errorLog(error, source: "Common Image");
-
         return _buildErrorWidget();
       },
     );

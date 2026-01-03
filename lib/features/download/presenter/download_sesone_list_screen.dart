@@ -58,7 +58,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
                           if (controller.value.value) {
                             controller.toggleSelection(index);
                           } else {
-                            Get.toNamed(AppRoutes.downloadEpisodList);
+                            Get.toNamed(AppRoutes.downloadEpisode);
                           }
                         },
                       );

@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
+import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
 
 class HomeController extends GetxController {
@@ -25,13 +28,20 @@ class HomeController extends GetxController {
   // Debounce timer for smooth state updates
   Timer? _debounceTimer;
 
+  // Carousel state
+  late PageController carouselPageController;
+  final RxInt carouselCurrentIndex = 0.obs;
+  Timer? _autoScrollTimer;
+  final RxBool isUserScrolling = false.obs;
+  final RxSet<String> bookmarkedMovies = <String>{}.obs;
+
   // Categories
   final List<Category> categories = RxList<Category>();
   final List<Movie> movies = RxList<Movie>();
   final RxBool isLoading = false.obs;
   final RxBool isError = false.obs;
   final RxString errorMessage = ''.obs;
-
+  final List<Reminder> reminders = RxList<Reminder>();
   final List<String> libraryMovies = ['All', 'Featured', 'Movie'];
   final List<String> libraryMovies2 = [
     'All',
@@ -54,9 +64,18 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Initialize carousel
+    carouselPageController = PageController(
+      viewportFraction: 0.45,
+      initialPage: 0,
+    );
+    carouselPageController.addListener(_onPageControllerChanged);
+    _startAutoScroll();
+
     getCategories();
     getTrailers();
     getMovies();
+    getReminders();
   }
 
   // Featured movies for carousel
@@ -711,11 +730,30 @@ class HomeController extends GetxController {
     Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 
-  void onBookmarkTap(String title) {
-    Get.snackbar(
-      'Bookmark',
-      'Added $title to bookmarks',
-      colorText: AppColors.background,
+  Future<void> onBookmarkTap(
+    String title,
+    String id,
+    ReferenceType referenceType,
+  ) async {
+    final result = await categoryRepository.toggleBookmark(
+      id,
+      referenceType.name,
+    );
+    result.fold(
+      (l) {
+        Get.snackbar(
+          'Bookmark',
+          'Added $title to bookmarks',
+          colorText: AppColors.background,
+        );
+      },
+      (r) {
+        Get.snackbar(
+          'Bookmark',
+          'Removed $title from bookmarks',
+          colorText: AppColors.background,
+        );
+      },
     );
   }
 
@@ -816,10 +854,104 @@ class HomeController extends GetxController {
     }
   }
 
+  //--- Get Reminders ---//
+  Future<void> getReminders() async {
+    isLoading.value = true;
+    try {
+      final result = await categoryRepository.getReminders();
+      result.fold(
+        (l) {
+          isError.value = true;
+          errorMessage.value = l;
+        },
+        (r) {
+          isError.value = false;
+          reminders.assignAll(r);
+        },
+      );
+    } catch (e) {
+      isError.value = true;
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //--- Carousel Methods ---//
+  void _onPageControllerChanged() {
+    if (!carouselPageController.hasClients) return;
+
+    if (!carouselPageController.position.isScrollingNotifier.value) {
+      final page = carouselPageController.page?.round() ?? 0;
+      if (carouselCurrentIndex.value != page) {
+        final oldIndex = carouselCurrentIndex.value;
+        carouselCurrentIndex.value = page;
+        // Only update the specific cards that changed (old center and new center)
+        update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+      }
+    }
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!isUserScrolling.value && bannersList.isNotEmpty) {
+        final nextIndex = (carouselCurrentIndex.value + 1) % bannersList.length;
+        carouselPageController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic,
+        );
+      }
+    });
+  }
+
+  void onCarouselPageChanged(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (carouselCurrentIndex.value != index) {
+        final oldIndex = carouselCurrentIndex.value;
+        carouselCurrentIndex.value = index;
+        // Only update the specific cards that changed (old center and new center)
+        // This minimizes rebuilds
+        update(['carousel_index_$oldIndex', 'carousel_index_$index']);
+      }
+    });
+  }
+
+  void onCarouselScrollStart() {
+    isUserScrolling.value = true;
+  }
+
+  void onCarouselScrollEnd() {
+    // Reset after a delay to allow auto-scroll to resume
+    Future.delayed(const Duration(seconds: 2), () {
+      isUserScrolling.value = false;
+    });
+  }
+
+  void toggleCarouselBookmark(String title, String id) {
+    final wasBookmarked = bookmarkedMovies.contains(title);
+    if (wasBookmarked) {
+      bookmarkedMovies.remove(title);
+    } else {
+      bookmarkedMovies.add(title);
+    }
+    // Only update the specific card whose bookmark changed
+    // Find the index of the card with this title
+    final index = bannersList.indexWhere((trailer) => trailer.title == title);
+    if (index != -1) {
+      update(['carousel_bookmark_$index']);
+    }
+    // Call the original bookmark tap handler
+    onBookmarkTap(title, id, ReferenceType.Trailer);
+  }
+
   //--- onClose ---//
   @override
   void onClose() {
     _debounceTimer?.cancel();
+    _autoScrollTimer?.cancel();
+    carouselPageController.removeListener(_onPageControllerChanged);
+    carouselPageController.dispose();
     super.onClose();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/card/coming_soon_card.dart';
 import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
@@ -40,15 +41,16 @@ class ComingSoonSection extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        itemCount: controller.comingSoonMovies.length,
+        itemCount: controller.reminders.length,
         itemBuilder: (context, index) {
-          final movie = controller.comingSoonMovies[index];
+          final reminder = controller.reminders[index];
           return ComingSoonCard(
-            title: movie['title'],
-            imageUrl: movie['imageUrl'],
-            releaseDate: movie['releaseDate'],
-            onTap: () => controller.onMovieTap(movie['title']),
-            onRemindMeTap: () => controller.onRemindMeTap(movie['title']),
+            title: reminder.name,
+            imageUrl:
+                ApiEndPoint.instance.imageUrl + (reminder.thumbnail ?? ''),
+            releaseDate: reminder.reminderTime.date,
+            onTap: () => controller.onMovieTap(reminder.name),
+            onRemindMeTap: () => controller.onRemindMeTap(reminder.id),
           );
         },
       ),

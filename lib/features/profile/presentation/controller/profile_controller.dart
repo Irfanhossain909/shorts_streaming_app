@@ -1,84 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:testemu/core/config/api/api_end_point.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
-import 'package:testemu/core/services/api/api_service.dart';
-import 'package:testemu/core/services/storage/storage_services.dart';
-import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/profile/model/profile_model.dart';
+import 'package:testemu/features/profile/repository/profile_repository.dart';
 
 class ProfileController extends GetxController {
-  /// Language List here
-  List languages = ["English", "French", "Arabic"];
+  // ----------------repository here
 
-  /// form key here
-  final formKey = GlobalKey<FormState>();
-
-  /// select Language here
-  String selectedLanguage = "English";
-
-  /// select image here
-  String? image;
+  ProfileRepository profileRepository = ProfileRepository.instance;
 
   /// edit button loading here
   bool isLoading = false;
+
+  Rxn<ProfileModelData> profileModel = Rxn<ProfileModelData>();
 
   /// all controller here
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
 
-  /// select image function here
-  getProfileImage() async {
-    image = await OtherHelper.openGalleryForProfile();
-    update();
+  //------------------------ Main Func Call
+  @override
+  void onInit() {
+    super.onInit();
+    getProfile();
   }
 
-  /// select language  function here
-  selectLanguage(int index) {
-    selectedLanguage = languages[index];
-    update();
-    Get.back();
-  }
+  void getProfile() async {
+    final response = await profileRepository.getProfile();
 
-  /// update profile function here
-  Future<void> editProfileRepo() async {
-    if (!formKey.currentState!.validate()) return;
-
-    if (!LocalStorage.isLogIn) return;
-    isLoading = true;
-    update();
-
-    Map<String, String> body = {
-      "fullName": nameController.text,
-      "phone": numberController.text,
-    };
-
-    var response = await ApiService.instance.multipart(
-      ApiEndPoint.instance.user,
-      body: body,
-      imagePath: image,
-      imageName: "image",
-    );
-
-    if (response.statusCode == 200) {
-      var data = response.data;
-
-      LocalStorage.userId = data['data']?["_id"] ?? "";
-      LocalStorage.myImage = data['data']?["image"] ?? "";
-      LocalStorage.myName = data['data']?["fullName"] ?? "";
-      LocalStorage.myEmail = data['data']?["email"] ?? "";
-
-      LocalStorage.setString("userId", LocalStorage.userId);
-      LocalStorage.setString("myImage", LocalStorage.myImage);
-      LocalStorage.setString("myName", LocalStorage.myName);
-      LocalStorage.setString("myEmail", LocalStorage.myEmail);
-
-      // Utils.successSnackBar("Successfully Profile Updated", response.message);
-      Get.toNamed(AppRoutes.profile);
-    } else {
-      // Utils.errorSnackBar(response.statusCode, response.message);
+    if (response != null) {
+      profileModel.value = response;
+      update();
     }
-
-    isLoading = false;
-    update();
   }
 }

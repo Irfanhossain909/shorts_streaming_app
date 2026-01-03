@@ -11,7 +11,7 @@ class ApiEndPoint {
   final String imageUrl = _getImageUrl();
   final String socketUrl = _getSocketUrl();
 
-  // Auth endpoints
+  // -------------------Auth endpoints
   final String signUp = "/users/register";
   final String verifyEmail = "/auth/verify-email";
   final String signIn = "/auth/login";
@@ -20,6 +20,11 @@ class ApiEndPoint {
   // final String verifyOtp = "users/verify-otp";
   final String resetPassword = "/auth/reset-password";
   // final String changePassword = "users/change-password";
+
+  //-------------Profile endpoints
+  final String editProfile = "/users/profile";
+
+  //------------Core App endpoints
   final String settings = "/settings";
   final String subscription = "/package/users-package";
   final String getCategories = "/category";
@@ -28,7 +33,9 @@ class ApiEndPoint {
   final String getVideoDetails = "/movies/get-movies-with-seasons/";
   final String getSeasonVideoDetailsById = "/video/all-season-videos-by/";
   final String getFaqs = "/faq";
-
+  final String getReminders = "/reminder/for-user";
+  final String toggleBookmark = "/bookmark/toggle";
+  final String getBookmarks = "/bookmark";
   // // App endpoints
   final String user = "users";
   final String notifications = "notifications";
