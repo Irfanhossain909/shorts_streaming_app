@@ -3,9 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:testemu/features/home/presentation/controller/home_controller.dart';
+import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class MyListScree extends StatelessWidget {
@@ -15,7 +16,7 @@ class MyListScree extends StatelessWidget {
   Widget build(BuildContext context) {
     //final HomeController homeController = Get.find<HomeController>();
     return Scaffold(
-      body: GetBuilder<HomeController>(
+      body: GetBuilder<MyListController>(
         builder: (controller) {
           return Container(
             decoration: BoxDecoration(
@@ -55,7 +56,7 @@ class MyListScree extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(HomeController controller) {
+  Widget _buildHeader(MyListController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Row(
@@ -91,7 +92,7 @@ class MyListScree extends StatelessWidget {
     );
   }
 
-  Widget _buildMoviesGrid(HomeController controller) {
+  Widget _buildMoviesGrid(MyListController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: GridView.builder(
@@ -103,14 +104,20 @@ class MyListScree extends StatelessWidget {
           mainAxisSpacing: 16.h,
           childAspectRatio: 0.50,
         ),
-        itemCount: controller.movies.length,
+        itemCount: controller.bookmarks.length,
         itemBuilder: (context, index) {
-          final movie = controller.movies[index];
+          final movie = controller.bookmarks[index];
           return MovieCard(
-            title: movie.title,
-            imageUrl: movie.thumbnail ?? '',
-            badge: movie.genre,
-            onTap: () => controller.onMovieTap(movie.title),
+            title: movie.trailer?.title ?? '',
+            imageUrl:
+                ApiEndPoint.instance.imageUrl +
+                (movie.trailer?.thumbnailUrl ?? ''),
+            badge: movie.trailer?.contentName ?? '',
+            onTap: () => controller.onMovieTap(
+              movie.trailer?.id ?? '',
+              movie.referenceType,
+              movie.trailer?.videoUrl ?? '',
+            ),
           );
         },
       ),

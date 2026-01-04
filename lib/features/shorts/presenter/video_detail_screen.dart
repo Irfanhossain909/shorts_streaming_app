@@ -105,46 +105,48 @@ class VideoDetailScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 10.w),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              //print("Reborn True Princess Returns");
-                              Get.toNamed(AppRoutes.videoDetail);
-                            },
-                            child: CommonText(
-                              text: data.movie.title,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.white,
-                            ),
-                          ),
-                          CommonText(
-                            text:
-                                "Update to EP.${data.totalSeasons}/EP.${data.totalSeasons}",
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.white.withValues(alpha: .6),
-                            bottom: 10.h,
-                          ),
-                          Wrap(
-                            spacing: 6.w,
-                            runSpacing: 6.w,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CommonText(
-                                text: "Tags",
-                                fontSize: 12.sp,
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                //print("Reborn True Princess Returns");
+                                Get.toNamed(AppRoutes.videoDetail);
+                              },
+                              child: CommonText(
+                                text: data.movie.title,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.white,
                               ),
-                              for (var tag in data.movie.tags)
-                                TagCard(tag: tag),
-                            ],
-                          ),
-                        ],
+                            ),
+                            CommonText(
+                              text:
+                                  "Update to EP.${data.totalSeasons}/EP.${data.totalSeasons}",
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.white.withValues(alpha: .6),
+                              bottom: 10.h,
+                            ),
+                            Wrap(
+                              spacing: 6.w,
+                              runSpacing: 6.w,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                CommonText(
+                                  text: "Tags",
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.white,
+                                ),
+                                for (var tag in data.movie.tags)
+                                  TagCard(tag: tag),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

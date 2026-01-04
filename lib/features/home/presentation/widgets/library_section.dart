@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
 class LibrarySection extends StatelessWidget {
@@ -67,14 +69,17 @@ class LibrarySection extends StatelessWidget {
           crossAxisSpacing: 12.w,
           childAspectRatio: 0.60,
         ),
-        itemCount: controller.onlyOnThisflixMovies.length,
+        itemCount: controller.filteredMoviesBySelectedCategory.length,
         itemBuilder: (context, index) {
-          final movie = controller.onlyOnThisflixMovies[index];
+          final movie = controller.filteredMoviesBySelectedCategory[index];
           return TopChartCard(
-            title: movie['title'],
-            imageUrl: movie['imageUrl'],
-            view: movie['views'] ?? '0',
-            onTap: () => controller.onMovieTap(movie['title']),
+            title: movie.title,
+            imageUrl: OtherHelper.getImageUrl(
+              movie.thumbnail,
+              defaultAsset: AppImages.m1,
+            ),
+            view: movie.totalViews.toString(),
+            onTap: () => controller.onMovieTap(movie.id),
           );
         },
       ),

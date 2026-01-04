@@ -7,6 +7,7 @@ import 'package:testemu/features/auth/sign%20up/presentation/controller/sign_up_
 import 'package:testemu/features/download/controller/download_episod_controller.dart';
 import 'package:testemu/features/download/controller/download_sesone_list_controller.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
+import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/faqs_controller.dart';
@@ -34,5 +35,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => VideoDetailsController(), fenix: true);
     Get.lazyPut(() => VideoPlayerController(), fenix: true);
     Get.lazyPut(() => FaqsController(), fenix: true);
+    Get.lazyPut(() => MyListController(), fenix: true);
   }
 }

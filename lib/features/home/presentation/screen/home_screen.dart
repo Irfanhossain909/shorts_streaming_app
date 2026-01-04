@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/home/presentation/widgets/coming_soon_section.dart';
 import 'package:testemu/features/home/presentation/widgets/fantasy_section.dart';
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
 import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
+import 'package:testemu/features/home/presentation/widgets/popular_movie_section.dart';
 import 'package:testemu/features/home/presentation/widgets/ranking_section.dart';
 import 'package:testemu/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:testemu/features/home/presentation/widgets/vip_movies_section.dart';
@@ -78,7 +83,15 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           10.height,
                           // Search Bar
-                          const SearchBarWidget(),
+                          SearchBarWidget(
+                            controller: controller.searchController,
+                            onSearchChanged: (query) {
+                              controller.updateSearchQuery(query);
+                            },
+                            onClear: () {
+                              controller.clearSearch();
+                            },
+                          ),
                           10.height,
 
                           Obx(
@@ -104,8 +117,13 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   10.height,
 
-                  // Conditional content based on selected category
-                  Obx(() => _buildCategoryContent(controller)),
+                  // Conditional content based on search or selected category
+                  Obx(() {
+                    if (controller.isSearchActive) {
+                      return _buildSearchResults(controller);
+                    }
+                    return _buildCategoryContent(controller);
+                  }),
 
                   30.height,
                 ],
@@ -119,6 +137,8 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCategoryContent(HomeController controller) {
     switch (controller.selectedCategory.value.trim().toLowerCase()) {
+      case 'popular':
+        return PopularMovieSection(controller: controller);
       case 'vip':
         return VipMoviesSection(controller: controller);
       case 'new':
@@ -132,6 +152,92 @@ class HomeScreen extends StatelessWidget {
       default:
         return MoviesGridSection(controller: controller);
     }
+  }
+
+  Widget _buildSearchResults(HomeController controller) {
+    final searchedMovies = controller.searchedMovies;
+
+    if (searchedMovies.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 20.w),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search_off,
+                size: 64.sp,
+                color: AppColors.white.withValues(alpha: 0.5),
+              ),
+              16.height,
+              Text(
+                'No movies found',
+                style: TextStyle(
+                  color: AppColors.white.withValues(alpha: 0.7),
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              8.height,
+              Text(
+                'Try searching with different keywords',
+                style: TextStyle(
+                  color: AppColors.white.withValues(alpha: 0.5),
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          child: Text(
+            'Search Results (${searchedMovies.length})',
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        _buildMoviesGrid(searchedMovies, controller),
+      ],
+    );
+  }
+
+  Widget _buildMoviesGrid(List<Movie> movies, HomeController controller) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 12.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.50,
+        ),
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          final movie = movies[index];
+          return MovieCard(
+            title: movie.title,
+            imageUrl: OtherHelper.getImageUrl(
+              movie.thumbnail,
+              defaultAsset: AppImages.m1,
+            ),
+            badge: movie.genre,
+            onTap: () => controller.onMovieTap(movie.id),
+          );
+        },
+      ),
+    );
   }
 }
 
