@@ -56,7 +56,7 @@ class HomeController extends GetxController {
   final List<String> vipFilters = ['Daily', 'Weekly'];
 
   // Ranking sub-filters
-  final List<String> rankingFilters = ['Most Popular', 'Hottest', 'New Series'];
+  final List<String> rankingFilters = ['Most Popular'];
 
   // Banners List
   final List<Trailer> bannersList = RxList<Trailer>();
@@ -894,7 +894,9 @@ class HomeController extends GetxController {
 
   void _startAutoScroll() {
     _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (!isUserScrolling.value && bannersList.isNotEmpty) {
+      if (!isUserScrolling.value &&
+          bannersList.isNotEmpty &&
+          carouselPageController.hasClients) {
         final nextIndex = (carouselCurrentIndex.value + 1) % bannersList.length;
         carouselPageController.animateToPage(
           nextIndex,

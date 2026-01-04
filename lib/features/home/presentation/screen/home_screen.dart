@@ -10,6 +10,7 @@ import 'package:testemu/features/home/presentation/widgets/fantasy_section.dart'
 import 'package:testemu/features/home/presentation/widgets/home_header.dart';
 import 'package:testemu/features/home/presentation/widgets/library_section.dart';
 import 'package:testemu/features/home/presentation/widgets/movies_grid_section.dart';
+import 'package:testemu/features/home/presentation/widgets/popular_movie_section.dart';
 import 'package:testemu/features/home/presentation/widgets/ranking_section.dart';
 import 'package:testemu/features/home/presentation/widgets/search_bar_widget.dart';
 import 'package:testemu/features/home/presentation/widgets/vip_movies_section.dart';
@@ -119,6 +120,8 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCategoryContent(HomeController controller) {
     switch (controller.selectedCategory.value.trim().toLowerCase()) {
+      case 'popular':
+        return PopularMovieSection(controller: controller);
       case 'vip':
         return VipMoviesSection(controller: controller);
       case 'new':
