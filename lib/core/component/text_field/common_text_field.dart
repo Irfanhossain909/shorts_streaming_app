@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../constants/app_colors.dart';
 import '../text/common_text.dart';
 
 class CommonTextField extends StatefulWidget {
-  CommonTextField({
+  const CommonTextField({
     super.key,
     this.hintText,
     this.labelText,
@@ -90,10 +91,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
     final effectiveKeyboardType = widget.isPassword
         ? TextInputType.text
         : (widget.textInputAction == TextInputAction.newline &&
-                effectiveMaxLines != null &&
-                effectiveMaxLines > 1)
-            ? TextInputType.multiline
-            : widget.keyboardType;
+              effectiveMaxLines != null &&
+              effectiveMaxLines > 1)
+        ? TextInputType.multiline
+        : widget.keyboardType;
 
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -127,10 +128,14 @@ class _CommonTextFieldState extends State<CommonTextField> {
         errorBorder: _buildBorder(),
         hintText: widget.hintText,
         labelText: widget.labelText,
-        hintStyle:
-            GoogleFonts.poppins(fontSize: 14, color: widget.hintTextColor),
-        labelStyle:
-            GoogleFonts.poppins(fontSize: 14, color: widget.labelTextColor),
+        hintStyle: GoogleFonts.poppins(
+          fontSize: 14,
+          color: widget.hintTextColor,
+        ),
+        labelStyle: GoogleFonts.poppins(
+          fontSize: 14,
+          color: widget.labelTextColor,
+        ),
         prefix: widget.prefixText != null
             ? CommonText(
                 text: widget.prefixText ?? "",
@@ -167,8 +172,6 @@ class _CommonTextFieldState extends State<CommonTextField> {
     );
   }
 }
-
-
 
 // // ignore_for_file: must_be_immutable
 

@@ -171,7 +171,6 @@ Dio _getMyDio() {
       onRequest: (options, handler) {
         options
           ..headers["Authorization"] ??= "Bearer ${LocalStorage.token}"
-          ..headers["Content-Type"] ??= "application/json"
           ..connectTimeout = const Duration(seconds: 30)
           ..sendTimeout = const Duration(seconds: 30)
           ..receiveDataWhenStatusError = true
@@ -180,6 +179,13 @@ Dio _getMyDio() {
           ..baseUrl = options.baseUrl.startsWith("http")
               ? ""
               : ApiEndPoint.instance.baseUrl;
+
+        // Only set Content-Type to application/json if not FormData
+        // Dio will automatically set multipart/form-data with boundary for FormData
+        if (options.data is! FormData) {
+          options.headers["Content-Type"] ??= "application/json";
+        }
+
         handler.next(options);
       },
       onResponse: (response, handler) {

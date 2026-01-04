@@ -2,8 +2,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/config/route/app_routes.dart';
-import '../../utils/log/app_log.dart';
 import '../../utils/enum/enum.dart';
+import '../../utils/log/app_log.dart';
 import 'storage_keys.dart';
 
 class LocalStorage {
@@ -74,11 +74,33 @@ class LocalStorage {
   static Future<void> setString(String key, String value) async {
     final localStorage = await _getStorage();
     await localStorage.setString(key, value);
+
+    // Update static variables immediately after saving
+    if (key == LocalStorageKeys.token) {
+      token = value;
+    } else if (key == LocalStorageKeys.refreshToken) {
+      refreshToken = value;
+    } else if (key == LocalStorageKeys.userId) {
+      userId = value;
+    } else if (key == LocalStorageKeys.myImage) {
+      myImage = value;
+    } else if (key == LocalStorageKeys.myName) {
+      myName = value;
+    } else if (key == LocalStorageKeys.myEmail) {
+      myEmail = value;
+    } else if (key == LocalStorageKeys.userRole) {
+      userRole = value == "employer" ? UserRole.employer : UserRole.jobSeeker;
+    }
   }
 
   static Future<void> setBool(String key, bool value) async {
     final localStorage = await _getStorage();
     await localStorage.setBool(key, value);
+
+    // Update static variables immediately after saving
+    if (key == LocalStorageKeys.isLogIn) {
+      isLogIn = value;
+    }
   }
 
   static Future<void> setInt(String key, int value) async {

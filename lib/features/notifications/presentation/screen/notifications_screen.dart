@@ -20,6 +20,7 @@ class NotificationScreen extends StatelessWidget {
       /// App Bar Section starts here
 
       /// Body Section starts here
+      // ignore: avoid_unnecessary_containers
       body: Container(
         // decoration: BoxDecoration(
         //   gradient: LinearGradient(
