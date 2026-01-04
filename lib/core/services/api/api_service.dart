@@ -52,12 +52,16 @@ class ApiService {
 
   Future<ApiResponseModel> multipart(
     String url, {
-    Map<String, String> header = const {},
+    Map<String, String>? header,
     Map<String, String> body = const {},
-    String method = "POST",
+    // String method = "POST",
+    String method = "PATCH",
     String imageName = 'image',
     String? imagePath,
   }) async {
+    final Map<String, String> finalHeader = header != null
+        ? Map.from(header)
+        : {};
     FormData formData = FormData();
     if (imagePath != null && imagePath.isNotEmpty) {
       File file = File(imagePath);
@@ -82,9 +86,8 @@ class ApiService {
       formData.fields.add(MapEntry(key, value));
     });
 
-    header['Content-Type'] = "multipart/form-data";
-
-    return _request(url, method, body: formData, header: header);
+    finalHeader['Content-Type'] = "multipart/form-data";
+    return _request(url, method, body: formData, header: finalHeader);
   }
 
   /// ========== [ API REQUEST HANDLER ] ========== ///

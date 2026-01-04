@@ -47,7 +47,7 @@ class DownloadMenuScreen extends StatelessWidget {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    Get.toNamed(AppRoutes.downloadSesone);
+                    Get.toNamed(AppRoutes.downloadSeason);
                   },
                   child: CommonText(
                     text: "View Download",

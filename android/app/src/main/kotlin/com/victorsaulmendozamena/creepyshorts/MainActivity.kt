@@ -1,4 +1,4 @@
-package com.example.testemu
+package com.victorsaulmendozamena.creepyshorts
 
 import android.os.Bundle
 import android.view.WindowManager

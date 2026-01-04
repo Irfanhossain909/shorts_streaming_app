@@ -6,6 +6,7 @@ import 'package:testemu/features/message/presentation/controller/chat_controller
 import 'package:testemu/features/message/presentation/controller/message_controller.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
+import 'package:testemu/features/profile/presentation/controller/edit_profile_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
 
 class AppBinding extends Bindings {
@@ -19,5 +20,6 @@ class AppBinding extends Bindings {
     Get.lazyPut(() => MessageController());
     Get.lazyPut(() => DownloadEpisodController());
     Get.lazyPut(() => DownloadSesoneListController());
+    Get.lazyPut(() => EditProfileController());
   }
 }
