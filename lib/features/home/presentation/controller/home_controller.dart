@@ -291,6 +291,8 @@ class HomeController extends GetxController {
         (r) {
           isError.value = false;
           bannersList.assignAll(r);
+          // Only update the carousel widget when list initially loads
+          update(['banners_list']);
         },
       );
     } catch (e) {
@@ -351,23 +353,30 @@ class HomeController extends GetxController {
   void _onPageControllerChanged() {
     if (!carouselPageController.hasClients) return;
 
+    // Only update when scrolling is complete to avoid jank during animation
     if (!carouselPageController.position.isScrollingNotifier.value) {
       final page = carouselPageController.page?.round() ?? 0;
       if (carouselCurrentIndex.value != page) {
         final oldIndex = carouselCurrentIndex.value;
         carouselCurrentIndex.value = page;
-        // Only update the specific cards that changed (old center and new center)
-        update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+        // Use post-frame callback to batch updates and reduce jank
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Only update the specific cards that changed (old center and new center)
+          // This minimizes rebuilds during auto-scroll
+          update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+        });
       }
     }
   }
 
   void _startAutoScroll() {
-    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (!isUserScrolling.value &&
           bannersList.isNotEmpty &&
           carouselPageController.hasClients) {
         final nextIndex = (carouselCurrentIndex.value + 1) % bannersList.length;
+        // Use a smoother animation curve and slightly longer duration
+        // This reduces jank by giving the GPU more time to render
         carouselPageController.animateToPage(
           nextIndex,
           duration: const Duration(milliseconds: 800),
@@ -378,15 +387,23 @@ class HomeController extends GetxController {
   }
 
   void onCarouselPageChanged(int index) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (carouselCurrentIndex.value != index) {
-        final oldIndex = carouselCurrentIndex.value;
-        carouselCurrentIndex.value = index;
+    // Debounce rapid page changes to prevent excessive rebuilds
+    if (carouselCurrentIndex.value != index) {
+      final oldIndex = carouselCurrentIndex.value;
+      carouselCurrentIndex.value = index;
+      // Use post-frame callback to batch updates and reduce jank
+      // This ensures updates happen after the frame is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         // Only update the specific cards that changed (old center and new center)
-        // This minimizes rebuilds
-        update(['carousel_index_$oldIndex', 'carousel_index_$index']);
-      }
-    });
+        // This minimizes rebuilds during auto-scroll
+        if (oldIndex >= 0 && oldIndex < bannersList.length) {
+          update(['carousel_index_$oldIndex']);
+        }
+        if (index >= 0 && index < bannersList.length) {
+          update(['carousel_index_$index']);
+        }
+      });
+    }
   }
 
   void onCarouselScrollStart() {

@@ -173,95 +173,111 @@ class VideoDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CommonText(
-                            text: "Episode",
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.white,
-                          ),
-                          SizedBox(width: 10.w),
-                          Obx(() {
-                            final seasons =
-                                videoDetailsController.data.value?.seasons ??
-                                [];
-                            final selectedId =
-                                videoDetailsController.selectedSeasonId.value;
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CommonText(
+                              text: "Episode",
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.white,
+                            ),
+                            SizedBox(width: 10.w),
+                            Flexible(
+                              child: Obx(() {
+                                final seasons =
+                                    videoDetailsController
+                                        .data
+                                        .value
+                                        ?.seasons ??
+                                    [];
+                                final selectedId = videoDetailsController
+                                    .selectedSeasonId
+                                    .value;
 
-                            if (seasons.isEmpty) {
-                              return SizedBox.shrink();
-                            }
+                                if (seasons.isEmpty) {
+                                  return SizedBox.shrink();
+                                }
 
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 4.h,
-                                horizontal: 4.w,
-                              ),
-                              height: 32.h,
-                              decoration: BoxDecoration(
-                                color: AppColors.red,
-                                borderRadius: BorderRadius.circular(40.r),
-                              ),
-                              child: DropdownButton<String>(
-                                value: selectedId ?? seasons.first.id,
-                                selectedItemBuilder: (BuildContext context) {
-                                  return seasons.map((season) {
-                                    final displayText =
-                                        season.seasonTitle?.isNotEmpty == true
-                                        ? season.seasonTitle!
-                                        : (season.seasonNumber != null
-                                              ? "Series ${season.seasonNumber}"
-                                              : "Series");
-                                    return CommonText(
-                                      text: displayText,
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 4.h,
+                                    horizontal: 4.w,
+                                  ),
+                                  height: 32.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.red,
+                                    borderRadius: BorderRadius.circular(40.r),
+                                  ),
+                                  child: DropdownButton<String>(
+                                    value: selectedId ?? seasons.first.id,
+                                    isExpanded: true,
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return seasons.map((season) {
+                                        final displayText =
+                                            season.seasonTitle?.isNotEmpty ==
+                                                true
+                                            ? season.seasonTitle!
+                                            : (season.seasonNumber != null
+                                                  ? "Series ${season.seasonNumber}"
+                                                  : "Series");
+                                        return CommonText(
+                                          text: displayText,
+                                          color: AppColors.white,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                          overflow: TextOverflow.ellipsis,
+                                        );
+                                      }).toList();
+                                    },
+                                    items: seasons.map((season) {
+                                      final displayText =
+                                          season.seasonTitle?.isNotEmpty == true
+                                          ? season.seasonTitle!
+                                          : (season.seasonNumber != null
+                                                ? "Series ${season.seasonNumber}"
+                                                : "Series");
+                                      return DropdownMenuItem<String>(
+                                        value: season.id,
+                                        child: CommonText(
+                                          text: displayText,
+                                          color: AppColors.white,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        videoDetailsController.onSeasonChanged(
+                                          value,
+                                        );
+                                      }
+                                    },
+                                    icon: const SizedBox.shrink(),
+                                    style: TextStyle(
                                       color: AppColors.white,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    );
-                                  }).toList();
-                                },
-                                items: seasons.map((season) {
-                                  final displayText =
-                                      season.seasonTitle?.isNotEmpty == true
-                                      ? season.seasonTitle!
-                                      : (season.seasonNumber != null
-                                            ? "Series ${season.seasonNumber}"
-                                            : "Series");
-                                  return DropdownMenuItem<String>(
-                                    value: season.id,
-                                    child: CommonText(
-                                      text: displayText,
-                                      color: AppColors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    videoDetailsController.onSeasonChanged(
-                                      value,
-                                    );
-                                  }
-                                },
-                                icon: const SizedBox.shrink(),
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                iconSize: 0,
-                                dropdownColor: AppColors.red,
-                                underline: Container(),
-                                borderRadius: BorderRadius.circular(10.r),
-                                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              ),
-                            );
-                          }),
-                        ],
+                                    iconSize: 0,
+                                    dropdownColor: AppColors.red,
+                                    underline: Container(),
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
                       ),
+                      SizedBox(width: 8.w),
                       GestureDetector(
                         onTap: () {
                           Get.back();
