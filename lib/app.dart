@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,
         navigatorKey: Get.key,
+        //showPerformanceOverlay: true,
         //locale: DevicePreview.locale(context),
         //builder: DevicePreview.appBuilder,
         defaultTransition: Transition.fadeIn,

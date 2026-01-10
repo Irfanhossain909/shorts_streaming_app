@@ -8,6 +8,7 @@ import 'core/services/socket/socket_service.dart';
 import 'core/services/storage/storage_services.dart';
 
 Future<void> main() async {
+  //debugRepaintRainbowEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
   await init.tryCatch();
   runApp(

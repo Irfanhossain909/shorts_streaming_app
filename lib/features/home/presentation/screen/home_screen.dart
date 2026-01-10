@@ -111,23 +111,21 @@ class HomeScreen extends StatelessWidget {
                 ),
               ];
             },
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  10.height,
+            body: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: SizedBox(height: 10)),
 
-                  // Conditional content based on search or selected category
-                  Obx(() {
+                SliverToBoxAdapter(
+                  child: Obx(() {
                     if (controller.isSearchActive) {
                       return _buildSearchResults(controller);
                     }
                     return _buildCategoryContent(controller);
                   }),
+                ),
 
-                  30.height,
-                ],
-              ),
+                SliverToBoxAdapter(child: SizedBox(height: 30)),
+              ],
             ),
           ),
         ),
@@ -212,30 +210,29 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildMoviesGrid(List<Movie> movies, HomeController controller) {
-    return Padding(
+    return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final movie = movies[index];
+          return RepaintBoundary(
+            child: MovieCard(
+              title: movie.title,
+              imageUrl: OtherHelper.getImageUrl(
+                movie.thumbnail,
+                defaultAsset: AppImages.m1,
+              ),
+              badge: movie.genre,
+              onTap: () => controller.onMovieTap(movie.id),
+            ),
+          );
+        }, childCount: movies.length),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 12.w,
           mainAxisSpacing: 16.h,
           childAspectRatio: 0.50,
         ),
-        itemCount: movies.length,
-        itemBuilder: (context, index) {
-          final movie = movies[index];
-          return MovieCard(
-            title: movie.title,
-            imageUrl: OtherHelper.getImageUrl(
-              movie.thumbnail,
-              defaultAsset: AppImages.m1,
-            ),
-            badge: movie.genre,
-            onTap: () => controller.onMovieTap(movie.id),
-          );
-        },
       ),
     );
   }
@@ -257,6 +254,8 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get maxExtent => maxHeight;
+  @override
+  bool shouldRebuild(_) => false;
 
   @override
   Widget build(
@@ -265,12 +264,5 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(_StickyHeaderDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
   }
 }

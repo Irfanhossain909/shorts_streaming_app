@@ -19,6 +19,8 @@ class CategoryFilter extends StatelessWidget {
     return SizedBox(
       height: 40.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         padding: EdgeInsets.symmetric(horizontal: 20.w),

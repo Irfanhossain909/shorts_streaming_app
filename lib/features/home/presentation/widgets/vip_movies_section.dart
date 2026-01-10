@@ -67,6 +67,8 @@ class VipMoviesSection extends StatelessWidget {
     return SizedBox(
       height: 140.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: movies.length,
@@ -96,6 +98,8 @@ class VipMoviesSection extends StatelessWidget {
     return SizedBox(
       height: 240.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: movies.length,

@@ -90,6 +90,15 @@ class ApiService {
     return _request(url, method, body: formData, header: finalHeader);
   }
 
+  Future<ApiResponseModel> downloadFile(String url, String savePath) async {
+    try {
+      final response = await _dio.download(url, savePath);
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleError(e);
+    }
+  }
+
   /// ========== [ API REQUEST HANDLER ] ========== ///
   Future<ApiResponseModel> _request(
     String url,

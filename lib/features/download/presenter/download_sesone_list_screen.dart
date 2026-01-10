@@ -43,6 +43,8 @@ class DownloadSesoneListScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
+                  addRepaintBoundaries: true,
+                  addAutomaticKeepAlives: false,
                   itemCount: downloadItems.length,
                   itemBuilder: (context, index) {
                     final item = downloadItems[index];

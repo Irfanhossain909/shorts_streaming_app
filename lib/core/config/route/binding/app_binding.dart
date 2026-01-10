@@ -8,6 +8,7 @@ import 'package:testemu/features/navigation_bar/presentation/controller/navigati
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/edit_profile_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
+import 'package:testemu/features/shorts/controller/shorts_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -21,5 +22,6 @@ class AppBinding extends Bindings {
     Get.lazyPut(() => DownloadEpisodController());
     Get.lazyPut(() => DownloadSesoneListController());
     Get.lazyPut(() => EditProfileController());
+    Get.lazyPut(() => ShortsScontroller());
   }
 }

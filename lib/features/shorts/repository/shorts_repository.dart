@@ -1,4 +1,5 @@
 import 'package:testemu/core/config/api/api_end_point.dart';
+import 'package:testemu/core/services/api/api_response_model.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/shorts/model/season_video_details_model.dart';
@@ -58,6 +59,20 @@ class ShortsRepository {
         statusCode: 0,
         data: [],
       );
+    }
+  }
+
+  Future<ApiResponseModel> downloadVideo(String url, String savePath) async {
+    try {
+      final response = await apiService.downloadFile(url, savePath);
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception(response.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Download Video');
+      throw Exception(e.toString());
     }
   }
 }
