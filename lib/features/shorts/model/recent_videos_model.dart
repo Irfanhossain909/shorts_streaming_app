@@ -1,29 +1,53 @@
-class SeasonVideoResponse {
+class RecentVideosResponse {
   final bool success;
   final String message;
   final int statusCode;
-  final List<SeasonVideo> data;
+  final List<RecentlyViewedItem> data;
+  final Meta? meta;
 
-  SeasonVideoResponse({
+  RecentVideosResponse({
     required this.success,
     required this.message,
     required this.statusCode,
     required this.data,
+    this.meta,
   });
 
-  factory SeasonVideoResponse.fromJson(Map<String, dynamic> json) {
-    return SeasonVideoResponse(
+  factory RecentVideosResponse.fromJson(Map<String, dynamic> json) {
+    return RecentVideosResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
       statusCode: json['statusCode'] ?? 0,
       data: (json['data'] as List<dynamic>? ?? [])
-          .map((e) => SeasonVideo.fromJson(e))
+          .map((e) => RecentlyViewedItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      meta: json['meta'] != null ? Meta.fromJson(json['meta']) : null,
     );
   }
 }
 
-class SeasonVideo {
+class RecentlyViewedItem {
+  final RecentVideo videoId;
+  final String id;
+  final DateTime viewedAt;
+
+  RecentlyViewedItem({
+    required this.videoId,
+    required this.id,
+    required this.viewedAt,
+  });
+
+  factory RecentlyViewedItem.fromJson(Map<String, dynamic> json) {
+    return RecentlyViewedItem(
+      videoId: RecentVideo.fromJson(json['videoId'] as Map<String, dynamic>),
+      id: json['_id'] ?? '',
+      viewedAt: DateTime.tryParse(json['viewedAt'] ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+class RecentVideo {
+  final String type;
   final String id;
   final String title;
   final String description;
@@ -37,15 +61,16 @@ class SeasonVideo {
   final int episodeNumber;
   final int views;
   final int likes;
+  final DownloadUrls? downloadUrls;
   final List<String> likedBy;
   final bool isDeleted;
-  final bool isSubscribed;
-  final bool isAccess;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int version;
+  final bool isSubscribed;
+  final bool isAccess;
 
-  SeasonVideo({
+  RecentVideo({
+    required this.type,
     required this.id,
     required this.title,
     required this.description,
@@ -59,25 +84,26 @@ class SeasonVideo {
     required this.episodeNumber,
     required this.views,
     required this.likes,
+    this.downloadUrls,
     required this.likedBy,
     required this.isDeleted,
-    required this.isSubscribed,
-    required this.isAccess,
     required this.createdAt,
     required this.updatedAt,
-    required this.version,
+    required this.isSubscribed,
+    required this.isAccess,
   });
 
-  factory SeasonVideo.fromJson(Map<String, dynamic> json) {
+  factory RecentVideo.fromJson(Map<String, dynamic> json) {
     // Sanitize videoUrl to remove whitespace and newlines
     String rawVideoUrl = json['videoUrl'] ?? '';
     String sanitizedVideoUrl = rawVideoUrl
-        .replaceAll(RegExp(r'\s+'), '') // Remove all whitespace
-        .replaceAll('\n', '') // Remove newlines
-        .replaceAll('\r', '') // Remove carriage returns
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll('\n', '')
+        .replaceAll('\r', '')
         .trim();
-    
-    return SeasonVideo(
+
+    return RecentVideo(
+      type: json['type'] ?? 'video',
       id: json['_id'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
@@ -91,40 +117,52 @@ class SeasonVideo {
       episodeNumber: json['episodeNumber'] ?? 0,
       views: json['views'] ?? 0,
       likes: json['likes'] ?? 0,
+      downloadUrls: json['downloadUrls'] != null
+          ? DownloadUrls.fromJson(json['downloadUrls'])
+          : null,
       likedBy: (json['likedBy'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
       isDeleted: json['isDeleted'] ?? false,
-      isSubscribed: json['isSubscribed'] ?? false,
-      isAccess: json['isAccess'] ?? false,
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
-      version: json['__v'] ?? 0,
+      isSubscribed: json['isSubscribed'] ?? false,
+      isAccess: json['isAccess'] ?? false,
     );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'title': title,
-      'description': description,
-      'duration': duration,
-      'videoUrl': videoUrl,
-      'videoId': videoId,
-      'libraryId': libraryId,
-      'thumbnailUrl': thumbnailUrl,
-      'movieId': movieId,
-      'seasonId': seasonId,
-      'episodeNumber': episodeNumber,
-      'views': views,
-      'likes': likes,
-      'likedBy': likedBy,
-      'isDeleted': isDeleted,
-      'isSubscribed': isSubscribed,
-      'isAccess': isAccess,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-      '__v': version,
-    };
+class DownloadUrls {
+  final String original;
+  final String hd;
+  final String sd;
+  final String? mobile;
+
+  DownloadUrls({
+    required this.original,
+    required this.hd,
+    required this.sd,
+    this.mobile,
+  });
+
+  factory DownloadUrls.fromJson(Map<String, dynamic> json) {
+    return DownloadUrls(
+      original: json['original'] ?? '',
+      hd: json['hd'] ?? '',
+      sd: json['sd'] ?? '',
+      mobile: json['mobile'],
+    );
+  }
+}
+
+class Meta {
+  final int total;
+  final int page;
+  final int limit;
+
+  Meta({required this.total, required this.page, required this.limit});
+
+  factory Meta.fromJson(Map<String, dynamic> json) {
+    return Meta(total: json['total'], page: json['page'], limit: json['limit']);
   }
 }

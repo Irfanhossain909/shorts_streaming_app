@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
+import 'package:testemu/features/shorts/model/recent_videos_model.dart';
 import 'package:testemu/features/shorts/model/season_video_details_model.dart';
 import 'package:testemu/features/shorts/model/video_details_model.dart';
 import 'package:testemu/features/shorts/repository/shorts_repository.dart';
@@ -23,12 +24,14 @@ class VideoDetailsController extends GetxController {
   var seasonVideoIsNotEmpty = false.obs;
   var selectedSeasonId = Rx<String?>(null);
   var listOfVideos = Rx<List<String>?>(null);
+  var recentVideos = Rx<List<RecentlyViewedItem>?>(null);
   @override
   void onInit() {
     videoId = Get.arguments['videoId'];
     appLog(videoId, source: 'VideoId');
     super.onInit();
     getVideoDetails();
+    getRecentVideos();
   }
 
   Future<void> getVideoDetails() async {
@@ -101,7 +104,7 @@ class VideoDetailsController extends GetxController {
     seasonVideoIsEmpty.value = true;
   }
 
-  void onSeasonTap(String videoUrl, int index) {
+  Future<void> onSeasonTap(String videoUrl, String videoId, int index) async {
     // Sanitize URL before passing
     String sanitizedUrl = _sanitizeUrl(videoUrl);
     appLog('Original VideoUrl: $videoUrl', source: 'VideoUrl');
@@ -109,11 +112,13 @@ class VideoDetailsController extends GetxController {
     if (listOfVideos.value != null &&
         (listOfVideos.value?.isNotEmpty ?? false)) {
       appLog('List of Videos is not empty', source: 'List of Videos');
+      await addRecentVideo(videoId);
       Get.toNamed(
         AppRoutes.videoPlayer,
         arguments: {'index': index, 'listOfVideos': listOfVideos.value!},
       );
     } else if (videoUrl.isNotEmpty) {
+      await addRecentVideo(videoId);
       Get.toNamed(
         AppRoutes.videoPlayer,
         arguments: {'videoUrl': videoUrl, 'index': index},
@@ -141,5 +146,32 @@ class VideoDetailsController extends GetxController {
         .trim();
 
     return sanitized;
+  }
+
+  Future<void> addRecentVideo(String videoId) async {
+    final response = await shortsRepository.addRecentVideo(videoId);
+    if (response.statusCode == 200) {
+      appLog('Recent video added successfully', source: 'Recent Video');
+    } else {
+      appLog(
+        'Failed to add recent video: ${response.message}',
+        source: 'Recent Video',
+      );
+    }
+  }
+
+  Future<void> getRecentVideos() async {
+    final RecentVideosResponse response = await shortsRepository
+        .getRecentVideos();
+    if (response.success && response.statusCode == 200) {
+      recentVideos.value = response.data;
+      appLog('Recent videos: ${recentVideos.value}', source: 'Recent Videos');
+      appLog('Recent videos fetched successfully', source: 'Recent Videos');
+    } else {
+      appLog(
+        'Failed to fetch recent videos: ${response.message}',
+        source: 'Recent Videos',
+      );
+    }
   }
 }

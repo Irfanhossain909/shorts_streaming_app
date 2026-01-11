@@ -36,6 +36,8 @@ class ApiEndPoint {
   final String getReminders = "/reminder/for-user";
   final String toggleBookmark = "/bookmark/toggle";
   final String getBookmarks = "/bookmark";
+  final String addRecentVideos = "/users/add-recently-viewed/";
+  final String getRecentVideos = "/users/recently-viewed";
   // // App endpoints
   final String user = "users";
   final String notifications = "notifications";

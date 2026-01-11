@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
@@ -330,6 +331,7 @@ class VideoDetailScreen extends StatelessWidget {
                               onPressed: () {
                                 videoDetailsController.onSeasonTap(
                                   episode.videoUrl,
+                                  episode.id,
                                   index,
                                 );
                               },
@@ -347,29 +349,51 @@ class VideoDetailScreen extends StatelessWidget {
                     color: AppColors.white,
                   ),
                   SizedBox(height: 10.h),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(vertical: 10.h),
-                  //   height: 280
-                  //       .h, // Increased height to accommodate full MovieCard content
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.horizontal,
-                  //     itemCount: data.seasons.length,
-                  //     itemBuilder: (context, index) {
-                  //       return MovieCard(
-                  //         title:
-                  //             data.seasons[index].title,
-                  //         imageUrl: data.seasons[index].imageUrl,
-                  //             data.seasons[index].imageUrl,
-                  //         badge:
-                  //             data.seasons[index].badge,
-                  //         date: data.seasons[index].releaseDate,
-                  //         onTap: () => videoDetailsController.onSeasonTap(
-                  //           data.seasons[index].id,
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
+                  Obx(() {
+                    final recentVideos =
+                        videoDetailsController.recentVideos.value ?? [];
+
+                    if (recentVideos.isEmpty) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        child: Center(
+                          child: CommonText(
+                            text: "No recommendations available",
+                            fontSize: 14.sp,
+                            color: AppColors.white.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      height: 280
+                          .h, // Increased height to accommodate full MovieCard content
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: recentVideos.length,
+                        itemBuilder: (context, index) {
+                          final recentItem = recentVideos[index];
+                          final video =
+                              recentItem.videoId; // Access nested video
+                          return MovieCard(
+                            title: video.title,
+                            imageUrl: video.thumbnailUrl,
+                            badge: "Episode ${video.episodeNumber}",
+                            date: recentItem.viewedAt
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0],
+                            onTap: () => Get.toNamed(
+                              AppRoutes.videoDetail,
+                              arguments: {'videoId': video.movieId},
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
