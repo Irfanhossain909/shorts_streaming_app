@@ -50,7 +50,7 @@ class ApiEndPoint {
 // Helper function to get domain based on environment
 String _getDomain() {
   String liveServer = "http://72.62.164.122:5000";
-  String localServer = "https://rakibur5003.binarybards.online";
+  String localServer = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {
@@ -66,7 +66,7 @@ String _getDomain() {
 // Helper function to get image URL
 String _getImageUrl() {
   String liveImageUrl = "http://72.62.164.122:5000";
-  String localImageUrl = "https://rakibur5003.binarybards.online";
+  String localImageUrl = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {
@@ -82,7 +82,7 @@ String _getImageUrl() {
 // Helper function to get socket URL
 String _getSocketUrl() {
   String liveSocket = "http://72.62.164.122:5000";
-  String localSocket = "https://rakibur5003.binarybards.online";
+  String localSocket = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {

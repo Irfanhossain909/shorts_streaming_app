@@ -8,11 +8,11 @@ import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/download/controller/downloaded_shorts_controller.dart';
+import 'package:testemu/features/download/model/downloaded_video_model.dart';
 
-class DownloadSesoneListScreen extends StatelessWidget {
-  const DownloadSesoneListScreen({super.key});
+class DownloadedShortsScreen extends StatelessWidget {
+  const DownloadedShortsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +34,14 @@ class DownloadSesoneListScreen extends StatelessWidget {
             ],
             isCenterTitle: false,
             title: "Downloaded Shorts",
-            isShowBackButton: false,
+            isShowBackButton: true,
           ),
-
           body: Obx(() {
-            // Loading state
             if (controller.isLoading.value &&
                 controller.downloadedVideos.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            // Empty state
             if (controller.downloadedVideos.isEmpty) {
               return Center(
                 child: Column(
@@ -64,7 +61,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     CommonText(
-                      text: "Download videos from Shorts to watch offline",
+                      text: "Download videos to watch offline",
                       fontSize: 12.sp,
                       color: AppColors.white.withValues(alpha: 0.4),
                     ),
@@ -73,7 +70,6 @@ class DownloadSesoneListScreen extends StatelessWidget {
               );
             }
 
-            // Video list
             return Column(
               children: [
                 // Storage info
@@ -105,6 +101,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
                   ),
                 ),
 
+                // Video list
                 Expanded(
                   child: ListView.builder(
                     addRepaintBoundaries: true,
@@ -113,13 +110,9 @@ class DownloadSesoneListScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final video = controller.getVideoAt(index);
                       return Obx(() {
-                        return MovieCardD(
-                          imagePath: video.thumbnailUrl,
-                          title: video.title,
-                          description: video.description,
-                          size: video.formattedFileSize,
-                          episodeInfo: video.episodeInfo,
-                          isMarkShowAll: controller.isSelectionMode.value,
+                        return DownloadedVideoCard(
+                          video: video,
+                          isSelectionMode: controller.isSelectionMode.value,
                           isSelected: controller.isVideoSelected(video.videoId),
                           onTap: () {
                             controller.playDownloadedVideo(index);
@@ -159,20 +152,15 @@ class DownloadSesoneListScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-
-                          // Vertical Divider
                           Container(
                             width: 1,
                             height: 24,
                             color: AppColors.white.withValues(alpha: 0.5),
                           ),
-
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                if (controller.selectedVideoIds.isNotEmpty) {
-                                  deteleDialog(context, controller);
-                                }
+                                controller.showDeleteConfirmationDialog();
                               },
                               child: CommonText(
                                 text:
@@ -195,158 +183,36 @@ class DownloadSesoneListScreen extends StatelessWidget {
       },
     );
   }
-
-  Future<dynamic> deteleDialog(
-    BuildContext context,
-    DownloadedShortsController controller,
-  ) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.background,
-        contentPadding: const EdgeInsets.only(
-          top: 16,
-          left: 16,
-          right: 16,
-          bottom: 8,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        content: Stack(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                34.height, // space for close button
-
-                Text(
-                  "Delete ${controller.selectedVideoIds.length} video(s)?",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    color: AppColors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "This will permanently delete the videos from your device",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    color: AppColors.white.withValues(alpha: 0.6),
-                    fontSize: 12.sp,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => Get.back(),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.black.withValues(alpha: .1),
-                            borderRadius: BorderRadius.circular(36.r),
-                          ),
-                          alignment: Alignment.center,
-                          child: CommonText(
-                            top: 8.h,
-                            bottom: 8.h,
-                            text: "Cancel",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Get.back();
-                          controller.deleteSelectedVideos();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.red,
-                            borderRadius: BorderRadius.circular(36.r),
-                          ),
-                          alignment: Alignment.center,
-                          child: CommonText(
-                            top: 8.h,
-                            bottom: 8.h,
-                            text: "Delete",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Positioned(
-              top: -10,
-              right: -10,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: AppColors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-class MovieCardD extends StatefulWidget {
-  final String? imagePath;
-  final String? title;
-  final String? description;
-  final String? size;
-  final String? episodeInfo;
-  final VoidCallback? onTap;
-  final bool isMarkShowAll;
+class DownloadedVideoCard extends StatelessWidget {
+  final DownloadedVideoModel video;
+  final bool isSelectionMode;
   final bool isSelected;
+  final VoidCallback? onTap;
 
-  const MovieCardD({
+  const DownloadedVideoCard({
     super.key,
-    this.imagePath,
-    this.title,
-    this.description,
-    this.size,
-    this.episodeInfo,
-    this.onTap,
-    this.isMarkShowAll = false,
+    required this.video,
+    this.isSelectionMode = false,
     this.isSelected = false,
+    this.onTap,
   });
 
-  @override
-  State<MovieCardD> createState() => _MovieCardDState();
-}
-
-class _MovieCardDState extends State<MovieCardD> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: widget.onTap,
+        onTap: onTap,
         child: Row(
           spacing: 8,
           children: [
-            if (widget.isMarkShowAll)
+            // Selection indicator
+            if (isSelectionMode)
               InkWell(
-                onTap: widget.onTap,
-                child: widget.isSelected
+                onTap: onTap,
+                child: isSelected
                     ? Container(
                         width: 18.w,
                         height: 18.h,
@@ -354,7 +220,7 @@ class _MovieCardDState extends State<MovieCardD> {
                           color: AppColors.red,
                           borderRadius: BorderRadius.circular(100.r),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.done,
                           size: 12,
                           color: AppColors.black,
@@ -369,17 +235,18 @@ class _MovieCardDState extends State<MovieCardD> {
                         ),
                       ),
               ),
+
+            // Thumbnail
             Stack(
               children: [
                 CommonImage(
                   borderRadius: 8.r,
                   width: 82.w,
                   height: 103.h,
-                  imageSrc: widget.imagePath?.isNotEmpty == true
-                      ? widget.imagePath!
+                  imageSrc: video.thumbnailUrl.isNotEmpty
+                      ? video.thumbnailUrl
                       : AppImages.m1,
                 ),
-                // Offline indicator badge
                 Positioned(
                   bottom: 4,
                   right: 4,
@@ -401,70 +268,76 @@ class _MovieCardDState extends State<MovieCardD> {
                 ),
               ],
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width - 130,
-              height: 100,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonText(
-                    text: widget.title ?? "Reborn True Princess Returns",
-                    style: GoogleFonts.poppins(
-                      fontSize: 12.sp,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
 
-                  CommonText(
-                    text:
-                        widget.description ??
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
-                    maxLines: 3,
-                    textAlign: TextAlign.justify,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 10.sp,
-                      color: AppColors.white.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w400,
+            // Video info
+            Expanded(
+              child: SizedBox(
+                height: 103.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    CommonText(
+                      text: video.title,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12.sp,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const Spacer(),
 
-                  // Episode info and file size
-                  Row(
-                    children: [
-                      if (widget.episodeInfo?.isNotEmpty == true) ...[
+                    // Description
+                    CommonText(
+                      text: video.description,
+                      maxLines: 2,
+                      textAlign: TextAlign.justify,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10.sp,
+                        color: AppColors.white.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // Episode info and file size
+                    Row(
+                      children: [
+                        if (video.episodeInfo.isNotEmpty) ...[
+                          CommonText(
+                            text: video.episodeInfo,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10.sp,
+                              color: AppColors.white.withValues(alpha: 0.7),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: AppColors.white.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                        ],
                         CommonText(
-                          text: widget.episodeInfo!,
+                          text: video.formattedFileSize,
                           style: GoogleFonts.poppins(
                             fontSize: 10.sp,
-                            color: AppColors.white.withValues(alpha: 0.7),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Container(
-                          width: 3,
-                          height: 3,
-                          decoration: BoxDecoration(
                             color: AppColors.white.withValues(alpha: 0.5),
-                            shape: BoxShape.circle,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        SizedBox(width: 8.w),
                       ],
-                      CommonText(
-                        text: widget.size ?? "0 MB",
-                        style: GoogleFonts.poppins(
-                          fontSize: 10.sp,
-                          color: AppColors.white.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -473,6 +346,3 @@ class _MovieCardDState extends State<MovieCardD> {
     );
   }
 }
-
-// Note: This screen now shows REAL offline downloaded videos
-// The dummy data below is kept for reference but not used anymore

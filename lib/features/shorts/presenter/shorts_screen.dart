@@ -190,11 +190,70 @@ class ShortVideoPlayer extends StatelessWidget {
                       onTap: () => controller.showEpisodeListBottomSheet(),
                     ),
                     ReelButton(imgPath: AppImages.shareIc, text: "Share"),
-                    ReelButton(
-                      onTap: () => controller.downloadCurrentVideo(),
-                      imgPath: AppImages.download,
-                      text: "DownLoad",
-                    ),
+                    // Download button with circular progress
+                    Obx(() {
+                      final isDownloading = controller.isDownloading.value;
+                      final progress = controller.downloadProgress.value;
+
+                      return InkWell(
+                        onTap: isDownloading
+                            ? null
+                            : () => controller.downloadCurrentVideo(),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 4.h,
+                          children: [
+                            // Icon with circular progress
+                            SizedBox(
+                              width: 40.w,
+                              height: 40.w,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Circular progress indicator
+                                  if (isDownloading)
+                                    SizedBox(
+                                      width: 40.w,
+                                      height: 40.w,
+                                      child: CircularProgressIndicator(
+                                        value: progress,
+                                        strokeWidth: 2.5,
+                                        backgroundColor: AppColors.white
+                                            .withOpacity(0.3),
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                              AppColors.red2,
+                                            ),
+                                      ),
+                                    ),
+
+                                  // Download icon
+                                  CommonImage(
+                                    imageColor: isDownloading
+                                        ? AppColors.red2
+                                        : AppColors.background,
+                                    imageSrc: AppImages.download,
+                                    width: 24.w,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Text showing progress or "Download"
+                            CommonText(
+                              text: isDownloading
+                                  ? "${(progress * 100).toInt()}%"
+                                  : "Download",
+                              fontSize: 14.h,
+                              fontWeight: FontWeight.w600,
+                              color: isDownloading
+                                  ? AppColors.red2
+                                  : AppColors.background,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),

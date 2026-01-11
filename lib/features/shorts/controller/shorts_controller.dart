@@ -4,18 +4,63 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/features/download/model/downloaded_video_model.dart';
+import 'package:testemu/features/download/service/download_service.dart';
 import 'package:testemu/features/shorts/repository/shorts_repository.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
 import 'package:video_player/video_player.dart';
 
 class ShortsScontroller extends GetxController {
   final ShortsRepository repository = ShortsRepository.instance;
+  final DownloadService downloadService = DownloadService.instance;
+
   // Video list
   final List<String> videos = [
     "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
     "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
     "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
     "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
+  ];
+
+  // Video metadata (should come from API in real implementation)
+  // For now, using sample data
+  final List<Map<String, String>> videoMetadata = [
+    {
+      'title': 'Amazing Short Video 1',
+      'description':
+          'This is an amazing short video with stunning visuals and great content. Watch till the end!',
+      'thumbnailUrl':
+          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
+      'episodeNumber': '1',
+      'seasonNumber': '1',
+    },
+    {
+      'title': 'Incredible Short Video 2',
+      'description':
+          'Another incredible short that will blow your mind. Don\'t miss this one!',
+      'thumbnailUrl':
+          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
+      'episodeNumber': '2',
+      'seasonNumber': '1',
+    },
+    {
+      'title': 'Epic Short Video 3',
+      'description':
+          'An epic journey captured in a short video. Experience the magic!',
+      'thumbnailUrl':
+          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
+      'episodeNumber': '3',
+      'seasonNumber': '1',
+    },
+    {
+      'title': 'Fantastic Short Video 4',
+      'description':
+          'A fantastic short that showcases creativity at its best. Enjoy!',
+      'thumbnailUrl':
+          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
+      'episodeNumber': '4',
+      'seasonNumber': '1',
+    },
   ];
 
   // PageView controller
@@ -259,33 +304,197 @@ class ShortsScontroller extends GetxController {
     required String url,
     required String savePath,
   }) async {
-    final response = await repository.downloadVideo(url, savePath);
-    if (response.statusCode == 200) {
-      return true;
-    } else {
+    try {
+      printInfo(info: '📥 Starting download from: $url');
+      printInfo(info: '💾 Saving to: $savePath');
+
+      final response = await repository.downloadVideo(
+        url,
+        savePath,
+        onProgress: (received, total) {
+          if (total != -1) {
+            final progress = (received / total * 100).toStringAsFixed(0);
+            downloadProgress.value = received / total;
+            printInfo(info: '⬇️ Download progress: $progress%');
+          }
+        },
+      );
+
+      if (response.statusCode == 200) {
+        printInfo(info: '✅ Download completed successfully');
+        return true;
+      } else {
+        printInfo(
+          info: '❌ Download failed with status: ${response.statusCode}',
+        );
+        printInfo(info: 'Response: ${response.data}');
+        return false;
+      }
+    } catch (e) {
+      printInfo(info: '❌ Download exception: $e');
       return false;
     }
   }
 
+  // Track download state
+  RxBool isDownloading = false.obs;
+  RxDouble downloadProgress = 0.0.obs;
+
   Future<void> downloadCurrentVideo() async {
+    printInfo(info: '🚀 downloadCurrentVideo called');
+
+    // Prevent multiple simultaneous downloads
+    if (isDownloading.value) {
+      printInfo(info: '⏸️ Already downloading, skipping');
+      Get.snackbar(
+        "Please Wait",
+        "Another download is in progress",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     final index = currentIndex.value;
     final url = videos[index];
     final videoId = url.hashCode.toString();
 
-    final path = await getVideoLocalPath(videoId);
+    printInfo(info: '📹 Video URL: $url');
+    printInfo(info: '🆔 Video ID: $videoId');
 
-    _loadingStates[index] = true;
-    update();
+    // Check if already downloaded
+    try {
+      final isAlreadyDownloaded = await downloadService.isVideoDownloaded(
+        videoId,
+      );
+      printInfo(info: '✓ Already downloaded check: $isAlreadyDownloaded');
 
-    final success = await downloadVideo(url: url, savePath: path);
+      if (isAlreadyDownloaded) {
+        Get.snackbar(
+          "Already Downloaded",
+          "This video is already available offline",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+    } catch (e) {
+      printInfo(info: '❌ Error checking download status: $e');
+    }
 
-    _loadingStates[index] = false;
-    update();
+    // CRITICAL: Pause the video before downloading to free up resources
+    printInfo(info: '⏸️ Pausing video before download');
+    _pauseVideo(index);
 
-    if (success) {
-      Get.snackbar("Downloaded", "Video available offline");
-    } else {
-      Get.snackbar("Error", "Download failed");
+    isDownloading.value = true;
+    downloadProgress.value = 0.0;
+
+    Get.snackbar(
+      "Downloading",
+      "Starting download...",
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 2),
+      showProgressIndicator: true,
+    );
+
+    try {
+      final path = await getVideoLocalPath(videoId);
+      printInfo(info: '💾 Save path: $path');
+
+      // Download in background (non-blocking)
+      printInfo(info: '⬇️ Calling downloadVideo method...');
+      final success = await downloadVideo(url: url, savePath: path);
+      printInfo(info: '✓ downloadVideo returned: $success');
+
+      if (success) {
+        printInfo(info: '✅ Download success flag is true');
+
+        // Wait a bit for file system to sync
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Get file size
+        final file = File(path);
+        final exists = await file.exists();
+        printInfo(info: '📁 File exists check: $exists');
+
+        if (!exists) {
+          printInfo(info: '❌ File not found at: $path');
+          throw Exception('Downloaded file not found at: $path');
+        }
+
+        final fileSize = await file.length();
+        printInfo(
+          info:
+              '📦 File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB',
+        );
+
+        // Get metadata for this video
+        final metadata = index < videoMetadata.length
+            ? videoMetadata[index]
+            : {
+                'title': 'Short Video ${index + 1}',
+                'description': 'Enjoy this amazing short video!',
+                'thumbnailUrl': '',
+                'episodeNumber': '${index + 1}',
+                'seasonNumber': '1',
+              };
+
+        // Create downloaded video model
+        final downloadedVideo = DownloadedVideoModel(
+          videoId: videoId,
+          title: metadata['title'] ?? 'Short Video ${index + 1}',
+          description:
+              metadata['description'] ?? 'Enjoy this amazing short video!',
+          thumbnailUrl: metadata['thumbnailUrl'] ?? '',
+          localPath: path,
+          originalUrl: url,
+          downloadedAt: DateTime.now(),
+          fileSize: fileSize,
+          episodeNumber: metadata['episodeNumber'] ?? '',
+          seasonNumber: metadata['seasonNumber'] ?? '',
+        );
+
+        // Save metadata
+        final saved = await downloadService.saveDownloadedVideo(
+          downloadedVideo,
+        );
+
+        if (saved) {
+          Get.snackbar(
+            "✓ Downloaded",
+            "Video saved successfully",
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.green.withOpacity(0.8),
+            colorText: Colors.white,
+          );
+
+          // Resume video playback after successful download
+          _playVideo(index);
+        } else {
+          Get.snackbar(
+            "Warning",
+            "Video downloaded but metadata not saved",
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        throw Exception('Download failed');
+      }
+    } catch (e) {
+      printInfo(info: 'Download error: $e');
+      Get.snackbar(
+        "Download Failed",
+        "Please check your internet connection and try again",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+
+      // Resume video playback after error
+      _playVideo(index);
+    } finally {
+      isDownloading.value = false;
+      downloadProgress.value = 0.0;
     }
   }
 

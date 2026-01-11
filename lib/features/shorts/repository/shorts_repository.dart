@@ -62,9 +62,17 @@ class ShortsRepository {
     }
   }
 
-  Future<ApiResponseModel> downloadVideo(String url, String savePath) async {
+  Future<ApiResponseModel> downloadVideo(
+    String url,
+    String savePath, {
+    Function(int, int)? onProgress,
+  }) async {
     try {
-      final response = await apiService.downloadFile(url, savePath);
+      final response = await apiService.downloadFile(
+        url,
+        savePath,
+        onProgress: onProgress,
+      );
       if (response.statusCode == 200) {
         return response;
       } else {

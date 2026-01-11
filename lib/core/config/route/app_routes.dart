@@ -23,6 +23,8 @@ import 'package:testemu/features/download/presenter/download_episod_list_screen.
 ======================= */
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
+import 'package:testemu/features/download/presenter/downloaded_shorts_screen.dart';
+import 'package:testemu/features/download/presenter/downloaded_shorts_player_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 /* =======================
   💬 MESSAGE SCREENS
@@ -99,6 +101,8 @@ class AppRoutes {
   static const downloadMenu = "/download_menu";
   static const downloadSeason = "/download_season";
   static const downloadEpisode = "/download_episode";
+  static const downloadedShorts = "/downloaded_shorts";
+  static const downloadedShortsPlayer = "/downloaded_shorts_player";
 
   /* =======================
     🚦 GETX ROUTES
@@ -196,6 +200,15 @@ class AppRoutes {
       name: downloadEpisode,
       binding: AppBinding(),
       page: () => const DownloadEpisodListScreen(),
+    ),
+    GetPage(
+      name: downloadedShorts,
+      binding: AppBinding(),
+      page: () => const DownloadedShortsScreen(),
+    ),
+    GetPage(
+      name: downloadedShortsPlayer,
+      page: () => const DownloadedShortsPlayerScreen(),
     ),
 
     /// 🌐 NO INTERNET
