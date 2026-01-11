@@ -123,6 +123,9 @@ class ShortsScontroller extends GetxController {
     // Await this to ensure resources are freed before we try to allocate new ones
     await _manageControllerResources(index);
 
+    // CRITICAL: Add delay to allow native buffers to be fully released
+    await Future.delayed(const Duration(milliseconds: 100));
+
     // Initialize and play new video if not already initialized
     if (!_videoControllers.containsKey(index)) {
       _initializeVideoForIndex(index);
@@ -140,7 +143,15 @@ class ShortsScontroller extends GetxController {
     update();
 
     final videoUrl = videos[index];
-    final controller = VideoPlayerController.network(videoUrl);
+
+    // Configure video player with optimized settings for buffer management
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse(videoUrl),
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: false, // Don't mix with other audio
+        allowBackgroundPlayback: false, // Prevent background playback
+      ),
+    );
 
     _videoControllers[index] = controller;
 
@@ -148,7 +159,15 @@ class ShortsScontroller extends GetxController {
         .initialize()
         .then((_) {
           // Check if controller was disposed while initializing
-          if (_videoControllers[index] != controller) return;
+          if (_videoControllers[index] != controller) {
+            printInfo(info: 'Controller was disposed during init, cleaning up');
+            try {
+              controller.dispose();
+            } catch (e) {
+              printInfo(info: 'Error disposing orphaned controller: $e');
+            }
+            return;
+          }
 
           _loadingStates[index] = false;
           _errorStates[index] = false;
@@ -160,6 +179,8 @@ class ShortsScontroller extends GetxController {
           }
         })
         .catchError((error) {
+          printInfo(info: 'Error initializing video at index $index: $error');
+
           // Check if controller was disposed
           if (_videoControllers[index] != controller) return;
 
@@ -176,7 +197,15 @@ class ShortsScontroller extends GetxController {
           _playingStates[index] = false;
 
           update();
-          printInfo(info: 'Error initializing video at index $index: $error');
+
+          // If error is buffer-related, show helpful message
+          if (error.toString().contains('buffer') ||
+              error.toString().contains('decoder')) {
+            printInfo(
+              info:
+                  '⚠️ Buffer/Decoder error detected - may need to reduce video quality',
+            );
+          }
         });
 
     // Listen for video completion
@@ -255,21 +284,39 @@ class ShortsScontroller extends GetxController {
     if (controller != null) {
       printInfo(info: 'Disposing video controller at index $index');
 
-      // 1. Remove from maps immediately to prevent UI from accessing it
+      // 1. Stop playback and release audio resources first
+      try {
+        if (controller.value.isInitialized) {
+          await controller.pause();
+          await controller.setVolume(0);
+          // Seek to start to clear any buffered frames
+          await controller.seekTo(Duration.zero);
+        }
+      } catch (e) {
+        printInfo(info: 'Error pausing controller at index $index: $e');
+      }
+
+      // 2. Remove from maps immediately to prevent UI from accessing it
       _videoControllers.remove(index);
       _loadingStates.remove(index);
       _errorStates.remove(index);
       _playingStates.remove(index);
 
-      // 2. Notify UI immediately to unmount the VideoPlayer widget
+      // 3. Notify UI immediately to unmount the VideoPlayer widget
       update();
 
-      // 3. Dispose the controller safely
+      // 4. Small delay to ensure UI has unmounted the widget
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      // 5. Dispose the controller safely and wait for native cleanup
       try {
         await controller.dispose();
       } catch (e) {
         printInfo(info: 'Error disposing controller at index $index: $e');
       }
+
+      // 6. Additional delay to allow native decoder resources to be freed
+      await Future.delayed(const Duration(milliseconds: 50));
     }
   }
 
