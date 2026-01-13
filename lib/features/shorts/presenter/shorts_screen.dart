@@ -19,15 +19,60 @@ class ShortsFeedScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          body: PageView.builder(
-            controller: controller.pageController,
-            scrollDirection: Axis.vertical,
-            itemCount: controller.videos.length,
-            onPageChanged: controller.onPageChanged,
-            itemBuilder: (context, index) {
-              return ShortVideoPlayer(index: index);
-            },
-          ),
+          body: Obx(() {
+            // Show loading indicator while fetching videos
+            if (controller.isLoadingVideos.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            // Show error message if there's an error
+            if (controller.hasError.value) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      controller.errorMessage.value,
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => controller.refreshVideos(),
+                      child: const Text("Retry"),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // Show empty state if no videos
+            if (controller.videos.isEmpty) {
+              return const Center(
+                child: Text(
+                  "No videos available",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              );
+            }
+
+            // Show videos
+            return PageView.builder(
+              controller: controller.pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: controller.videos.length,
+              onPageChanged: controller.onPageChanged,
+              itemBuilder: (context, index) {
+                return ShortVideoPlayer(index: index);
+              },
+            );
+          }),
         );
       },
     );
@@ -110,55 +155,75 @@ class ShortVideoPlayer extends StatelessWidget {
                   left: 20,
                   right: 20,
                   child: RepaintBoundary(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CommonText(
-                          text: "This is the title of the content",
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          color: AppColors.background,
-                        ),
-                        SizedBox(
-                          width: 300.w,
-                          child: CommonText(
-                            fontSize: 12.sp,
-                            color: AppColors.background.withValues(alpha: 0.7),
-                            textAlign: TextAlign.justify,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                            text:
-                                "This is the description text. It is long and should be shown only in 2 lines initially. When the user clicks 'See more', the full description will be displayed properly without cutting off any part of the text.",
-                          ),
-                        ),
-                        SizedBox(width: 8.h),
-                        Row(
+                    child: Builder(
+                      builder: (context) {
+                        // Get metadata for current video
+                        final metadata = index < controller.videoMetadata.length
+                            ? controller.videoMetadata[index]
+                            : null;
+
+                        if (metadata == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CommonImage(imageSrc: AppImages.listIc, width: 16),
-                            const SizedBox(width: 8),
                             CommonText(
-                              text: "EP.1/67 EP",
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.white,
+                              text: metadata['title'] ?? "Short Video",
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              color: AppColors.background,
+                            ),
+                            SizedBox(
+                              width: 300.w,
+                              child: CommonText(
+                                fontSize: 12.sp,
+                                color: AppColors.background.withValues(
+                                  alpha: 0.7,
+                                ),
+                                textAlign: TextAlign.justify,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                text: metadata['description'] ?? "",
+                              ),
+                            ),
+                            SizedBox(width: 8.h),
+                            Row(
+                              children: [
+                                CommonImage(
+                                  imageSrc: AppImages.listIc,
+                                  width: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                CommonText(
+                                  text:
+                                      "EP.${metadata['episodeNumber'] ?? '1'}",
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.white,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 16.h,
+                              child: VideoProgressIndicator(
+                                videoController,
+                                allowScrubbing: true,
+                                colors: VideoProgressColors(
+                                  playedColor: AppColors.red2,
+                                  bufferedColor: Colors.grey.withValues(
+                                    alpha: .5,
+                                  ),
+                                  backgroundColor: Colors.grey,
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          height: 16.h,
-                          child: VideoProgressIndicator(
-                            videoController,
-                            allowScrubbing: true,
-                            colors: VideoProgressColors(
-                              playedColor: AppColors.red2,
-                              bufferedColor: Colors.grey.withValues(alpha: .5),
-                              backgroundColor: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -174,21 +239,34 @@ class ShortVideoPlayer extends StatelessWidget {
                       RepaintBoundary(
                         child: InkWell(
                           onTap: () => controller.showEpisodeListBottomSheet(),
-                          child: Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: CommonImage(
-                              fill: BoxFit.cover,
-                              borderRadius: 28,
-                              imageSrc:
-                                  "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
-                              width: 56,
-                              height: 56,
-                            ),
+                          child: Builder(
+                            builder: (context) {
+                              final metadata =
+                                  index < controller.videoMetadata.length
+                                  ? controller.videoMetadata[index]
+                                  : null;
+
+                              return Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: CommonImage(
+                                  fill: BoxFit.cover,
+                                  borderRadius: 28,
+                                  imageSrc:
+                                      metadata?['thumbnailUrl'] ??
+                                      "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                                  width: 56,
+                                  height: 56,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),

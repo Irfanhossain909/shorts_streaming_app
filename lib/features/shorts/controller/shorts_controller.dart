@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
 import 'package:testemu/features/download/service/download_service.dart';
+import 'package:testemu/features/shorts/model/shorts_video_model.dart';
 import 'package:testemu/features/shorts/repository/shorts_repository.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
 import 'package:video_player/video_player.dart';
@@ -14,54 +15,33 @@ class ShortsScontroller extends GetxController {
   final ShortsRepository repository = ShortsRepository.instance;
   final DownloadService downloadService = DownloadService.instance;
 
-  // Video list
-  final List<String> videos = [
-    "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
-    "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
-    "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
-    "https://vz-4bdf02a2-a32.b-cdn.net/2797393c-0073-4763-9a4a-21f9588fe2f7/original",
-  ];
+  // API data
+  RxList<ShortsVideoItem> shortsVideosList = <ShortsVideoItem>[].obs;
+  RxBool isLoadingVideos = false.obs;
+  RxBool hasError = false.obs;
+  RxString errorMessage = ''.obs;
 
-  // Video metadata (should come from API in real implementation)
-  // For now, using sample data
-  final List<Map<String, String>> videoMetadata = [
-    {
-      'title': 'Amazing Short Video 1',
-      'description':
-          'This is an amazing short video with stunning visuals and great content. Watch till the end!',
-      'thumbnailUrl':
-          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
-      'episodeNumber': '1',
-      'seasonNumber': '1',
-    },
-    {
-      'title': 'Incredible Short Video 2',
-      'description':
-          'Another incredible short that will blow your mind. Don\'t miss this one!',
-      'thumbnailUrl':
-          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
-      'episodeNumber': '2',
-      'seasonNumber': '1',
-    },
-    {
-      'title': 'Epic Short Video 3',
-      'description':
-          'An epic journey captured in a short video. Experience the magic!',
-      'thumbnailUrl':
-          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
-      'episodeNumber': '3',
-      'seasonNumber': '1',
-    },
-    {
-      'title': 'Fantastic Short Video 4',
-      'description':
-          'A fantastic short that showcases creativity at its best. Enjoy!',
-      'thumbnailUrl':
-          'https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg',
-      'episodeNumber': '4',
-      'seasonNumber': '1',
-    },
-  ];
+  // Video list - will be populated from API
+  List<String> get videos {
+    return shortsVideosList
+        .map((video) => video.downloadUrls ?? '')
+        .where((url) => url.isNotEmpty)
+        .toList();
+  }
+
+  // Video metadata - will be populated from API
+  List<Map<String, String>> get videoMetadata {
+    return shortsVideosList.map((video) {
+      return {
+        'title': video.title,
+        'description': video.description,
+        'thumbnailUrl': video.thumbnailUrl,
+        'episodeNumber': video.episodeNumber.toString(),
+        'seasonNumber': video.seasonId?.seasonNumber.toString() ?? '1',
+        'videoId': video.id,
+      };
+    }).toList();
+  }
 
   // PageView controller
   late PageController pageController;
@@ -108,7 +88,49 @@ class ShortsScontroller extends GetxController {
     super.onInit();
     printInfo(info: 'ShortsScontroller initialized');
     pageController = PageController(initialPage: 0);
-    _initializeVideoForIndex(0);
+    fetchShortsVideos();
+  }
+
+  // Fetch shorts videos from API
+  Future<void> fetchShortsVideos() async {
+    try {
+      isLoadingVideos.value = true;
+      hasError.value = false;
+      errorMessage.value = '';
+
+      printInfo(info: '🔄 Fetching shorts videos from API...');
+
+      final response = await repository.getShortsVideos();
+
+      if (response.success && response.data.isNotEmpty) {
+        shortsVideosList.value = response.data;
+        printInfo(
+          info: '✅ Successfully fetched ${response.data.length} videos',
+        );
+
+        // Initialize first video after data is loaded
+        if (videos.isNotEmpty) {
+          _initializeVideoForIndex(0);
+        }
+      } else {
+        hasError.value = true;
+        errorMessage.value = response.message.isEmpty
+            ? 'No videos available'
+            : response.message;
+        printInfo(info: '❌ Failed to fetch videos: ${errorMessage.value}');
+      }
+    } catch (e) {
+      hasError.value = true;
+      errorMessage.value = 'Failed to load videos: $e';
+      printInfo(info: '❌ Error fetching shorts videos: $e');
+    } finally {
+      isLoadingVideos.value = false;
+    }
+  }
+
+  // Refresh videos
+  Future<void> refreshVideos() async {
+    await fetchShortsVideos();
   }
 
   Future<void> onPageChanged(int index) async {
@@ -402,8 +424,29 @@ class ShortsScontroller extends GetxController {
     }
 
     final index = currentIndex.value;
-    final url = videos[index];
-    final videoId = url.hashCode.toString();
+
+    // Check if we have valid data
+    if (index >= shortsVideosList.length) {
+      Get.snackbar(
+        "Error",
+        "Video not found",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    final videoItem = shortsVideosList[index];
+    final url = videoItem.downloadUrls ?? '';
+    final videoId = videoItem.id;
+
+    if (url.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Download URL not available",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
 
     printInfo(info: '📹 Video URL: $url');
     printInfo(info: '🆔 Video ID: $videoId');
@@ -473,30 +516,21 @@ class ShortsScontroller extends GetxController {
               '📦 File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB',
         );
 
-        // Get metadata for this video
-        final metadata = index < videoMetadata.length
-            ? videoMetadata[index]
-            : {
-                'title': 'Short Video ${index + 1}',
-                'description': 'Enjoy this amazing short video!',
-                'thumbnailUrl': '',
-                'episodeNumber': '${index + 1}',
-                'seasonNumber': '1',
-              };
+        // Get video item for metadata
+        final videoItem = shortsVideosList[index];
 
         // Create downloaded video model
         final downloadedVideo = DownloadedVideoModel(
           videoId: videoId,
-          title: metadata['title'] ?? 'Short Video ${index + 1}',
-          description:
-              metadata['description'] ?? 'Enjoy this amazing short video!',
-          thumbnailUrl: metadata['thumbnailUrl'] ?? '',
+          title: videoItem.title,
+          description: videoItem.description,
+          thumbnailUrl: videoItem.thumbnailUrl,
           localPath: path,
           originalUrl: url,
           downloadedAt: DateTime.now(),
           fileSize: fileSize,
-          episodeNumber: metadata['episodeNumber'] ?? '',
-          seasonNumber: metadata['seasonNumber'] ?? '',
+          episodeNumber: videoItem.episodeNumber.toString(),
+          seasonNumber: videoItem.seasonId?.seasonNumber.toString() ?? '1',
         );
 
         // Save metadata
