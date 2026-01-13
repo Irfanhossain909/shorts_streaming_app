@@ -401,70 +401,71 @@ class _MovieCardDState extends State<MovieCardD> {
                 ),
               ],
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width - 130,
-              height: 100,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonText(
-                    text: widget.title ?? "Reborn True Princess Returns",
-                    style: GoogleFonts.poppins(
-                      fontSize: 12.sp,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
+            Expanded(
+              child: SizedBox(
+                height: 100,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonText(
+                      text: widget.title ?? "Reborn True Princess Returns",
+                      style: GoogleFonts.poppins(
+                        fontSize: 12.sp,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
 
-                  CommonText(
-                    text:
-                        widget.description ??
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
-                    maxLines: 3,
-                    textAlign: TextAlign.justify,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 10.sp,
-                      color: AppColors.white.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w400,
+                    CommonText(
+                      text:
+                          widget.description ??
+                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ...",
+                      maxLines: 3,
+                      textAlign: TextAlign.justify,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10.sp,
+                        color: AppColors.white.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
+                    const Spacer(),
 
-                  // Episode info and file size
-                  Row(
-                    children: [
-                      if (widget.episodeInfo?.isNotEmpty == true) ...[
+                    // Episode info and file size
+                    Row(
+                      children: [
+                        if (widget.episodeInfo?.isNotEmpty == true) ...[
+                          CommonText(
+                            text: widget.episodeInfo!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10.sp,
+                              color: AppColors.white.withValues(alpha: 0.7),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: AppColors.white.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                        ],
                         CommonText(
-                          text: widget.episodeInfo!,
+                          text: widget.size ?? "0 MB",
                           style: GoogleFonts.poppins(
                             fontSize: 10.sp,
-                            color: AppColors.white.withValues(alpha: 0.7),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Container(
-                          width: 3,
-                          height: 3,
-                          decoration: BoxDecoration(
                             color: AppColors.white.withValues(alpha: 0.5),
-                            shape: BoxShape.circle,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        SizedBox(width: 8.w),
                       ],
-                      CommonText(
-                        text: widget.size ?? "0 MB",
-                        style: GoogleFonts.poppins(
-                          fontSize: 10.sp,
-                          color: AppColors.white.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
