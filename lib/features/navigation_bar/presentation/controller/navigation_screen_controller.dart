@@ -1,11 +1,18 @@
-
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
 class NavigationScreenController extends GetxController {
   RxInt selectedIndex = RxInt(0);
 
-  changeIndex(int index) {
-    selectedIndex.value = index;
+  void changeIndex(int index) {
+    // Prevent build-during-frame errors by scheduling state change
+    if (SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        selectedIndex.value = index;
+      });
+    } else {
+      selectedIndex.value = index;
+    }
   }
 
   initialDataSetUp() {

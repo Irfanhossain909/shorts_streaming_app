@@ -25,10 +25,21 @@ class MovieCard extends StatelessWidget {
     this.isRemindMe = false,
   });
 
+  // Cache static gradient to avoid recreation
+  static const _remindMeGradient = LinearGradient(
+    colors: [
+      AppColors.red,
+      Color(0xCCCC0000), // red.withValues(alpha: 0.8)
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
         child: SizedBox(
@@ -53,13 +64,13 @@ class MovieCard extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Movie poster image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.r),
+                    // Movie poster image with RepaintBoundary
+                    RepaintBoundary(
                       child: CommonImage(
                         imageSrc: imageUrl,
                         width: double.infinity,
                         height: double.infinity,
+                        borderRadius: 12.r,
                         fill: BoxFit.cover,
                       ),
                     ),
@@ -133,14 +144,7 @@ class MovieCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.red,
                           borderRadius: BorderRadius.circular(30.r),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.red,
-                              AppColors.red.withValues(alpha: 0.8),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          gradient: _remindMeGradient,
                         ),
                         child: Row(
                           children: [

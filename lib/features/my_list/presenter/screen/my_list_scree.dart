@@ -7,12 +7,27 @@ import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
-import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class MyListScree extends StatelessWidget {
   const MyListScree({super.key});
+
+  // Cache gradient to avoid recreation
+  static const _backgroundGradient = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [
+        AppColors.red2,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +36,7 @@ class MyListScree extends StatelessWidget {
       body: GetBuilder<MyListController>(
         builder: (controller) {
           return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.red2, // প্রথম color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            decoration: _backgroundGradient,
             child: SafeArea(
               child: SingleChildScrollView(
                 child: Column(
@@ -136,10 +138,11 @@ class MyListScree extends StatelessWidget {
         itemCount: controller.recentVideos.length,
         itemBuilder: (context, index) {
           final recentItem = controller.recentVideos[index];
-          final video = recentItem.videoId;
+          final video =
+              recentItem.videoId!; // Safe because we filter nulls in controller
           return MovieCard(
             title: video.title,
-            imageUrl: OtherHelper.getImageUrl(video.thumbnailUrl),
+            imageUrl: video.thumbnailUrl,
             badge: 'Episode ${video.episodeNumber}',
             date: recentItem.viewedAt.toLocal().toString().split(' ')[0],
             onTap: () => Get.toNamed(

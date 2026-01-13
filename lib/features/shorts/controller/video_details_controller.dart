@@ -164,8 +164,10 @@ class VideoDetailsController extends GetxController {
     final RecentVideosResponse response = await shortsRepository
         .getRecentVideos();
     if (response.success && response.statusCode == 200) {
-      recentVideos.value = response.data;
-      appLog('Recent videos: ${recentVideos.value}', source: 'Recent Videos');
+      // Filter out items with null videoId
+      final validVideos = response.data.where((item) => item.videoId != null).toList();
+      recentVideos.value = validVideos;
+      appLog('Recent videos: ${validVideos.length} valid items (filtered from ${response.data.length} total)', source: 'Recent Videos');
       appLog('Recent videos fetched successfully', source: 'Recent Videos');
     } else {
       appLog(

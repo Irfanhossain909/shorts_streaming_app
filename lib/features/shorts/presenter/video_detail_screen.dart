@@ -376,7 +376,7 @@ class VideoDetailScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final recentItem = recentVideos[index];
                           final video =
-                              recentItem.videoId; // Access nested video
+                              recentItem.videoId!; // Safe because we filter nulls in controller
                           return MovieCard(
                             title: video.title,
                             imageUrl: video.thumbnailUrl,

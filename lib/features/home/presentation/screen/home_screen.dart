@@ -23,24 +23,27 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final HomeController controller = Get.put(HomeController());
 
+  // Cache gradient decorations to avoid recreation
+  static const _backgroundGradient = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [
+        AppColors.red2,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.red2,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        decoration: _backgroundGradient,
         child: SafeArea(
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -61,52 +64,7 @@ class HomeScreen extends StatelessWidget {
                   delegate: _StickyHeaderDelegate(
                     minHeight: 160.h,
                     maxHeight: 160.h,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-
-                            Colors.black,
-                            Colors.black,
-                            Colors.black,
-                            Colors.black,
-                            Colors.black,
-                            Colors.black,
-                            Colors.black,
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          10.height,
-                          // Search Bar
-                          SearchBarWidget(
-                            controller: controller.searchController,
-                            onSearchChanged: (query) {
-                              controller.updateSearchQuery(query);
-                            },
-                            onClear: () {
-                              controller.clearSearch();
-                            },
-                          ),
-                          10.height,
-
-                          Obx(
-                            () => CategoryFilter(
-                              categories: controller.categories
-                                  .map((e) => e.name)
-                                  .toList(),
-                              selectedCategory:
-                                  controller.selectedCategory.value,
-                              onCategorySelected: controller.selectCategory,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: _StickyHeader(controller: controller),
                   ),
                 ),
               ];
@@ -116,12 +74,14 @@ class HomeScreen extends StatelessWidget {
                 SliverToBoxAdapter(child: SizedBox(height: 10)),
 
                 SliverToBoxAdapter(
-                  child: Obx(() {
-                    if (controller.isSearchActive) {
-                      return _buildSearchResults(controller);
-                    }
-                    return _buildCategoryContent(controller);
-                  }),
+                  child: RepaintBoundary(
+                    child: Obx(() {
+                      if (controller.isSearchActive) {
+                        return _buildSearchResults(controller);
+                      }
+                      return _buildCategoryContent(controller);
+                    }),
+                  ),
                 ),
 
                 SliverToBoxAdapter(child: SizedBox(height: 30)),
@@ -238,6 +198,64 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// Separate widget for sticky header to optimize rebuilds
+class _StickyHeader extends StatelessWidget {
+  final HomeController controller;
+  
+  const _StickyHeader({required this.controller});
+
+  // Cache gradient decoration
+  static const _headerGradient = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [
+        Colors.transparent,
+        Colors.black,
+        Colors.black,
+        Colors.black,
+        Colors.black,
+        Colors.black,
+        Colors.black,
+        Colors.black,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: _headerGradient,
+      child: Column(
+        children: [
+          10.height,
+          // Search Bar
+          SearchBarWidget(
+            controller: controller.searchController,
+            onSearchChanged: (query) {
+              controller.updateSearchQuery(query);
+            },
+            onClear: () {
+              controller.clearSearch();
+            },
+          ),
+          10.height,
+          Obx(
+            () => CategoryFilter(
+              categories: controller.categories
+                  .map((e) => e.name)
+                  .toList(),
+              selectedCategory:
+                  controller.selectedCategory.value,
+              onCategorySelected: controller.selectCategory,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;
@@ -254,8 +272,12 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get maxExtent => maxHeight;
+  
   @override
-  bool shouldRebuild(_) => false;
+  bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
+    return minHeight != oldDelegate.minHeight ||
+        maxHeight != oldDelegate.maxHeight;
+  }
 
   @override
   Widget build(

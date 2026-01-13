@@ -55,9 +55,11 @@ class MyListController extends GetxController {
         errorLog(l, source: 'My List Controller');
       },
       (r) {
-        recentVideos.assignAll(r);
+        // Filter out items with null videoId
+        final validVideos = r.where((item) => item.videoId != null).toList();
+        recentVideos.assignAll(validVideos);
         appLog(
-          'Recent videos: ${recentVideos.length} items',
+          'Recent videos: ${recentVideos.length} valid items (filtered from ${r.length} total)',
           source: 'My List Controller',
         );
       },

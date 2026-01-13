@@ -22,6 +22,13 @@ class FeaturedMovieCard extends StatelessWidget {
     this.isBookmarked = false, // Add default value
   });
 
+  // Cache static gradient to avoid recreation
+  static const _watchButtonGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [AppColors.red2, AppColors.red],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,13 +45,13 @@ class FeaturedMovieCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(24.r),
+          // Background image with RepaintBoundary
+          RepaintBoundary(
             child: CommonImage(
               imageSrc: imageUrl,
               width: double.infinity,
               height: double.infinity,
+              borderRadius: 24.r,
               fill: BoxFit.cover,
             ),
           ),
@@ -53,6 +60,7 @@ class FeaturedMovieCard extends StatelessWidget {
             left: 10,
             child: GestureDetector(
               onTap: onBookmarkTap,
+              behavior: HitTestBehavior.opaque,
               child: Container(
                 width: 32.w,
                 height: 32.w,
@@ -77,16 +85,13 @@ class FeaturedMovieCard extends StatelessWidget {
             right: 10,
             child: GestureDetector(
               onTap: onWatchTap,
+              behavior: HitTestBehavior.opaque,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: AppColors.red,
                   borderRadius: BorderRadius.circular(50.r),
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [AppColors.red2, AppColors.red],
-                  ),
+                  gradient: _watchButtonGradient,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -140,6 +145,11 @@ class MiniFeaturedMovieCard extends StatelessWidget {
     this.onBookmarkTap,
   });
 
+  // Cache static gradient to avoid recreation
+  static const _watchButtonGradient = LinearGradient(
+    colors: [AppColors.red2, AppColors.red],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -157,28 +167,30 @@ class MiniFeaturedMovieCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Background Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16.r),
+          // Background Image with RepaintBoundary
+          RepaintBoundary(
             child: CommonImage(
               imageSrc: imageUrl,
               width: double.infinity,
               height: double.infinity,
+              borderRadius: 16.r,
               fill: BoxFit.cover,
             ),
           ),
 
           // Gradient Overlay
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.black.withValues(alpha: 0.15),
-                  AppColors.black.withValues(alpha: 0.7),
-                ],
+          RepaintBoundary(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.black.withValues(alpha: 0.15),
+                    AppColors.black.withValues(alpha: 0.7),
+                  ],
+                ),
               ),
             ),
           ),
@@ -218,6 +230,7 @@ class MiniFeaturedMovieCard extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: onBookmarkTap,
+                      behavior: HitTestBehavior.opaque,
                       child: Container(
                         width: 24.w,
                         height: 24.w,
@@ -239,15 +252,14 @@ class MiniFeaturedMovieCard extends StatelessWidget {
                     const Spacer(),
                     GestureDetector(
                       onTap: onWatchTap,
+                      behavior: HitTestBehavior.opaque,
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 6.w,
                           vertical: 3.h,
                         ),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.red2, AppColors.red],
-                          ),
+                          gradient: _watchButtonGradient,
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Row(

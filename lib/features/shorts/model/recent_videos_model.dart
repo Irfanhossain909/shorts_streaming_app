@@ -27,19 +27,26 @@ class RecentVideosResponse {
 }
 
 class RecentlyViewedItem {
-  final RecentVideo videoId;
+  final RecentVideo? videoId;
   final String id;
   final DateTime viewedAt;
 
-  RecentlyViewedItem({
-    required this.videoId,
-    required this.id,
-    required this.viewedAt,
-  });
+  RecentlyViewedItem({this.videoId, required this.id, required this.viewedAt});
 
   factory RecentlyViewedItem.fromJson(Map<String, dynamic> json) {
+    // Handle null videoId
+    final videoIdJson = json['videoId'];
+    RecentVideo? video;
+    if (videoIdJson != null && videoIdJson is Map<String, dynamic>) {
+      try {
+        video = RecentVideo.fromJson(videoIdJson);
+      } catch (e) {
+        print('⚠️ Error parsing videoId: $e');
+      }
+    }
+
     return RecentlyViewedItem(
-      videoId: RecentVideo.fromJson(json['videoId'] as Map<String, dynamic>),
+      videoId: video,
       id: json['_id'] ?? '',
       viewedAt: DateTime.tryParse(json['viewedAt'] ?? '') ?? DateTime.now(),
     );
@@ -61,7 +68,7 @@ class RecentVideo {
   final int episodeNumber;
   final int views;
   final int likes;
-  final DownloadUrls? downloadUrls;
+  final String? downloadUrls;
   final List<String> likedBy;
   final bool isDeleted;
   final DateTime createdAt;
@@ -102,6 +109,15 @@ class RecentVideo {
         .replaceAll('\r', '')
         .trim();
 
+    // Sanitize thumbnailUrl - add https:// if missing
+    String rawThumbnailUrl = json['thumbnailUrl'] ?? '';
+    String sanitizedThumbnailUrl = rawThumbnailUrl;
+    if (rawThumbnailUrl.isNotEmpty &&
+        !rawThumbnailUrl.startsWith('http://') &&
+        !rawThumbnailUrl.startsWith('https://')) {
+      sanitizedThumbnailUrl = 'https://$rawThumbnailUrl';
+    }
+
     return RecentVideo(
       type: json['type'] ?? 'video',
       id: json['_id'] ?? '',
@@ -111,14 +127,14 @@ class RecentVideo {
       videoUrl: sanitizedVideoUrl,
       videoId: json['videoId'] ?? '',
       libraryId: json['libraryId'] ?? '',
-      thumbnailUrl: json['thumbnailUrl'] ?? '',
+      thumbnailUrl: sanitizedThumbnailUrl,
       movieId: json['movieId'] ?? '',
       seasonId: json['seasonId'] ?? '',
       episodeNumber: json['episodeNumber'] ?? 0,
       views: json['views'] ?? 0,
       likes: json['likes'] ?? 0,
-      downloadUrls: json['downloadUrls'] != null
-          ? DownloadUrls.fromJson(json['downloadUrls'])
+      downloadUrls: json['downloadUrls'] is String
+          ? json['downloadUrls'] as String
           : null,
       likedBy: (json['likedBy'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
@@ -128,29 +144,6 @@ class RecentVideo {
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
       isSubscribed: json['isSubscribed'] ?? false,
       isAccess: json['isAccess'] ?? false,
-    );
-  }
-}
-
-class DownloadUrls {
-  final String original;
-  final String hd;
-  final String sd;
-  final String? mobile;
-
-  DownloadUrls({
-    required this.original,
-    required this.hd,
-    required this.sd,
-    this.mobile,
-  });
-
-  factory DownloadUrls.fromJson(Map<String, dynamic> json) {
-    return DownloadUrls(
-      original: json['original'] ?? '',
-      hd: json['hd'] ?? '',
-      sd: json['sd'] ?? '',
-      mobile: json['mobile'],
     );
   }
 }

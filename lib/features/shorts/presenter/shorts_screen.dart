@@ -85,17 +85,19 @@ class ShortVideoPlayer extends StatelessWidget {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: Container(
-                  height: 550.h,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: .8),
-                        Colors.black.withValues(alpha: .5),
-                        Colors.transparent,
-                      ],
+                child: RepaintBoundary(
+                  child: Container(
+                    height: 550.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: .8),
+                          Colors.black.withValues(alpha: .5),
+                          Colors.transparent,
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -107,55 +109,57 @@ class ShortVideoPlayer extends StatelessWidget {
                   bottom: 110.h,
                   left: 20,
                   right: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText(
-                        text: "This is the title of the content",
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        color: AppColors.background,
-                      ),
-                      SizedBox(
-                        width: 300.w,
-                        child: CommonText(
-                          fontSize: 12.sp,
-                          color: AppColors.background.withValues(alpha: 0.7),
-                          textAlign: TextAlign.justify,
+                  child: RepaintBoundary(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText(
+                          text: "This is the title of the content",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          text:
-                              "This is the description text. It is long and should be shown only in 2 lines initially. When the user clicks 'See more', the full description will be displayed properly without cutting off any part of the text.",
+                          maxLines: 1,
+                          color: AppColors.background,
                         ),
-                      ),
-                      SizedBox(width: 8.h),
-                      Row(
-                        children: [
-                          CommonImage(imageSrc: AppImages.listIc, width: 16),
-                          const SizedBox(width: 8),
-                          CommonText(
-                            text: "EP.1/67 EP",
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.white,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.h,
-                        child: VideoProgressIndicator(
-                          videoController,
-                          allowScrubbing: true,
-                          colors: VideoProgressColors(
-                            playedColor: AppColors.red2,
-                            bufferedColor: Colors.grey.withValues(alpha: .5),
-                            backgroundColor: Colors.grey,
+                        SizedBox(
+                          width: 300.w,
+                          child: CommonText(
+                            fontSize: 12.sp,
+                            color: AppColors.background.withValues(alpha: 0.7),
+                            textAlign: TextAlign.justify,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            text:
+                                "This is the description text. It is long and should be shown only in 2 lines initially. When the user clicks 'See more', the full description will be displayed properly without cutting off any part of the text.",
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 8.h),
+                        Row(
+                          children: [
+                            CommonImage(imageSrc: AppImages.listIc, width: 16),
+                            const SizedBox(width: 8),
+                            CommonText(
+                              text: "EP.1/67 EP",
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.white,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 16.h,
+                          child: VideoProgressIndicator(
+                            videoController,
+                            allowScrubbing: true,
+                            colors: VideoProgressColors(
+                              playedColor: AppColors.red2,
+                              bufferedColor: Colors.grey.withValues(alpha: .5),
+                              backgroundColor: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -163,98 +167,116 @@ class ShortVideoPlayer extends StatelessWidget {
               Positioned(
                 bottom: 146.h,
                 right: 10,
-                child: Column(
-                  spacing: 16.h,
-                  children: [
-                    InkWell(
-                      onTap: () => controller.showEpisodeListBottomSheet(),
-                      child: CircleAvatar(
-                        radius: 28,
-                        backgroundColor: Colors.white,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(28),
-                          child: CommonImage(
-                            fill: BoxFit.cover,
-                            imageSrc:
-                                "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                child: RepaintBoundary(
+                  child: Column(
+                    spacing: 16.h,
+                    children: [
+                      RepaintBoundary(
+                        child: InkWell(
+                          onTap: () => controller.showEpisodeListBottomSheet(),
+                          child: Container(
                             width: 56,
                             height: 56,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: CommonImage(
+                              fill: BoxFit.cover,
+                              borderRadius: 28,
+                              imageSrc:
+                                  "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                              width: 56,
+                              height: 56,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    ReelButton(imgPath: AppImages.star, text: "125.5K"),
-                    ReelButton(
-                      imgPath: AppImages.listIc,
-                      text: "List",
-                      onTap: () => controller.showEpisodeListBottomSheet(),
-                    ),
-                    ReelButton(imgPath: AppImages.shareIc, text: "Share"),
-                    // Download button with circular progress
-                    Obx(() {
-                      final isDownloading = controller.isDownloading.value;
-                      final progress = controller.downloadProgress.value;
-
-                      return InkWell(
-                        onTap: isDownloading
-                            ? null
-                            : () => controller.downloadCurrentVideo(),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          spacing: 4.h,
-                          children: [
-                            // Icon with circular progress
-                            SizedBox(
-                              width: 40.w,
-                              height: 40.w,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Circular progress indicator
-                                  if (isDownloading)
-                                    SizedBox(
-                                      width: 40.w,
-                                      height: 40.w,
-                                      child: CircularProgressIndicator(
-                                        value: progress,
-                                        strokeWidth: 2.5,
-                                        backgroundColor: AppColors.white
-                                            .withOpacity(0.3),
-                                        valueColor:
-                                            const AlwaysStoppedAnimation<Color>(
-                                              AppColors.red2,
-                                            ),
-                                      ),
-                                    ),
-
-                                  // Download icon
-                                  CommonImage(
-                                    imageColor: isDownloading
-                                        ? AppColors.red2
-                                        : AppColors.background,
-                                    imageSrc: AppImages.download,
-                                    width: 24.w,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Text showing progress or "Download"
-                            CommonText(
-                              text: isDownloading
-                                  ? "${(progress * 100).toInt()}%"
-                                  : "Download",
-                              fontSize: 14.h,
-                              fontWeight: FontWeight.w600,
-                              color: isDownloading
-                                  ? AppColors.red2
-                                  : AppColors.background,
-                            ),
-                          ],
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppImages.star,
+                          text: "125.5K",
                         ),
-                      );
-                    }),
-                  ],
+                      ),
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppImages.listIc,
+                          text: "List",
+                          onTap: () => controller.showEpisodeListBottomSheet(),
+                        ),
+                      ),
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppImages.shareIc,
+                          text: "Share",
+                        ),
+                      ),
+                      // Download button with circular progress
+                      Obx(() {
+                        final isDownloading = controller.isDownloading.value;
+                        final progress = controller.downloadProgress.value;
+
+                        return InkWell(
+                          onTap: isDownloading
+                              ? null
+                              : () => controller.downloadCurrentVideo(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 4.h,
+                            children: [
+                              // Icon with circular progress
+                              SizedBox(
+                                width: 40.w,
+                                height: 40.w,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Circular progress indicator
+                                    if (isDownloading)
+                                      SizedBox(
+                                        width: 40.w,
+                                        height: 40.w,
+                                        child: CircularProgressIndicator(
+                                          value: progress,
+                                          strokeWidth: 2.5,
+                                          backgroundColor: AppColors.white
+                                              .withOpacity(0.3),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                Color
+                                              >(AppColors.red2),
+                                        ),
+                                      ),
+
+                                    // Download icon
+                                    CommonImage(
+                                      imageColor: isDownloading
+                                          ? AppColors.red2
+                                          : AppColors.background,
+                                      imageSrc: AppImages.download,
+                                      width: 24.w,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Text showing progress or "Download"
+                              CommonText(
+                                text: isDownloading
+                                    ? "${(progress * 100).toInt()}%"
+                                    : "Download",
+                                fontSize: 14.h,
+                                fontWeight: FontWeight.w600,
+                                color: isDownloading
+                                    ? AppColors.red2
+                                    : AppColors.background,
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ],
