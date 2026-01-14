@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/my_list/model/my_list_model.dart';
 import 'package:testemu/features/my_list/repository/my_list_repository.dart';
+import 'package:testemu/features/shorts/model/recent_videos_model.dart';
 
 class MyListController extends GetxController {
   final MyListRepository myListRepository = MyListRepository.instance;
@@ -11,10 +13,12 @@ class MyListController extends GetxController {
   final List<String> myListCategories = ['Recently Watched', 'My Collection '];
   final RxString selectedMyListCategory = 'Recently Watched'.obs;
   RxList<String> bookmarkCategories = <String>[].obs;
+  RxList<RecentlyViewedItem> recentVideos = <RecentlyViewedItem>[].obs;
   @override
   void onInit() {
     super.onInit();
     getBookmarks();
+    getRecentVideos();
   }
 
   Future<void> getBookmarks() async {
@@ -42,5 +46,23 @@ class MyListController extends GetxController {
     } else {
       Get.snackbar('Error', 'Invalid reference type');
     }
+  }
+
+  Future<void> getRecentVideos() async {
+    final result = await myListRepository.getRecentVideos();
+    result.fold(
+      (l) {
+        errorLog(l, source: 'My List Controller');
+      },
+      (r) {
+        // Filter out items with null videoId
+        final validVideos = r.where((item) => item.videoId != null).toList();
+        recentVideos.assignAll(validVideos);
+        appLog(
+          'Recent videos: ${recentVideos.length} valid items (filtered from ${r.length} total)',
+          source: 'My List Controller',
+        );
+      },
+    );
   }
 }

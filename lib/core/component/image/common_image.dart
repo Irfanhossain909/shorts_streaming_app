@@ -63,8 +63,11 @@ class CommonImage extends StatelessWidget {
       if (value == null) return null;
       if (!value.isFinite) return null;
       final intValue = value.toInt();
-      // Limit cache size to 300px max to reduce GPU load
-      return intValue > 300 ? 300 : intValue;
+      // Limit cache size to 400px max to reduce GPU load
+      // For very large images, scale down more aggressively
+      if (intValue > 800) return 400;
+      if (intValue > 400) return 300;
+      return intValue;
     }
 
     return CachedNetworkImage(
@@ -107,19 +110,53 @@ class CommonImage extends StatelessWidget {
   }
 
   Widget _buildPngImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: Image.asset(
-        imageSrc,
-        color: imageColor,
-        height: size ?? height,
-        width: size ?? width,
-        fit: fill,
-        errorBuilder: (context, error, stackTrace) {
-          errorLog(error, source: "Common Image");
-          return _buildErrorWidget();
-        },
-      ),
+    // Helper function to safely convert to int only if finite
+    int? safeToInt(double? value) {
+      if (value == null) return null;
+      if (!value.isFinite) return null;
+      return value.toInt();
+    }
+
+    final actualWidth = size ?? width;
+    final actualHeight = size ?? height;
+
+    if (borderRadius > 0) {
+      // Only use Container with decoration when borderRadius is needed
+      return Container(
+        height: actualHeight,
+        width: actualWidth,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.asset(
+          imageSrc,
+          color: imageColor,
+          height: actualHeight,
+          width: actualWidth,
+          fit: fill,
+          cacheHeight: safeToInt(actualHeight),
+          cacheWidth: safeToInt(actualWidth),
+          errorBuilder: (context, error, stackTrace) {
+            errorLog(error, source: "Common Image");
+            return _buildErrorWidget();
+          },
+        ),
+      );
+    }
+    // No borderRadius - skip clipping entirely for better performance
+    return Image.asset(
+      imageSrc,
+      color: imageColor,
+      height: actualHeight,
+      width: actualWidth,
+      fit: fill,
+      cacheHeight: safeToInt(actualHeight),
+      cacheWidth: safeToInt(actualWidth),
+      errorBuilder: (context, error, stackTrace) {
+        errorLog(error, source: "Common Image");
+        return _buildErrorWidget();
+      },
     );
   }
 }

@@ -18,7 +18,8 @@
         android:label="Creepy Shorts"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:largeHeap="true">
 
         <!-- Main Flutter Activity -->
         <activity

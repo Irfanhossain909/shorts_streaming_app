@@ -58,6 +58,8 @@ class FantasySection extends StatelessWidget {
     return SizedBox(
       height: 380.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: movies.length,
@@ -85,6 +87,8 @@ class FantasySection extends StatelessWidget {
     return SizedBox(
       height: 200.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         itemCount: movies.length,
         itemBuilder: (context, index) {

@@ -102,4 +102,29 @@ class SeasonVideo {
       version: json['__v'] ?? 0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'description': description,
+      'duration': duration,
+      'videoUrl': videoUrl,
+      'videoId': videoId,
+      'libraryId': libraryId,
+      'thumbnailUrl': thumbnailUrl,
+      'movieId': movieId,
+      'seasonId': seasonId,
+      'episodeNumber': episodeNumber,
+      'views': views,
+      'likes': likes,
+      'likedBy': likedBy,
+      'isDeleted': isDeleted,
+      'isSubscribed': isSubscribed,
+      'isAccess': isAccess,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      '__v': version,
+    };
+  }
 }

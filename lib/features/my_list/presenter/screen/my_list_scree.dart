@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
@@ -12,6 +13,22 @@ import 'package:testemu/features/notifications/presentation/screen/notifications
 class MyListScree extends StatelessWidget {
   const MyListScree({super.key});
 
+  // Cache gradient to avoid recreation
+  static const _backgroundGradient = BoxDecoration(
+    gradient: LinearGradient(
+      colors: [
+        AppColors.red2,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+        Colors.transparent,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     //final HomeController homeController = Get.find<HomeController>();
@@ -19,33 +36,23 @@ class MyListScree extends StatelessWidget {
       body: GetBuilder<MyListController>(
         builder: (controller) {
           return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.red2, // প্রথম color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                  Colors.transparent, // শেষ color
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            decoration: _backgroundGradient,
             child: SafeArea(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     _buildHeader(controller),
                     20.height,
-                    CategoryFilter(
-                      categories: controller.myListCategories,
-                      selectedCategory: controller.selectedMyListCategory.value,
-                      onCategorySelected: controller.selectMyListCategory,
+                    Obx(
+                      () => CategoryFilter(
+                        categories: controller.myListCategories,
+                        selectedCategory:
+                            controller.selectedMyListCategory.value,
+                        onCategorySelected: controller.selectMyListCategory,
+                      ),
                     ),
                     20.height,
-                    _buildMoviesGrid(controller),
+                    Obx(() => _buildContent(controller)),
                   ],
                 ),
               ),
@@ -92,7 +99,78 @@ class MyListScree extends StatelessWidget {
     );
   }
 
-  Widget _buildMoviesGrid(MyListController controller) {
+  Widget _buildContent(MyListController controller) {
+    // Check which tab is selected
+    if (controller.selectedMyListCategory.value == 'Recently Watched') {
+      return _buildRecentVideosGrid(controller);
+    } else {
+      return _buildBookmarksGrid(controller);
+    }
+  }
+
+  Widget _buildRecentVideosGrid(MyListController controller) {
+    if (controller.recentVideos.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.h),
+        child: Center(
+          child: Text(
+            'No recently watched videos',
+            style: TextStyle(
+              color: AppColors.white.withValues(alpha: 0.7),
+              fontSize: 16.sp,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 12.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.50,
+        ),
+        itemCount: controller.recentVideos.length,
+        itemBuilder: (context, index) {
+          final recentItem = controller.recentVideos[index];
+          final video =
+              recentItem.videoId!; // Safe because we filter nulls in controller
+          return MovieCard(
+            title: video.title,
+            imageUrl: video.thumbnailUrl,
+            badge: 'Episode ${video.episodeNumber}',
+            date: recentItem.viewedAt.toLocal().toString().split(' ')[0],
+            onTap: () => Get.toNamed(
+              AppRoutes.videoDetail,
+              arguments: {'videoId': video.movieId},
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBookmarksGrid(MyListController controller) {
+    if (controller.bookmarks.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.h),
+        child: Center(
+          child: Text(
+            'No bookmarked items',
+            style: TextStyle(
+              color: AppColors.white.withValues(alpha: 0.7),
+              fontSize: 16.sp,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: GridView.builder(

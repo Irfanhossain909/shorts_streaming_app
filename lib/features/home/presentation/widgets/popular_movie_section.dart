@@ -46,6 +46,10 @@ class PopularMovieSection extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
+        // Optimize ListView/GridView performance
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: true,
+        cacheExtent: 200.h,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 12.w,
@@ -55,14 +59,17 @@ class PopularMovieSection extends StatelessWidget {
         itemCount: movies.length,
         itemBuilder: (context, index) {
           final movie = movies[index];
-          return MovieCard(
-            title: movie.title,
-            imageUrl: OtherHelper.getImageUrl(
-              movie.thumbnail,
-              defaultAsset: AppImages.m1,
+          return RepaintBoundary(
+            child: MovieCard(
+              key: ValueKey('movie_${movie.id}'),
+              title: movie.title,
+              imageUrl: OtherHelper.getImageUrl(
+                movie.thumbnail,
+                defaultAsset: AppImages.m1,
+              ),
+              badge: movie.genre,
+              onTap: () => controller.onMovieTap(movie.id),
             ),
-            badge: movie.genre,
-            onTap: () => controller.onMovieTap(movie.id),
           );
         },
       ),

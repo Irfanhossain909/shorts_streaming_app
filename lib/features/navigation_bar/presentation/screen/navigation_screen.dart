@@ -1,5 +1,3 @@
-import 'dart:ui'; // for blur effect
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,96 +13,122 @@ import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({super.key});
 
+  // Cache icon paths to avoid recreation
+  static const List<String> _iconPaths = [
+    AppImages.nav1,
+    AppImages.nav2,
+    AppImages.nav3,
+    AppImages.nav4,
+  ];
+
+  // Cache border radius
+  static const _bottomBarBorderRadius = BorderRadius.only(
+    topLeft: Radius.circular(30),
+    topRight: Radius.circular(30),
+  );
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<NavigationScreenController>(
       builder: (controller) {
         return Scaffold(
-          body: Stack(
-            children: [
-              Obx(
-                () => IndexedStack(
-                  index: controller.selectedIndex.value,
-                  children: [
-                    HomeScreen(),
-
-                    controller.selectedIndex.value == 1
-                        ? const ShortsFeedScreen()
-                        : Container(),
-                    const MyListScree(),
-                    ProfileScreen(),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 10,
-                      sigmaY: 10,
-                    ), // blur effect
+          body: SafeArea(
+            top: false,
+            child: Stack(
+              children: [
+                // Use single Obx for IndexedStack
+                Obx(() {
+                  final index = controller.selectedIndex.value;
+                  return IndexedStack(
+                    index: index,
+                    children: [
+                      HomeScreen(),
+                      // Only build ShortsFeedScreen when needed
+                      if (index == 1)
+                        ShortsFeedScreen()
+                      else
+                        const SizedBox.shrink(),
+                      const MyListScree(),
+                      const ProfileScreen(),
+                    ],
+                  );
+                }),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: RepaintBoundary(
                     child: Container(
                       padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
                       decoration: BoxDecoration(
-                        color: AppColors.background.withValues(
-                          alpha: 0.3,
-                        ), // transparent bg
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
+                        // Use solid color instead of blur for better performance
+                        color: AppColors.grey.withValues(alpha: 0.85),
+                        borderRadius: _bottomBarBorderRadius,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
                       ),
-                      child: Obx(
-                        () => Row(
+                      child: Obx(() {
+                        final selectedIndex = controller.selectedIndex.value;
+                        return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: List.generate(4, (index) {
-                            final isSelected =
-                                controller.selectedIndex.value == index;
-                            final iconPaths = [
-                              AppImages.nav1,
-                              AppImages.nav2,
-                              AppImages.nav3,
-                              AppImages.nav4,
-                            ];
-
-                            return InkWell(
-                              onTap: () => controller.changeIndex(index),
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: isSelected
-                                    ? const BoxDecoration(
-                                        color: AppColors.red2,
-                                        shape: BoxShape.circle,
-                                      )
-                                    : null,
-                                child: CommonImage(
-                                  imageSrc: iconPaths[index],
-                                  width: 24.w,
-                                  height: 24.w,
-                                  imageColor: isSelected
-                                      ? Colors.white
-                                      : AppColors.background,
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
+                          children: List.generate(
+                            4,
+                            (index) => _NavigationItem(
+                              index: index,
+                              isSelected: selectedIndex == index,
+                              onTap: controller.changeIndex,
+                            ),
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+}
+
+// Separate widget to optimize rebuilds
+class _NavigationItem extends StatelessWidget {
+  final int index;
+  final bool isSelected;
+  final Function(int) onTap;
+
+  const _NavigationItem({
+    required this.index,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  static final _selectedDecoration = BoxDecoration(
+    color: AppColors.red2,
+    shape: BoxShape.circle,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onTap(index),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: isSelected ? _selectedDecoration : null,
+        child: CommonImage(
+          imageSrc: NavigationScreen._iconPaths[index],
+          width: 24.w,
+          height: 24.w,
+          imageColor: isSelected ? Colors.white : AppColors.background,
+        ),
+      ),
     );
   }
 }

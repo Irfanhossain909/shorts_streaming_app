@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
@@ -67,10 +68,10 @@ class CategoryRepository {
     try {
       final apiResponse = await apiService.get(apiEndPoint.getAllMovies);
       if (apiResponse.statusCode == 200) {
-        final response = MovieResponse.fromJson(
+        final movies = await foundation.compute(
+          _parseMovies,
           apiResponse.data as Map<String, dynamic>,
         );
-        final movies = response.data;
         return Right(movies);
       } else {
         errorLog(apiResponse.data, source: 'Movie Repository');
@@ -128,5 +129,9 @@ class CategoryRepository {
       errorLog(e, source: 'Toggle Bookmark Repository');
       return Left(e.toString());
     }
+  }
+
+  List<Movie> _parseMovies(Map<String, dynamic> json) {
+    return MovieResponse.fromJson(json).data;
   }
 }

@@ -90,6 +90,73 @@ class ApiService {
     return _request(url, method, body: formData, header: finalHeader);
   }
 
+  Future<ApiResponseModel> downloadFile(
+    String url,
+    String savePath, {
+    Function(int, int)? onProgress,
+  }) async {
+    try {
+      print('🔽 Dio download starting...');
+      print('🔗 URL: $url');
+      print('💾 Save path: $savePath');
+
+      final response = await _dio.download(
+        url,
+        savePath,
+        onReceiveProgress: (received, total) {
+          if (onProgress != null) {
+            onProgress(received, total);
+          }
+          if (total != -1) {
+            final progress = (received / total * 100).toStringAsFixed(0);
+            print('📊 Dio progress: $progress% ($received/$total bytes)');
+          }
+        },
+        options: Options(
+          receiveTimeout: const Duration(minutes: 10),
+          sendTimeout: const Duration(minutes: 10),
+          // CRITICAL: ResponseType must be bytes for file downloads
+          responseType: ResponseType.bytes,
+          // Follow redirects for CDN URLs
+          followRedirects: true,
+          maxRedirects: 5,
+          // Accept any status < 500
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      print('✅ Dio download completed');
+      print('📊 Response status: ${response.statusCode}');
+      print('📊 Response data type: ${response.data.runtimeType}');
+
+      // CRITICAL: For downloads, don't use _handleResponse
+      // Just return success/failure based on status code
+      if (response.statusCode == 200) {
+        print('✅ Download successful, returning 200');
+        return ApiResponseModel(200, {
+          'success': true,
+          'message': 'Download completed',
+        });
+      } else {
+        print('❌ Download failed with status: ${response.statusCode}');
+        return ApiResponseModel(response.statusCode ?? 500, {
+          'success': false,
+          'message': 'Download failed',
+        });
+      }
+    } catch (e) {
+      // Better error logging for downloads
+      if (e is DioException) {
+        print('❌ Download DioException: ${e.type}');
+        print('❌ Error Message: ${e.message}');
+        print('❌ Response: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('❌ Download Error: $e');
+      }
+      return _handleError(e);
+    }
+  }
+
   /// ========== [ API REQUEST HANDLER ] ========== ///
   Future<ApiResponseModel> _request(
     String url,
@@ -169,16 +236,31 @@ Dio _getMyDio() {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        options
-          ..headers["Authorization"] ??= "Bearer ${LocalStorage.token}"
-          ..connectTimeout = const Duration(seconds: 30)
-          ..sendTimeout = const Duration(seconds: 30)
-          ..receiveDataWhenStatusError = true
-          ..responseType = ResponseType.json
-          ..receiveTimeout = const Duration(seconds: 30)
-          ..baseUrl = options.baseUrl.startsWith("http")
-              ? ""
-              : ApiEndPoint.instance.baseUrl;
+        // Add authorization header
+        options.headers["Authorization"] ??= "Bearer ${LocalStorage.token}";
+
+        // Set timeouts (can be overridden by individual requests)
+        options.connectTimeout ??= const Duration(seconds: 30);
+        options.sendTimeout ??= const Duration(seconds: 30);
+        options.receiveTimeout ??= const Duration(seconds: 30);
+
+        options.receiveDataWhenStatusError = true;
+
+        // CRITICAL FIX: Don't force responseType to json
+        // Let individual requests specify their own responseType
+        // For API calls it will default to json, for downloads it should be stream
+        if (options.responseType != ResponseType.stream) {
+          options.responseType = ResponseType.json;
+        }
+
+        // Set baseUrl only if URL doesn't already start with http/https
+        final path = options.path;
+        if (path.startsWith("http")) {
+          // For full URLs (like video CDN), don't use baseUrl
+          options.baseUrl = "";
+        } else {
+          options.baseUrl = ApiEndPoint.instance.baseUrl;
+        }
 
         // Only set Content-Type to application/json if not FormData
         // Dio will automatically set multipart/form-data with boundary for FormData

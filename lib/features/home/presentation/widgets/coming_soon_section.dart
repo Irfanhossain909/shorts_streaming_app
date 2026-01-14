@@ -46,6 +46,8 @@ class ComingSoonSection extends StatelessWidget {
     return SizedBox(
       height: 320.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: controller.reminders.length,
