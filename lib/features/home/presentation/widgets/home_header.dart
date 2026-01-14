@@ -23,17 +23,21 @@ class HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(
-                  () => Text(
-                    'Good Evening,${LocalStorage.myName.isNotEmpty ? LocalStorage.myName : controller.userName.value} !',
+                Obx(() {
+                  String name = controller.userName.value;
+                  if (LocalStorage.myName.isNotEmpty) {
+                    name = LocalStorage.myName;
+                  }
+                  return Text(
+                    'Good Evening, $name !',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.8),
                       fontSize: 24.sp,
                       fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+                  );
+                }),
                 4.height,
                 Text(
                   'What you want to watch?',
