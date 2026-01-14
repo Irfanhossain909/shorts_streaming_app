@@ -73,7 +73,12 @@ class VideoDetailScreen extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.only(top: 80.h, left: 16.w, right: 16.w),
+            padding: EdgeInsets.only(
+              top: 80.h,
+              left: 16.w,
+              right: 16.w,
+              bottom: 20.h,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -21,7 +21,7 @@ class HomeController extends GetxController {
   var selectedLibraryCategory = 'Most Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
   var selectedRankingFilter = 'Most Popular'.obs;
-  var userName = 'Designjot'.obs;
+  var userName = 'user'.obs;
   var isHeaderSticky = false.obs;
   var searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();

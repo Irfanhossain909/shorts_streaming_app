@@ -5,6 +5,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/services/storage/storage_keys.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/profile/model/faqs_model.dart';
@@ -107,6 +109,10 @@ class ProfileRepository {
       if (response.isSuccess) {
         final data = response.data['data'] as Map<String, dynamic>? ?? {};
         final result = ProfileModelData.fromJson(data);
+        await LocalStorage.setString(
+          LocalStorageKeys.myName,
+          result.name ?? '',
+        );
         return result;
       }
       throw Exception(response.message);
