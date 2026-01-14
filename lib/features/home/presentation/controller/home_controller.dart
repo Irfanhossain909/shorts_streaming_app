@@ -350,6 +350,34 @@ class HomeController extends GetxController {
     }
   }
 
+  //--- Refresh All Data (Pull to Refresh) ---//
+  Future<void> refreshHomeData() async {
+    try {
+      // Load all data in parallel for better performance
+      await Future.wait([
+        getCategories(),
+        getMovies(),
+        getTrailers(),
+        getReminders(),
+      ]);
+
+      Get.snackbar(
+        'Refreshed',
+        'Home data updated successfully',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2.withValues(alpha: 0.8),
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh data',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2,
+      );
+    }
+  }
+
   //--- Carousel Methods ---//
   void _onPageControllerChanged() {
     if (!carouselPageController.hasClients) return;

@@ -38,22 +38,30 @@ class MyListScree extends StatelessWidget {
           return Container(
             decoration: _backgroundGradient,
             child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildHeader(controller),
-                    20.height,
-                    Obx(
-                      () => CategoryFilter(
-                        categories: controller.myListCategories,
-                        selectedCategory:
-                            controller.selectedMyListCategory.value,
-                        onCategorySelected: controller.selectMyListCategory,
+              child: RefreshIndicator(
+                onRefresh: controller.refreshMyListData,
+                color: AppColors.red2,
+                backgroundColor: Colors.white,
+                displacement: 40.0,
+                strokeWidth: 2.5,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _buildHeader(controller),
+                      20.height,
+                      Obx(
+                        () => CategoryFilter(
+                          categories: controller.myListCategories,
+                          selectedCategory:
+                              controller.selectedMyListCategory.value,
+                          onCategorySelected: controller.selectMyListCategory,
+                        ),
                       ),
-                    ),
-                    20.height,
-                    Obx(() => _buildContent(controller)),
-                  ],
+                      20.height,
+                      Obx(() => _buildContent(controller)),
+                    ],
+                  ),
                 ),
               ),
             ),

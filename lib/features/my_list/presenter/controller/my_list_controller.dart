@@ -68,4 +68,31 @@ class MyListController extends GetxController {
       },
     );
   }
+
+  //--- Refresh All Data (Pull to Refresh) ---//
+  Future<void> refreshMyListData() async {
+    try {
+      // Load bookmarks and recent videos in parallel
+      await Future.wait([
+        getBookmarks(),
+        getRecentVideos(),
+      ]);
+      
+      Get.snackbar(
+        'Refreshed',
+        'My List updated successfully',
+        colorText: Get.theme.colorScheme.onPrimary,
+        backgroundColor: Get.theme.primaryColor.withValues(alpha: 0.8),
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      errorLog(e, source: 'My List Controller - Refresh');
+      Get.snackbar(
+        'Error',
+        'Failed to refresh data',
+        colorText: Get.theme.colorScheme.onError,
+        backgroundColor: Get.theme.colorScheme.error,
+      );
+    }
+  }
 }

@@ -69,23 +69,31 @@ class HomeScreen extends StatelessWidget {
                 ),
               ];
             },
-            body: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(child: SizedBox(height: 10)),
+            body: RefreshIndicator(
+              onRefresh: controller.refreshHomeData,
+              color: AppColors.red2,
+              backgroundColor: Colors.white,
+              displacement: 40.0,
+              strokeWidth: 2.5,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: 10)),
 
-                SliverToBoxAdapter(
-                  child: RepaintBoundary(
-                    child: Obx(() {
-                      if (controller.isSearchActive) {
-                        return _buildSearchResults(controller);
-                      }
-                      return _buildCategoryContent(controller);
-                    }),
+                  SliverToBoxAdapter(
+                    child: RepaintBoundary(
+                      child: Obx(() {
+                        if (controller.isSearchActive) {
+                          return _buildSearchResults(controller);
+                        }
+                        return _buildCategoryContent(controller);
+                      }),
+                    ),
                   ),
-                ),
 
-                SliverToBoxAdapter(child: SizedBox(height: 30)),
-              ],
+                  SliverToBoxAdapter(child: SizedBox(height: 30)),
+                ],
+              ),
             ),
           ),
         ),
