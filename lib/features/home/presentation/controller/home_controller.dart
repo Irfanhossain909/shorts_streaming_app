@@ -11,9 +11,12 @@ import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
+import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
 
 class HomeController extends GetxController {
   CategoryRepository categoryRepository = CategoryRepository.instance;
+
+  ProfileController profileController = Get.find<ProfileController>();
 
   // Observable variables
   var selectedCategory = 'popular'.obs;
