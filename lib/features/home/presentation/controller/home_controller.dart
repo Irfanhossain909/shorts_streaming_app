@@ -197,6 +197,7 @@ class HomeController extends GetxController {
 
   void onWatchTap(String videoUrl) {
     appLog('onWatchTap: $videoUrl');
+    // VideoPlayerController will automatically generate videoId from URL if not provided
     Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 

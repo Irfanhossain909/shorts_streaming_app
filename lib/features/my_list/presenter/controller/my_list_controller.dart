@@ -40,7 +40,10 @@ class MyListController extends GetxController {
 
   void onMovieTap(String videoId, String referenceType, String videoUrl) {
     if (referenceType == ReferenceType.Trailer.name) {
-      Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
+      Get.toNamed(AppRoutes.videoPlayer, arguments: {
+        'videoUrl': videoUrl,
+        'videoId': videoId, // Pass videoId for progress tracking
+      });
     } else if (referenceType == ReferenceType.Movie.name) {
       Get.toNamed(AppRoutes.videoDetail, arguments: {'videoId': videoId});
     } else {
