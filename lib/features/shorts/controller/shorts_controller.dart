@@ -330,6 +330,20 @@ class ShortsScontroller extends GetxController {
     }
   }
 
+  /// Public method to pause current video (called when navigating away)
+  void pauseCurrentVideo() {
+    final index = currentIndex.value;
+    _pauseVideo(index);
+    // Save progress when navigating away
+    _saveVideoProgress(index);
+  }
+
+  /// Public method to resume current video (called when navigating back)
+  void resumeCurrentVideo() {
+    final index = currentIndex.value;
+    _playVideo(index);
+  }
+
   void seekTo(Duration position, {int? index}) {
     final videoIndex = index ?? currentIndex.value;
     final controller = _videoControllers[videoIndex];
