@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/card/coming_soon_card.dart';
 import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
+import 'package:testemu/core/component/shimmer/movie_card_shimmer.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -19,6 +21,21 @@ class ComingSoonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      // Show shimmer while loading
+      if (controller.isLoading.value) {
+        return Column(
+          children: [
+            SectionHeader(title: 'Coming Soon'),
+            20.height,
+            const HorizontalListShimmer(itemCount: 3, itemHeight: 320),
+            30.height,
+            SectionHeader(title: 'New Release'),
+            20.height,
+            const MoviesGridShimmer(itemCount: 6),
+          ],
+        );
+      }
+
       final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
       return Column(
         children: [

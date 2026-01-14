@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
@@ -20,9 +21,9 @@ class ShortsFeedScreen extends StatelessWidget {
         return Scaffold(
           extendBodyBehindAppBar: true,
           body: Obx(() {
-            // Show loading indicator while fetching videos
+            // Show shimmer loading while fetching videos
             if (controller.isLoadingVideos.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const VideoPlayerShimmer();
             }
 
             // Show error message if there's an error
@@ -97,9 +98,9 @@ class ShortVideoPlayer extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              /// Background video
+              /// Background video with shimmer
               isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const VideoPlayerShimmer()
                   : hasError
                   ? const Center(
                       child: Text(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/other_widgets/no_data.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
 
 import '../../data/model/notification_model.dart';
 import '../controller/notifications_controller.dart';
@@ -39,8 +40,8 @@ class NotificationScreen extends StatelessWidget {
         child: GetBuilder<NotificationsController>(
           builder: (controller) {
             return controller.isLoading
-                /// Loading bar here
-                ? const CommonLoader()
+                /// Beautiful shimmer loading here
+                ? const VerticalListShimmer(itemCount: 10)
                 : controller.notifications.isEmpty
                 ///  data is Empty then show default Data
                 ? const NoData()

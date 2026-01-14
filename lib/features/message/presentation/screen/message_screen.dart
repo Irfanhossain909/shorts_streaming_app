@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
 import 'package:testemu/core/constants/app_string.dart';
@@ -66,8 +67,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
           /// Body Section starts here
           body: controller.isLoading
-              /// Loading bar here
-              ? const Center(child: CircularProgressIndicator())
+              /// Beautiful shimmer loading here
+              ? const VerticalListShimmer(itemCount: 8)
               /// Show data  here
               : ListView.builder(
                   reverse: true,

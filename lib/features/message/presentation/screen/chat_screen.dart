@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/bottom_nav_bar/common_bottom_bar.dart';
-import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/screen/error_screen.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
@@ -32,8 +32,8 @@ class ChatListScreen extends StatelessWidget {
       /// Body Section Starts here
       body: GetBuilder<ChatController>(
         builder: (controller) => switch (controller.status) {
-          /// Loading bar here
-          Status.loading => const CommonLoader(),
+          /// Beautiful shimmer loading here
+          Status.loading => const VerticalListShimmer(itemCount: 10),
 
           /// Error Handle here
           Status.error => ErrorScreen(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:testemu/core/component/card/top_chart_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
+import 'package:testemu/core/component/shimmer/movie_card_shimmer.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -14,48 +16,54 @@ class LibrarySection extends StatelessWidget {
   const LibrarySection({super.key, required this.controller});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Library Section with Daily/Weekly filters
-        Padding(
-          padding: EdgeInsets.only(left: 10.0.w),
-          child: Text(
-            'Library',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Library Section with Daily/Weekly filters
+          Padding(
+            padding: EdgeInsets.only(left: 10.0.w),
+            child: Text(
+              'Library',
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
-        SectionHeader(
-          subFilters: controller.libraryMovies,
-          selectedSubFilter: controller.selectedLibraryCategory.value,
-          onSubFilterSelected: (value) {
-            controller.selectedLibraryCategory.value = value;
-          },
-        ),
-        SectionHeader(
-          subFilters: controller.libraryMovies2,
-          selectedSubFilter: controller.selectedLibraryCategory.value,
-          onSubFilterSelected: (value) {
-            controller.selectedLibraryCategory.value = value;
-          },
-        ),
-        SectionHeader(
-          subFilters: controller.libraryMovies3,
-          selectedSubFilter: controller.selectedLibraryCategory.value,
-          onSubFilterSelected: (value) {
-            controller.selectedLibraryCategory.value = value;
-          },
-        ),
+          SectionHeader(
+            subFilters: controller.libraryMovies,
+            selectedSubFilter: controller.selectedLibraryCategory.value,
+            onSubFilterSelected: (value) {
+              controller.selectedLibraryCategory.value = value;
+            },
+          ),
+          SectionHeader(
+            subFilters: controller.libraryMovies2,
+            selectedSubFilter: controller.selectedLibraryCategory.value,
+            onSubFilterSelected: (value) {
+              controller.selectedLibraryCategory.value = value;
+            },
+          ),
+          SectionHeader(
+            subFilters: controller.libraryMovies3,
+            selectedSubFilter: controller.selectedLibraryCategory.value,
+            onSubFilterSelected: (value) {
+              controller.selectedLibraryCategory.value = value;
+            },
+          ),
 
-        20.height,
-        // Library Movies Grid
-        _buildMoviesGrid(),
-      ],
-    );
+          20.height,
+          // Show shimmer while loading
+          if (controller.isLoading.value)
+            const MoviesGridShimmer(itemCount: 8)
+          else
+            // Library Movies Grid
+            _buildMoviesGrid(),
+        ],
+      );
+    });
   }
 
   Widget _buildMoviesGrid() {

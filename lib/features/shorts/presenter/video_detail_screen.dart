@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/shimmer/video_detail_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -42,8 +43,10 @@ class VideoDetailScreen extends StatelessWidget {
       body: Obx(() {
         final data = videoDetailsController.data.value;
         final seasonVideoData = videoDetailsController.seasonVideoData.value;
+
+        // Show beautiful shimmer while loading
         if (data == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const VideoDetailShimmer();
         }
         return Container(
           height: Get.height,
@@ -296,8 +299,15 @@ class VideoDetailScreen extends StatelessWidget {
 
                   /// Horizontal ListView for episodes
                   Obx(() {
+                    // Show shimmer while loading season videos
+                    if (videoDetailsController.seasonVideoIsLoading.value) {
+                      return const EpisodeButtonsShimmer();
+                    }
+
                     final episodes =
                         videoDetailsController.seasonVideoData.value ?? [];
+
+                    // Show empty state if no episodes
                     if (episodes.isEmpty) {
                       return SizedBox(
                         height: 40.h,
@@ -353,17 +363,20 @@ class VideoDetailScreen extends StatelessWidget {
                     final recentVideos =
                         videoDetailsController.recentVideos.value ?? [];
 
+                    // Show shimmer if loading, else show empty state
                     if (recentVideos.isEmpty) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(vertical: 20.h),
-                        child: Center(
-                          child: CommonText(
-                            text: "No recommendations available",
-                            fontSize: 14.sp,
-                            color: AppColors.white.withValues(alpha: 0.7),
-                          ),
-                        ),
-                      );
+                      return videoDetailsController.isLoading.value
+                          ? const RecommendedVideosShimmer()
+                          : Container(
+                              padding: EdgeInsets.symmetric(vertical: 20.h),
+                              child: Center(
+                                child: CommonText(
+                                  text: "No recommendations available",
+                                  fontSize: 14.sp,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                              ),
+                            );
                     }
 
                     return Container(
@@ -375,8 +388,8 @@ class VideoDetailScreen extends StatelessWidget {
                         itemCount: recentVideos.length,
                         itemBuilder: (context, index) {
                           final recentItem = recentVideos[index];
-                          final video =
-                              recentItem.videoId!; // Safe because we filter nulls in controller
+                          final video = recentItem
+                              .videoId!; // Safe because we filter nulls in controller
                           return MovieCard(
                             title: video.title,
                             imageUrl: video.thumbnailUrl,
