@@ -43,11 +43,7 @@ class NavigationScreen extends StatelessWidget {
                     index: index,
                     children: [
                       HomeScreen(),
-                      // Only build ShortsFeedScreen when needed
-                      if (index == 1)
-                        ShortsFeedScreen()
-                      else
-                        const SizedBox.shrink(),
+                      ShortsFeedScreen(),
                       const MyListScree(),
                       const ProfileScreen(),
                     ],

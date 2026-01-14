@@ -246,9 +246,10 @@ class DownloadedVideoPlayer extends StatelessWidget {
 
                     // Delete button
                     ReelButton(
-                      imgPath: AppImages.download,
+                      imgPath: AppImages.delete,
                       text: "Delete",
-                      onTap: () => controller.showDeleteConfirmation(video.videoId),
+                      onTap: () =>
+                          controller.showDeleteConfirmation(video.videoId),
                     ),
 
                     // Share button
@@ -267,4 +268,3 @@ class DownloadedVideoPlayer extends StatelessWidget {
     );
   }
 }
-

@@ -21,7 +21,7 @@ class HomeController extends GetxController {
   var selectedLibraryCategory = 'Most Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
   var selectedRankingFilter = 'Most Popular'.obs;
-  var userName = 'Designjot'.obs;
+  var userName = 'user'.obs;
   var isHeaderSticky = false.obs;
   var searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
@@ -197,6 +197,7 @@ class HomeController extends GetxController {
 
   void onWatchTap(String videoUrl) {
     appLog('onWatchTap: $videoUrl');
+    // VideoPlayerController will automatically generate videoId from URL if not provided
     Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 
@@ -346,6 +347,34 @@ class HomeController extends GetxController {
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  //--- Refresh All Data (Pull to Refresh) ---//
+  Future<void> refreshHomeData() async {
+    try {
+      // Load all data in parallel for better performance
+      await Future.wait([
+        getCategories(),
+        getMovies(),
+        getTrailers(),
+        getReminders(),
+      ]);
+
+      Get.snackbar(
+        'Refreshed',
+        'Home data updated successfully',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2.withValues(alpha: 0.8),
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh data',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2,
+      );
     }
   }
 

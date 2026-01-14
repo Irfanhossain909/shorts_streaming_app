@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
@@ -24,7 +25,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Obx(
                   () => Text(
-                    'Good Evening, ${controller.userName.value}!',
+                    'Good Evening,${LocalStorage.myName.isNotEmpty ? LocalStorage.myName : controller.userName.value} !',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.8),
                       fontSize: 24.sp,

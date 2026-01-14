@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/ranking_card.dart';
 import 'package:testemu/core/component/other_widgets/secondary_filter.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
@@ -29,8 +31,15 @@ class RankingSection extends StatelessWidget {
 
           20.height,
 
-          // Ranking List
-          _buildRankingList(movies),
+          // Show shimmer while loading
+          if (controller.isLoading.value)
+            SizedBox(
+              height: 600.h,
+              child: const VerticalListShimmer(itemCount: 5),
+            )
+          else
+            // Ranking List
+            _buildRankingList(movies),
         ],
       );
     });

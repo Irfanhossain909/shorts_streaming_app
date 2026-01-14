@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/most_popular_card.dart';
 import 'package:testemu/core/component/card/top_chart_card.dart';
+import 'package:testemu/core/component/shimmer/list_item_shimmer.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -17,6 +18,42 @@ class FantasySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      // Show shimmer while loading
+      if (controller.isLoading.value) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 10.0.w),
+              child: Text(
+                'Most Popular',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const HorizontalListShimmer(itemCount: 5, itemHeight: 200),
+            20.height,
+            Padding(
+              padding: EdgeInsets.only(left: 10.0.w),
+              child: Text(
+                'Top Chart',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            20.height,
+            const HorizontalListShimmer(itemCount: 4, itemHeight: 380),
+          ],
+        );
+      }
+
       final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

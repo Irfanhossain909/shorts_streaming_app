@@ -100,6 +100,23 @@ class TrailerRef {
   });
 
   factory TrailerRef.fromJson(Map<String, dynamic> json) {
+    // Sanitize videoUrl to remove whitespace and newlines
+    String rawVideoUrl = json['videoUrl'] ?? '';
+    String sanitizedVideoUrl = rawVideoUrl
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll('\n', '')
+        .replaceAll('\r', '')
+        .trim();
+
+    // Sanitize thumbnailUrl - add https:// if missing
+    String rawThumbnailUrl = json['thumbnailUrl'] ?? '';
+    String sanitizedThumbnailUrl = rawThumbnailUrl;
+    if (rawThumbnailUrl.isNotEmpty &&
+        !rawThumbnailUrl.startsWith('http://') &&
+        !rawThumbnailUrl.startsWith('https://')) {
+      sanitizedThumbnailUrl = 'https://$rawThumbnailUrl';
+    }
+
     return TrailerRef(
       id: json['_id'] ?? json['id'] ?? '',
       title: json['title'] ?? '',
@@ -107,10 +124,10 @@ class TrailerRef {
       color: json['color'] ?? '',
       contentName: json['contentName'] ?? '',
       description: json['description'] ?? '',
-      videoUrl: json['videoUrl'] ?? '',
+      videoUrl: sanitizedVideoUrl,
       videoId: json['videoId'] ?? '',
       libraryId: json['libraryId'] ?? '',
-      thumbnailUrl: json['thumbnailUrl'] ?? '',
+      thumbnailUrl: sanitizedThumbnailUrl,
       thumbnailUrlWithCache: json['thumbnailUrlWithCache'] ?? '',
       status: json['status'] ?? '',
       views: json['views'] ?? 0,

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/other_widgets/section_header.dart';
+import 'package:testemu/core/component/shimmer/movie_card_shimmer.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
@@ -18,6 +19,18 @@ class PopularMovieSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      // Show shimmer while loading
+      if (controller.isLoading.value) {
+        return Column(
+          children: [
+            20.height,
+            SectionHeader(title: 'You  Might Like'),
+            20.height,
+            const MoviesGridShimmer(itemCount: 9),
+          ],
+        );
+      }
+
       // Always use filtered movies (real data from backend)
       final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
 

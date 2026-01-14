@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/services/video_progress/video_progress_service.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
 import 'package:testemu/features/download/service/download_service.dart';
 import 'package:testemu/features/shorts/model/shorts_video_model.dart';
@@ -14,12 +16,16 @@ import 'package:video_player/video_player.dart';
 class ShortsScontroller extends GetxController {
   final ShortsRepository repository = ShortsRepository.instance;
   final DownloadService downloadService = DownloadService.instance;
+  final VideoProgressService progressService = VideoProgressService.instance;
 
   // API data
   RxList<ShortsVideoItem> shortsVideosList = <ShortsVideoItem>[].obs;
   RxBool isLoadingVideos = false.obs;
   RxBool hasError = false.obs;
   RxString errorMessage = ''.obs;
+
+  // Timer for periodic progress saving
+  Timer? _progressSaveTimer;
 
   // Video list - will be populated from API
   List<String> get videos {
@@ -48,6 +54,9 @@ class ShortsScontroller extends GetxController {
 
   // Current page index
   RxInt currentIndex = 0.obs;
+
+  // Track if the Shorts screen is currently visible (active tab)
+  RxBool isScreenVisible = false.obs;
 
   // Map to store video controllers for each index
   final Map<int, VideoPlayerController> _videoControllers = {};
@@ -134,8 +143,9 @@ class ShortsScontroller extends GetxController {
   }
 
   Future<void> onPageChanged(int index) async {
-    // Pause previous video
+    // Pause previous video and save its progress
     final previousIndex = currentIndex.value;
+    await _saveVideoProgress(previousIndex);
     _pauseVideo(previousIndex);
 
     // Update current index
@@ -166,20 +176,32 @@ class ShortsScontroller extends GetxController {
 
     final videoUrl = videos[index];
 
-    // Configure video player with optimized settings for buffer management
+    // Configure video player with optimized settings for low-end devices
     final controller = VideoPlayerController.networkUrl(
       Uri.parse(videoUrl),
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: false, // Don't mix with other audio
         allowBackgroundPlayback: false, // Prevent background playback
       ),
+      httpHeaders: {
+        // Request lower quality if available (some CDNs support this)
+        'Accept': 'video/*;q=0.8',
+      },
     );
 
     _videoControllers[index] = controller;
 
+    // Add timeout for initialization (helpful for slow networks)
     controller
         .initialize()
-        .then((_) {
+        .timeout(
+          const Duration(seconds: 20),
+          onTimeout: () {
+            printInfo(info: '⚠️ Video initialization timeout at index $index');
+            throw Exception('Video loading timeout - slow network');
+          },
+        )
+        .then((_) async {
           // Check if controller was disposed while initializing
           if (_videoControllers[index] != controller) {
             printInfo(info: 'Controller was disposed during init, cleaning up');
@@ -195,13 +217,21 @@ class ShortsScontroller extends GetxController {
           _errorStates[index] = false;
           update();
 
-          // Auto-play if it's the current video
-          if (currentIndex.value == index) {
+          printInfo(
+            info:
+                '✅ Video loaded: ${controller.value.size.width}x${controller.value.size.height}',
+          );
+
+          // Load and seek to saved progress
+          await _loadVideoProgress(index);
+
+          // Auto-play if it's the current video AND screen is visible
+          if (currentIndex.value == index && isScreenVisible.value) {
             _playVideo(index);
           }
         })
         .catchError((error) {
-          printInfo(info: 'Error initializing video at index $index: $error');
+          printInfo(info: '❌ Error initializing video at index $index: $error');
 
           // Check if controller was disposed
           if (_videoControllers[index] != controller) return;
@@ -220,21 +250,38 @@ class ShortsScontroller extends GetxController {
 
           update();
 
-          // If error is buffer-related, show helpful message
-          if (error.toString().contains('buffer') ||
+          // Provide user-friendly error messages
+          if (error.toString().contains('timeout')) {
+            Get.snackbar(
+              'Slow Network',
+              'Video is taking too long to load. Check your internet connection.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 3),
+            );
+          } else if (error.toString().contains('buffer') ||
               error.toString().contains('decoder')) {
             printInfo(
               info:
-                  '⚠️ Buffer/Decoder error detected - may need to reduce video quality',
+                  '⚠️ Buffer/Decoder error - device may not support this video quality',
+            );
+            Get.snackbar(
+              'Playback Error',
+              'Your device may not support this video quality. Try another video.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 3),
             );
           }
         });
 
-    // Listen for video completion
+    // Listen for video completion and progress tracking
     controller.addListener(() {
       if (controller.value.position >= controller.value.duration &&
           controller.value.duration.inMilliseconds > 0) {
-        // Video completed, restart
+        // Video completed, clear saved progress and restart
+        final videoId = _getVideoIdAtIndex(index);
+        if (videoId != null) {
+          progressService.clearProgress(videoId);
+        }
         controller.seekTo(Duration.zero);
         if (currentIndex.value == index) {
           controller.play();
@@ -250,6 +297,9 @@ class ShortsScontroller extends GetxController {
       controller.setLooping(true);
       _playingStates[index] = true;
       update();
+
+      // Start periodic progress saving
+      _startProgressSaveTimer(index);
     }
   }
 
@@ -259,6 +309,9 @@ class ShortsScontroller extends GetxController {
       controller.pause();
       _playingStates[index] = false;
       update();
+
+      // Stop periodic progress saving
+      _stopProgressSaveTimer();
     }
   }
 
@@ -270,11 +323,46 @@ class ShortsScontroller extends GetxController {
       if (_playingStates[index] == true) {
         controller.pause();
         _playingStates[index] = false;
+        _stopProgressSaveTimer();
+        // Save progress when manually paused
+        _saveVideoProgress(index);
       } else {
         controller.play();
         _playingStates[index] = true;
+        _startProgressSaveTimer(index);
       }
       update();
+    }
+  }
+
+  /// Public method to pause current video (called when navigating away)
+  void pauseCurrentVideo() {
+    isScreenVisible.value = false;
+    final index = currentIndex.value;
+    _pauseVideo(index);
+    // Save progress when navigating away
+    _saveVideoProgress(index);
+  }
+
+  /// Public method to resume current video (called when navigating back)
+  void resumeCurrentVideo() {
+    isScreenVisible.value = true;
+    final index = currentIndex.value;
+    // Only play if video is already initialized
+    if (_videoControllers.containsKey(index)) {
+      _playVideo(index);
+    }
+  }
+
+  /// Called when Shorts tab becomes visible for the first time
+  void onScreenBecameVisible() {
+    isScreenVisible.value = true;
+    // If videos are loaded but no video is playing, start the first one
+    if (videos.isNotEmpty && !_videoControllers.containsKey(0)) {
+      _initializeVideoForIndex(0);
+    } else if (_videoControllers.containsKey(currentIndex.value)) {
+      // If video is already initialized, just play it
+      _playVideo(currentIndex.value);
     }
   }
 
@@ -579,8 +667,83 @@ class ShortsScontroller extends GetxController {
     }
   }
 
+  /// Get video ID for the video at given index
+  String? _getVideoIdAtIndex(int index) {
+    if (index < 0 || index >= videoMetadata.length) return null;
+    return videoMetadata[index]['videoId'];
+  }
+
+  /// Load saved video progress and seek to that position
+  Future<void> _loadVideoProgress(int index) async {
+    final videoId = _getVideoIdAtIndex(index);
+    if (videoId == null) return;
+
+    final controller = _videoControllers[index];
+    if (controller == null || !controller.value.isInitialized) return;
+
+    try {
+      final savedPosition = await progressService.getProgress(videoId);
+      if (savedPosition != null && savedPosition > 0) {
+        final duration = controller.value.duration.inSeconds;
+
+        // Only seek if the saved position is valid and less than video duration
+        if (savedPosition < duration) {
+          await controller.seekTo(Duration(seconds: savedPosition));
+          printInfo(info: '▶️ Resumed video $videoId from ${savedPosition}s');
+        }
+      }
+    } catch (e) {
+      printInfo(info: 'Error loading video progress: $e');
+    }
+  }
+
+  /// Save current video progress
+  Future<void> _saveVideoProgress(int index) async {
+    final videoId = _getVideoIdAtIndex(index);
+    if (videoId == null) return;
+
+    final controller = _videoControllers[index];
+    if (controller == null || !controller.value.isInitialized) return;
+
+    try {
+      final position = controller.value.position.inSeconds;
+      final duration = controller.value.duration.inSeconds;
+
+      if (duration > 0) {
+        await progressService.saveProgress(
+          videoId: videoId,
+          positionInSeconds: position,
+          durationInSeconds: duration,
+        );
+      }
+    } catch (e) {
+      printInfo(info: 'Error saving video progress: $e');
+    }
+  }
+
+  /// Start timer to periodically save progress
+  void _startProgressSaveTimer(int index) {
+    _stopProgressSaveTimer();
+
+    _progressSaveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (currentIndex.value == index && _playingStates[index] == true) {
+        _saveVideoProgress(index);
+      }
+    });
+  }
+
+  /// Stop progress save timer
+  void _stopProgressSaveTimer() {
+    _progressSaveTimer?.cancel();
+    _progressSaveTimer = null;
+  }
+
   @override
   void onClose() {
+    // Save progress before closing
+    _saveVideoProgress(currentIndex.value);
+    _stopProgressSaveTimer();
+
     // Dispose all video controllers
     for (var controller in _videoControllers.values) {
       controller.dispose();

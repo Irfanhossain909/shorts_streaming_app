@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/other_widgets/category_filter.dart';
-import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -38,22 +37,30 @@ class MyListScree extends StatelessWidget {
           return Container(
             decoration: _backgroundGradient,
             child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildHeader(controller),
-                    20.height,
-                    Obx(
-                      () => CategoryFilter(
-                        categories: controller.myListCategories,
-                        selectedCategory:
-                            controller.selectedMyListCategory.value,
-                        onCategorySelected: controller.selectMyListCategory,
+              child: RefreshIndicator(
+                onRefresh: controller.refreshMyListData,
+                color: AppColors.red2,
+                backgroundColor: Colors.white,
+                displacement: 40.0,
+                strokeWidth: 2.5,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _buildHeader(controller),
+                      20.height,
+                      Obx(
+                        () => CategoryFilter(
+                          categories: controller.myListCategories,
+                          selectedCategory:
+                              controller.selectedMyListCategory.value,
+                          onCategorySelected: controller.selectMyListCategory,
+                        ),
                       ),
-                    ),
-                    20.height,
-                    Obx(() => _buildContent(controller)),
-                  ],
+                      20.height,
+                      Obx(() => _buildContent(controller)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -187,9 +194,7 @@ class MyListScree extends StatelessWidget {
           final movie = controller.bookmarks[index];
           return MovieCard(
             title: movie.trailer?.title ?? '',
-            imageUrl:
-                ApiEndPoint.instance.imageUrl +
-                (movie.trailer?.thumbnailUrl ?? ''),
+            imageUrl: (movie.trailer?.thumbnailUrl ?? ''),
             badge: movie.trailer?.contentName ?? '',
             onTap: () => controller.onMovieTap(
               movie.trailer?.id ?? '',

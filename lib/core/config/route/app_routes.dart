@@ -23,14 +23,12 @@ import 'package:testemu/features/download/presenter/download_episod_list_screen.
 ======================= */
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
-import 'package:testemu/features/download/presenter/downloaded_shorts_screen.dart';
 import 'package:testemu/features/download/presenter/downloaded_shorts_player_screen.dart';
+import 'package:testemu/features/download/presenter/downloaded_shorts_screen.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 /* =======================
   💬 MESSAGE SCREENS
 ======================= */
-import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
-import 'package:testemu/features/message/presentation/screen/message_screen.dart';
 import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
 import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
@@ -147,18 +145,6 @@ class AppRoutes {
       name: notifications,
       binding: AppBinding(),
       page: () => const NotificationScreen(),
-    ),
-
-    /// 💬 MESSAGES
-    GetPage(
-      name: chat,
-      binding: AppBinding(),
-      page: () => const ChatListScreen(),
-    ),
-    GetPage(
-      name: message,
-      binding: AppBinding(),
-      page: () => const MessageScreen(),
     ),
 
     /// 👤 PROFILE & SETTINGS
