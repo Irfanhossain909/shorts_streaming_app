@@ -170,10 +170,19 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildMoviesGrid(List<Movie> movies, HomeController controller) {
-    return SliverPadding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w),
-      sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate((context, index) {
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: movies.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 12.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.50,
+        ),
+        itemBuilder: (context, index) {
           final movie = movies[index];
           return RepaintBoundary(
             child: MovieCard(
@@ -186,13 +195,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () => controller.onMovieTap(movie.id),
             ),
           );
-        }, childCount: movies.length),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 12.w,
-          mainAxisSpacing: 16.h,
-          childAspectRatio: 0.50,
-        ),
+        },
       ),
     );
   }
@@ -201,7 +204,7 @@ class HomeScreen extends StatelessWidget {
 // Separate widget for sticky header to optimize rebuilds
 class _StickyHeader extends StatelessWidget {
   final HomeController controller;
-  
+
   const _StickyHeader({required this.controller});
 
   // Cache gradient decoration
@@ -242,11 +245,8 @@ class _StickyHeader extends StatelessWidget {
           10.height,
           Obx(
             () => CategoryFilter(
-              categories: controller.categories
-                  .map((e) => e.name)
-                  .toList(),
-              selectedCategory:
-                  controller.selectedCategory.value,
+              categories: controller.categories.map((e) => e.name).toList(),
+              selectedCategory: controller.selectedCategory.value,
               onCategorySelected: controller.selectCategory,
             ),
           ),
@@ -272,7 +272,7 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get maxExtent => maxHeight;
-  
+
   @override
   bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
     return minHeight != oldDelegate.minHeight ||

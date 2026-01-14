@@ -131,8 +131,16 @@ class DownloadedShortsPlayerController extends GetxController {
 
     _videoControllers[index] = controller;
 
+    // Add timeout for initialization
     controller
         .initialize()
+        .timeout(
+          const Duration(seconds: 15),
+          onTimeout: () {
+            printInfo(info: '⚠️ Downloaded video initialization timeout at index $index');
+            throw Exception('Video loading timeout');
+          },
+        )
         .then((_) async {
           // Check if controller was disposed while initializing
           if (_videoControllers[index] != controller) {
@@ -148,6 +156,10 @@ class DownloadedShortsPlayerController extends GetxController {
           _loadingStates[index] = false;
           _errorStates[index] = false;
           update();
+
+          printInfo(
+            info: '✅ Downloaded video loaded: ${controller.value.size.width}x${controller.value.size.height}',
+          );
 
           // Load and seek to saved progress
           await _loadVideoProgress(index);

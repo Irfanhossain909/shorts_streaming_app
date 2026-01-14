@@ -173,19 +173,31 @@ class ShortsScontroller extends GetxController {
 
     final videoUrl = videos[index];
 
-    // Configure video player with optimized settings for buffer management
+    // Configure video player with optimized settings for low-end devices
     final controller = VideoPlayerController.networkUrl(
       Uri.parse(videoUrl),
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: false, // Don't mix with other audio
         allowBackgroundPlayback: false, // Prevent background playback
       ),
+      httpHeaders: {
+        // Request lower quality if available (some CDNs support this)
+        'Accept': 'video/*;q=0.8',
+      },
     );
 
     _videoControllers[index] = controller;
 
+    // Add timeout for initialization (helpful for slow networks)
     controller
         .initialize()
+        .timeout(
+          const Duration(seconds: 20),
+          onTimeout: () {
+            printInfo(info: '⚠️ Video initialization timeout at index $index');
+            throw Exception('Video loading timeout - slow network');
+          },
+        )
         .then((_) async {
           // Check if controller was disposed while initializing
           if (_videoControllers[index] != controller) {
@@ -202,6 +214,10 @@ class ShortsScontroller extends GetxController {
           _errorStates[index] = false;
           update();
 
+          printInfo(
+            info: '✅ Video loaded: ${controller.value.size.width}x${controller.value.size.height}',
+          );
+
           // Load and seek to saved progress
           await _loadVideoProgress(index);
 
@@ -211,7 +227,7 @@ class ShortsScontroller extends GetxController {
           }
         })
         .catchError((error) {
-          printInfo(info: 'Error initializing video at index $index: $error');
+          printInfo(info: '❌ Error initializing video at index $index: $error');
 
           // Check if controller was disposed
           if (_videoControllers[index] != controller) return;
@@ -230,12 +246,24 @@ class ShortsScontroller extends GetxController {
 
           update();
 
-          // If error is buffer-related, show helpful message
-          if (error.toString().contains('buffer') ||
+          // Provide user-friendly error messages
+          if (error.toString().contains('timeout')) {
+            Get.snackbar(
+              'Slow Network',
+              'Video is taking too long to load. Check your internet connection.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 3),
+            );
+          } else if (error.toString().contains('buffer') ||
               error.toString().contains('decoder')) {
             printInfo(
-              info:
-                  '⚠️ Buffer/Decoder error detected - may need to reduce video quality',
+              info: '⚠️ Buffer/Decoder error - device may not support this video quality',
+            );
+            Get.snackbar(
+              'Playback Error',
+              'Your device may not support this video quality. Try another video.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 3),
             );
           }
         });
