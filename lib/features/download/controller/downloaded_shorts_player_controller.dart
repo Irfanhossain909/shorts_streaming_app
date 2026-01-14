@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
@@ -120,55 +121,61 @@ class DownloadedShortsPlayerController extends GetxController {
         allowBackgroundPlayback: false, // Prevent background playback
       ),
     );
-    
+
     _videoControllers[index] = controller;
 
-    controller.initialize().then((_) {
-      // Check if controller was disposed while initializing
-      if (_videoControllers[index] != controller) {
-        printInfo(info: 'Controller was disposed during init, cleaning up');
-        try {
-          controller.dispose();
-        } catch (e) {
-          printInfo(info: 'Error disposing orphaned controller: $e');
-        }
-        return;
-      }
+    controller
+        .initialize()
+        .then((_) {
+          // Check if controller was disposed while initializing
+          if (_videoControllers[index] != controller) {
+            printInfo(info: 'Controller was disposed during init, cleaning up');
+            try {
+              controller.dispose();
+            } catch (e) {
+              printInfo(info: 'Error disposing orphaned controller: $e');
+            }
+            return;
+          }
 
-      _loadingStates[index] = false;
-      _errorStates[index] = false;
-      update();
+          _loadingStates[index] = false;
+          _errorStates[index] = false;
+          update();
 
-      // Auto-play if it's the current video
-      if (currentIndex.value == index) {
-        _playVideo(index);
-      }
-    }).catchError((error) {
-      printInfo(info: 'Error initializing video at index $index: $error');
-      
-      // Check if controller was disposed
-      if (_videoControllers[index] != controller) return;
+          // Auto-play if it's the current video
+          if (currentIndex.value == index) {
+            _playVideo(index);
+          }
+        })
+        .catchError((error) {
+          printInfo(info: 'Error initializing video at index $index: $error');
 
-      // Dispose the failed controller
-      try {
-        controller.dispose();
-      } catch (e) {
-        printInfo(info: 'Error disposing failed controller: $e');
-      }
-      _videoControllers.remove(index);
+          // Check if controller was disposed
+          if (_videoControllers[index] != controller) return;
 
-      _loadingStates[index] = false;
-      _errorStates[index] = true;
-      _playingStates[index] = false;
+          // Dispose the failed controller
+          try {
+            controller.dispose();
+          } catch (e) {
+            printInfo(info: 'Error disposing failed controller: $e');
+          }
+          _videoControllers.remove(index);
 
-      update();
-      
-      // If error is buffer-related, show helpful message
-      if (error.toString().contains('buffer') || 
-          error.toString().contains('decoder')) {
-        printInfo(info: '⚠️ Buffer/Decoder error detected - may need to reduce video quality');
-      }
-    });
+          _loadingStates[index] = false;
+          _errorStates[index] = true;
+          _playingStates[index] = false;
+
+          update();
+
+          // If error is buffer-related, show helpful message
+          if (error.toString().contains('buffer') ||
+              error.toString().contains('decoder')) {
+            printInfo(
+              info:
+                  '⚠️ Buffer/Decoder error detected - may need to reduce video quality',
+            );
+          }
+        });
 
     // Listen for video completion
     controller.addListener(() {
@@ -286,10 +293,7 @@ class DownloadedShortsPlayerController extends GetxController {
           style: TextStyle(color: Colors.white70),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text("Cancel"),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text("Cancel")),
           TextButton(
             onPressed: () {
               Get.back();
@@ -305,6 +309,23 @@ class DownloadedShortsPlayerController extends GetxController {
 
   Future<void> deleteVideo(String videoId) async {
     try {
+      // Find the index of the video to delete
+      final deleteIndex = videos.indexWhere((v) => v.videoId == videoId);
+      if (deleteIndex == -1) {
+        Get.snackbar(
+          "Error",
+          "Video not found",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // If the video being deleted is currently playing, dispose its controller
+      if (deleteIndex == currentIndex.value) {
+        await _disposeControllerAtIndex(deleteIndex);
+      }
+
+      // Delete from local storage
       final success = await _downloadService.deleteDownloadedVideo(videoId);
 
       if (success) {
@@ -312,6 +333,8 @@ class DownloadedShortsPlayerController extends GetxController {
           "Success",
           "Video deleted successfully",
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
 
         // Remove from current list
@@ -327,19 +350,29 @@ class DownloadedShortsPlayerController extends GetxController {
           currentIndex.value = videos.length - 1;
         }
 
+        // Navigate to the new current video
+        pageController.jumpToPage(currentIndex.value);
+
+        // Initialize the new current video
+        _initializeVideoForIndex(currentIndex.value);
+
         update();
       } else {
         Get.snackbar(
           "Error",
           "Failed to delete video",
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Error deleting video",
+        "Error deleting video: $e",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }
@@ -360,4 +393,3 @@ class DownloadedShortsPlayerController extends GetxController {
     super.onClose();
   }
 }
-
