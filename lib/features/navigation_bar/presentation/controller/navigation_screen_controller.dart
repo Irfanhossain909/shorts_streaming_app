@@ -6,17 +6,24 @@ class NavigationScreenController extends GetxController {
   RxInt selectedIndex = RxInt(0);
 
   void changeIndex(int index) {
-    // Pause video when navigating away from Shorts tab (index 1)
-    if (selectedIndex.value == 1 && index != 1) {
-      try {
-        // Get the ShortsScontroller if it exists and pause the video
-        if (Get.isRegistered<ShortsScontroller>()) {
-          final shortsController = Get.find<ShortsScontroller>();
+    final previousIndex = selectedIndex.value;
+
+    // Handle Shorts tab visibility changes
+    try {
+      if (Get.isRegistered<ShortsScontroller>()) {
+        final shortsController = Get.find<ShortsScontroller>();
+
+        // Navigating away from Shorts tab
+        if (previousIndex == 1 && index != 1) {
           shortsController.pauseCurrentVideo();
         }
-      } catch (e) {
-        printInfo(info: 'Error pausing video: $e');
+        // Navigating to Shorts tab
+        else if (previousIndex != 1 && index == 1) {
+          shortsController.onScreenBecameVisible();
+        }
       }
+    } catch (e) {
+      printInfo(info: 'Error handling video state: $e');
     }
 
     // Prevent build-during-frame errors by scheduling state change

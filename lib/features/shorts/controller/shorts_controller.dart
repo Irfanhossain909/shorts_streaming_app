@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,6 +54,9 @@ class ShortsScontroller extends GetxController {
 
   // Current page index
   RxInt currentIndex = 0.obs;
+
+  // Track if the Shorts screen is currently visible (active tab)
+  RxBool isScreenVisible = false.obs;
 
   // Map to store video controllers for each index
   final Map<int, VideoPlayerController> _videoControllers = {};
@@ -215,14 +218,15 @@ class ShortsScontroller extends GetxController {
           update();
 
           printInfo(
-            info: '✅ Video loaded: ${controller.value.size.width}x${controller.value.size.height}',
+            info:
+                '✅ Video loaded: ${controller.value.size.width}x${controller.value.size.height}',
           );
 
           // Load and seek to saved progress
           await _loadVideoProgress(index);
 
-          // Auto-play if it's the current video
-          if (currentIndex.value == index) {
+          // Auto-play if it's the current video AND screen is visible
+          if (currentIndex.value == index && isScreenVisible.value) {
             _playVideo(index);
           }
         })
@@ -257,7 +261,8 @@ class ShortsScontroller extends GetxController {
           } else if (error.toString().contains('buffer') ||
               error.toString().contains('decoder')) {
             printInfo(
-              info: '⚠️ Buffer/Decoder error - device may not support this video quality',
+              info:
+                  '⚠️ Buffer/Decoder error - device may not support this video quality',
             );
             Get.snackbar(
               'Playback Error',
@@ -332,6 +337,7 @@ class ShortsScontroller extends GetxController {
 
   /// Public method to pause current video (called when navigating away)
   void pauseCurrentVideo() {
+    isScreenVisible.value = false;
     final index = currentIndex.value;
     _pauseVideo(index);
     // Save progress when navigating away
@@ -340,8 +346,24 @@ class ShortsScontroller extends GetxController {
 
   /// Public method to resume current video (called when navigating back)
   void resumeCurrentVideo() {
+    isScreenVisible.value = true;
     final index = currentIndex.value;
-    _playVideo(index);
+    // Only play if video is already initialized
+    if (_videoControllers.containsKey(index)) {
+      _playVideo(index);
+    }
+  }
+
+  /// Called when Shorts tab becomes visible for the first time
+  void onScreenBecameVisible() {
+    isScreenVisible.value = true;
+    // If videos are loaded but no video is playing, start the first one
+    if (videos.isNotEmpty && !_videoControllers.containsKey(0)) {
+      _initializeVideoForIndex(0);
+    } else if (_videoControllers.containsKey(currentIndex.value)) {
+      // If video is already initialized, just play it
+      _playVideo(currentIndex.value);
+    }
   }
 
   void seekTo(Duration position, {int? index}) {
@@ -663,13 +685,11 @@ class ShortsScontroller extends GetxController {
       final savedPosition = await progressService.getProgress(videoId);
       if (savedPosition != null && savedPosition > 0) {
         final duration = controller.value.duration.inSeconds;
-        
+
         // Only seek if the saved position is valid and less than video duration
         if (savedPosition < duration) {
           await controller.seekTo(Duration(seconds: savedPosition));
-          printInfo(
-            info: '▶️ Resumed video $videoId from ${savedPosition}s',
-          );
+          printInfo(info: '▶️ Resumed video $videoId from ${savedPosition}s');
         }
       }
     } catch (e) {
@@ -704,15 +724,12 @@ class ShortsScontroller extends GetxController {
   /// Start timer to periodically save progress
   void _startProgressSaveTimer(int index) {
     _stopProgressSaveTimer();
-    
-    _progressSaveTimer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) {
-        if (currentIndex.value == index && _playingStates[index] == true) {
-          _saveVideoProgress(index);
-        }
-      },
-    );
+
+    _progressSaveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (currentIndex.value == index && _playingStates[index] == true) {
+        _saveVideoProgress(index);
+      }
+    });
   }
 
   /// Stop progress save timer
@@ -726,7 +743,7 @@ class ShortsScontroller extends GetxController {
     // Save progress before closing
     _saveVideoProgress(currentIndex.value);
     _stopProgressSaveTimer();
-    
+
     // Dispose all video controllers
     for (var controller in _videoControllers.values) {
       controller.dispose();
