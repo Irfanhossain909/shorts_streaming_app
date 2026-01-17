@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/constants/app_colors.dart';
-import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
@@ -23,21 +22,17 @@ class HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(() {
-                  String name = controller.userName.value;
-                  if (LocalStorage.myName.isNotEmpty) {
-                    name = LocalStorage.myName;
-                  }
-                  return Text(
-                    'Good Evening, $name !',
+                Obx(
+                  () => Text(
+                    'Good Evening, ${controller.profileController.profileModel.value?.name ?? 'Guest'} ',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.8),
                       fontSize: 24.sp,
                       fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,
-                  );
-                }),
+                  ),
+                ),
                 4.height,
                 Text(
                   'What you want to watch?',
