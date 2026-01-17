@@ -5,7 +5,7 @@ import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
-import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/features/shorts/controller/shorts_controller.dart';
 import 'package:testemu/features/shorts/widgets/reel_button.dart';
 import 'package:video_player/video_player.dart';
@@ -195,7 +195,7 @@ class ShortVideoPlayer extends StatelessWidget {
                             Row(
                               children: [
                                 CommonImage(
-                                  imageSrc: AppImages.listIc,
+                                  imageSrc: AppIcons.icList,
                                   width: 16,
                                 ),
                                 const SizedBox(width: 8),
@@ -235,7 +235,7 @@ class ShortVideoPlayer extends StatelessWidget {
                 right: 10,
                 child: RepaintBoundary(
                   child: Column(
-                    spacing: 16.h,
+                    spacing: 18.h,
                     children: [
                       RepaintBoundary(
                         child: InkWell(
@@ -273,20 +273,20 @@ class ShortVideoPlayer extends StatelessWidget {
                       ),
                       RepaintBoundary(
                         child: ReelButton(
-                          imgPath: AppImages.star,
+                          imgPath: AppIcons.icStar,
                           text: "125.5K",
                         ),
                       ),
                       RepaintBoundary(
                         child: ReelButton(
-                          imgPath: AppImages.listIc,
+                          imgPath: AppIcons.icList,
                           text: "List",
                           onTap: () => controller.showEpisodeListBottomSheet(),
                         ),
                       ),
                       RepaintBoundary(
                         child: ReelButton(
-                          imgPath: AppImages.shareIc,
+                          imgPath: AppIcons.icShare,
                           text: "Share",
                         ),
                       ),
@@ -332,7 +332,7 @@ class ShortVideoPlayer extends StatelessWidget {
                                       imageColor: isDownloading
                                           ? AppColors.red2
                                           : AppColors.background,
-                                      imageSrc: AppImages.download,
+                                      imageSrc: AppIcons.icDownload,
                                       width: 24.w,
                                     ),
                                   ],

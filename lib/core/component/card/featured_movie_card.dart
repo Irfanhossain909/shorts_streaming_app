@@ -115,7 +115,7 @@ class FeaturedMovieCard extends StatelessWidget {
                       child: Icon(
                         Icons.play_arrow_rounded,
                         color: AppColors.white,
-                        size: 12.sp,
+                        size: 18.sp,
                       ),
                     ),
                   ],

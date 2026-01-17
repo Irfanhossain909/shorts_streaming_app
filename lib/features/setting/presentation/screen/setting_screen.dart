@@ -5,7 +5,7 @@ import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
-import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -32,21 +32,21 @@ class SettingScreen extends StatelessWidget {
                 Get.toNamed(AppRoutes.privacyPolicy);
               },
               title: "Privacy Policy",
-              leadPath: AppImages.icOfflineDownload,
+              leadPath: AppIcons.icOfflineDownload,
             ),
             ProfileRow(
               onTap: () {
                 Get.toNamed(AppRoutes.userAgreement);
               },
               title: "User Agreement",
-              leadPath: AppImages.icLanguage,
+              leadPath: AppIcons.icLanguage,
             ),
             ProfileRow(
               onTap: () {
                 Get.toNamed(AppRoutes.deleteAccount);
               },
               title: "Delete Account",
-              leadPath: AppImages.icFaq,
+              leadPath: AppIcons.icFaq,
             ),
           ],
         ),
