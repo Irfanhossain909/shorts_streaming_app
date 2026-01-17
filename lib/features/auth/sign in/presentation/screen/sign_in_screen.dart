@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
@@ -22,7 +23,7 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: CommonAppBar(title: ""),
+      appBar: CommonAppBar(isBackButton: false, title: ""),
 
       bottomNavigationBar: SafeArea(child: DoNotHaveAccount()),
 
@@ -50,10 +51,11 @@ class SignInScreen extends StatelessWidget {
                     // ),
                     child: Column(
                       children: [
+                        
                         CommonImage(
                           width: 120.w,
                           height: 120.h,
-                          imageSrc: AppImages.logo,
+                          imageSrc: AppImages.appLogoSvg,
                         ),
                         CommonText(
                           text: "Let's Get Started!",
