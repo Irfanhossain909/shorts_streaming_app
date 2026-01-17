@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 
 import 'app.dart';
@@ -10,6 +11,7 @@ import 'core/services/socket/socket_service.dart';
 import 'core/services/storage/storage_services.dart';
 
 Future<void> main() async {
+  await ScreenUtil.ensureScreenSize();
   //debugRepaintRainbowEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
 
