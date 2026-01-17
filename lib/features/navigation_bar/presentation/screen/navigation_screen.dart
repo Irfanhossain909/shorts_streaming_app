@@ -58,11 +58,11 @@ class NavigationScreen extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
                       decoration: BoxDecoration(
                         // Use solid color instead of blur for better performance
-                        color: AppColors.grey.withValues(alpha: 0.85),
+                        color: AppColors.white.withValues(alpha: 0.3),
                         borderRadius: _bottomBarBorderRadius,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, -2),
                           ),
