@@ -10,7 +10,7 @@ class AppImages {
   static const String google = "assets/icons/google.svg";
   static const String logo = "assets/icons/appLogoSvg.svg";
   // static const String logo = "$baseurl/logo.png";
-  static const String facebook = "assets/icons/facebook.svg ";
+  static const String facebook = "assets/icons/facebook.svg";
   static const String apple = "$baseurl/apple.png";
   static const String map = "$baseurl/map.png";
   static const String defaultProfile = "assets/images/defult_image.png";
