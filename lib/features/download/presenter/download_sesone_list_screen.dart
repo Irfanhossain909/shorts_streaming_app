@@ -34,7 +34,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
             ],
             isCenterTitle: false,
             title: "Downloaded Shorts",
-            isShowBackButton: false,
+            isShowBackButton: true,
           ),
 
           body: Obx(() {
@@ -203,7 +203,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.redGradient2,
         contentPadding: const EdgeInsets.only(
           top: 16,
           left: 16,
@@ -219,12 +219,12 @@ class DownloadSesoneListScreen extends StatelessWidget {
                 34.height, // space for close button
 
                 Text(
-                  "Delete ${controller.selectedVideoIds.length} video(s)?",
+                  "Delete ${controller.selectedVideoIds.length} videos?",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     color: AppColors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -232,8 +232,9 @@ class DownloadSesoneListScreen extends StatelessWidget {
                   "This will permanently delete the videos from your device",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: AppColors.white.withValues(alpha: 0.6),
-                    fontSize: 12.sp,
+                    color: AppColors.white,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -245,7 +246,7 @@ class DownloadSesoneListScreen extends StatelessWidget {
                         onTap: () => Get.back(),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: AppColors.black.withValues(alpha: .1),
+                            color: AppColors.red,
                             borderRadius: BorderRadius.circular(36.r),
                           ),
                           alignment: Alignment.center,

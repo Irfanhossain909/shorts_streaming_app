@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/constants/app_colors.dart';
-import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
 import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
 import 'package:testemu/features/navigation_bar/presentation/controller/navigation_screen_controller.dart';
@@ -15,10 +15,10 @@ class NavigationScreen extends StatelessWidget {
 
   // Cache icon paths to avoid recreation
   static const List<String> _iconPaths = [
-    AppImages.nav1,
-    AppImages.nav2,
-    AppImages.nav3,
-    AppImages.nav4,
+    AppIcons.icHome,
+    AppIcons.icShorts,
+    AppIcons.icLibrary,
+    AppIcons.icProfile,
   ];
 
   // Cache border radius
@@ -58,7 +58,7 @@ class NavigationScreen extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
                       decoration: BoxDecoration(
                         // Use solid color instead of blur for better performance
-                        color: AppColors.grey.withValues(alpha: 0.85),
+                        color: AppColors.white.withValues(alpha: 0.3),
                         borderRadius: _bottomBarBorderRadius,
                         boxShadow: [
                           BoxShadow(
@@ -121,7 +121,7 @@ class _NavigationItem extends StatelessWidget {
         child: CommonImage(
           imageSrc: NavigationScreen._iconPaths[index],
           width: 24.w,
-          height: 24.w,
+          height: 24.h,
           imageColor: isSelected ? Colors.white : AppColors.background,
         ),
       ),
