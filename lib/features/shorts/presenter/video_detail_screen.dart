@@ -234,12 +234,14 @@ class VideoDetailScreen extends StatelessWidget {
                                             : (season.seasonNumber != null
                                                   ? "Series ${season.seasonNumber}"
                                                   : "Series");
-                                        return CommonText(
-                                          text: displayText,
-                                          color: AppColors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                          overflow: TextOverflow.ellipsis,
+                                        return Center(
+                                          child: CommonText(
+                                            text: displayText,
+                                            color: AppColors.white,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         );
                                       }).toList();
                                     },
