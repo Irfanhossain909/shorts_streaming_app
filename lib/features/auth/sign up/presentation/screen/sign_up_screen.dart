@@ -11,6 +11,7 @@ import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/auth/sign%20up/presentation/widget/already_accunt_rich_text.dart';
+import 'package:testemu/core/utils/helpers/other_helper.dart';
 import '../controller/sign_up_controller.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -95,6 +96,7 @@ class SignUpScreen extends StatelessWidget {
                       hintTextColor: AppColors.background,
                       fillColor: AppColors.background.withValues(alpha: 0.3),
                       hintText: AppString.email,
+                      validator: OtherHelper.emailValidator,
                       keyboardType: TextInputType.emailAddress,
                     ),
 
@@ -110,6 +112,7 @@ class SignUpScreen extends StatelessWidget {
                       isPassword: true,
                       fillColor: AppColors.background.withValues(alpha: 0.3),
                       hintText: AppString.password,
+                      validator: OtherHelper.passwordValidator,
                       keyboardType: TextInputType.visiblePassword,
                     ),
 
@@ -125,6 +128,11 @@ class SignUpScreen extends StatelessWidget {
                       fillColor: AppColors.background.withValues(alpha: 0.3),
                       isPassword: true,
                       hintText: AppString.newPassword,
+                      validator: (value) =>
+                          OtherHelper.confirmPasswordValidator(
+                            value,
+                            controller.passwordController,
+                          ),
                       keyboardType: TextInputType.visiblePassword,
                     ),
 
@@ -145,7 +153,7 @@ class SignUpScreen extends StatelessWidget {
                                 FocusScope.of(
                                   context,
                                 ).unfocus(); // ✅ safe keyboard close
-                                controller.signUpUser();
+                                controller.signUpUser(formKey: _signUpFormKey);
                               },
                             );
                     }),

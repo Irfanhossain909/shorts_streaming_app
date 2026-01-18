@@ -25,14 +25,9 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
 
-      appBar: const CommonAppBar(
-        isShowBackButton: false,
-        title: "",
-      ),
+      appBar: const CommonAppBar(isShowBackButton: false, title: ""),
 
-      bottomNavigationBar: const SafeArea(
-        child: DoNotHaveAccount(),
-      ),
+      bottomNavigationBar: const SafeArea(child: DoNotHaveAccount()),
 
       body: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(
@@ -85,8 +80,7 @@ class SignInScreen extends StatelessWidget {
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
-                      fillColor:
-                          AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
                       hintText: AppString.email,
                       validator: OtherHelper.emailValidator,
                     ),
@@ -100,19 +94,17 @@ class SignInScreen extends StatelessWidget {
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor:
-                          AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
                       isPassword: true,
                       hintText: AppString.password,
-                      validator: OtherHelper.passwordValidator,
+                      // validator: OtherHelper.passwordValidator,
                     ),
 
                     /// Forgot password
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
-                        onTap: () =>
-                            Get.toNamed(AppRoutes.forgotPassword),
+                        onTap: () => Get.toNamed(AppRoutes.forgotPassword),
                         child: const CommonText(
                           text: AppString.forgotThePassword,
                           top: 10,
@@ -135,10 +127,10 @@ class SignInScreen extends StatelessWidget {
                             )
                           : CommonButtonPro(
                               onTap: () {
-                                FocusScope.of(context).unfocus(); // ✅ keyboard close safe
-                                controller.signInUser(
-                                  formKey: _formKey,
-                                );
+                                FocusScope.of(
+                                  context,
+                                ).unfocus(); // ✅ keyboard close safe
+                                controller.signInUser(formKey: _formKey);
                               },
                               text: "Sign In",
                             );
@@ -159,11 +151,9 @@ class SignInScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Container(
-                            padding:
-                                EdgeInsets.symmetric(vertical: 18.h),
+                            padding: EdgeInsets.symmetric(vertical: 18.h),
                             decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(12.w),
+                              borderRadius: BorderRadius.circular(12.w),
                               color: AppColors.background,
                             ),
                             child: Center(
@@ -177,11 +167,9 @@ class SignInScreen extends StatelessWidget {
                         12.width,
                         Expanded(
                           child: Container(
-                            padding:
-                                EdgeInsets.symmetric(vertical: 18.h),
+                            padding: EdgeInsets.symmetric(vertical: 18.h),
                             decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(12.w),
+                              borderRadius: BorderRadius.circular(12.w),
                               color: AppColors.blue,
                             ),
                             child: Center(
@@ -205,5 +193,3 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
-
-
