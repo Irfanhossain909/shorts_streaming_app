@@ -47,6 +47,7 @@ import 'package:testemu/features/setting/presentation/screen/user_agreement_scre
 /* =======================
   🎬 CONTENT / MEDIA
 ======================= */
+import 'package:testemu/features/shorts/presenter/episode_shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
 import 'package:testemu/features/shorts/presenter/video_player_screen.dart';
@@ -93,6 +94,7 @@ class AppRoutes {
   static const shorts = "/shorts";
   static const videoDetail = "/video_detail";
   static const videoPlayer = "/video_player";
+  static const episodeShorts = "/episode_shorts";
   static const myList = "/my_list";
 
   // Download
@@ -167,8 +169,9 @@ class AppRoutes {
 
     /// 🎬 MEDIA
     GetPage(name: shorts, page: () => ShortsFeedScreen()),
-    GetPage(name: videoDetail, page: () => VideoDetailScreen()),
+    GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
     GetPage(name: videoPlayer, page: () => const VideoPlayerScreen()),
+    GetPage(name: episodeShorts, page: () => const EpisodeShortsScreen()),
     GetPage(name: myList, page: () => const MyListScree()),
 
     /// ⬇️ DOWNLOAD

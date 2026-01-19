@@ -227,11 +227,37 @@ class HomeController extends GetxController {
     searchController.clear();
   }
 
-  // Current VIP movies based on selected filter
+  // Current VIP movies based on selected filter (Daily/Weekly)
   List<Movie> get currentVipMovies {
-    return filteredMoviesBySelectedCategory
-        .where((movie) => movie.categoryId == selectedVipFilter.value)
-        .toList();
+    final vipMovies = filteredMoviesBySelectedCategory;
+
+    // Get today's date (without time)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (selectedVipFilter.value == 'Daily') {
+      // Show only videos created today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isAtSameMomentAs(today);
+      }).toList();
+    } else if (selectedVipFilter.value == 'Weekly') {
+      // Show videos created before today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isBefore(today);
+      }).toList();
+    }
+
+    return vipMovies;
   }
 
   // Current ranking movies based on selected filter
@@ -279,24 +305,39 @@ class HomeController extends GetxController {
     String id,
     ReferenceType referenceType,
   ) async {
+    // Check current bookmark state before toggling
+    final wasBookmarked = bookmarkedMovies.contains(id);
+
     final result = await categoryRepository.toggleBookmark(
       id,
       referenceType.name,
     );
     result.fold(
       (l) {
+        // Error occurred
         Get.snackbar(
-          'Bookmark',
-          'Added $title to bookmarks',
+          'Error',
+          'Failed to update bookmark: $l',
           colorText: AppColors.background,
         );
       },
       (r) {
-        Get.snackbar(
-          'Bookmark',
-          'Removed $title from bookmarks',
-          colorText: AppColors.background,
-        );
+        // Success - toggle completed
+        if (wasBookmarked) {
+          bookmarkedMovies.remove(id);
+          Get.snackbar(
+            'Bookmark',
+            'Removed $title from bookmarks',
+            colorText: AppColors.background,
+          );
+        } else {
+          bookmarkedMovies.add(id);
+          Get.snackbar(
+            'Bookmark',
+            'Added $title to bookmarks',
+            colorText: AppColors.background,
+          );
+        }
       },
     );
   }

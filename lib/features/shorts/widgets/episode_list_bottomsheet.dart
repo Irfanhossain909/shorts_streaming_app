@@ -4,24 +4,23 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
-import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/features/setting/data/model/subscription_model.dart';
 import 'package:testemu/features/setting/presentation/widgets/sub_card.dart';
-import 'package:testemu/features/shorts/controller/shorts_controller.dart';
+import 'package:testemu/features/shorts/controller/episode_shorts_controller.dart';
 import 'package:testemu/features/shorts/widgets/episod_select_button.dart';
-import 'package:testemu/features/shorts/widgets/tag_card.dart';
 
-class ListBottomSheet extends StatelessWidget {
-  const ListBottomSheet({super.key});
+/// Bottom sheet for displaying episode list in EpisodeShortsScreen
+class EpisodeListBottomSheet extends StatelessWidget {
+  const EpisodeListBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ShortsScontroller>();
+    final controller = Get.find<EpisodeShortsController>();
 
     return Obx(() {
-      // Get current video data
-      if (controller.shortsVideosList.isEmpty) {
+      // Get current episode data
+      if (controller.episodeVideos.isEmpty) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           decoration: BoxDecoration(
@@ -38,31 +37,16 @@ class ListBottomSheet extends StatelessWidget {
           ),
           child: const Center(
             child: CommonText(
-              text: "No video data available",
+              text: "No episodes available",
               color: AppColors.white,
             ),
           ),
         );
       }
 
-      final currentVideo =
-          controller.shortsVideosList[controller.currentIndex.value];
-
-      // Get all episodes from the same movie/season
-      final relatedEpisodes = controller.shortsVideosList.where((video) {
-        // Same movie and season
-        return video.movieId?.id == currentVideo.movieId?.id &&
-            video.seasonId?.id == currentVideo.seasonId?.id;
-      }).toList();
-
-      // Sort by episode number
-      relatedEpisodes.sort(
-        (a, b) => a.episodeNumber.compareTo(b.episodeNumber),
-      );
-
-      // Get total episodes count
-      final totalEpisodes = relatedEpisodes.length;
-      final currentEpisode = currentVideo.episodeNumber;
+      final currentIndex = controller.currentIndex.value;
+      final currentEpisode = controller.episodeVideos[currentIndex];
+      final totalEpisodes = controller.episodeVideos.length;
 
       return SingleChildScrollView(
         child: Container(
@@ -81,9 +65,11 @@ class ListBottomSheet extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ///// Image And description
+              ///// Current Episode Image And Description
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -94,7 +80,7 @@ class ListBottomSheet extends StatelessWidget {
                       width: 84,
                       height: 120,
                       borderRadius: 8,
-                      imageSrc: currentVideo.thumbnailUrl,
+                      imageSrc: currentEpisode.thumbnailUrl,
                     ),
                   ),
                   SizedBox(width: 10.w),
@@ -102,48 +88,36 @@ class ListBottomSheet extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.videoDetail);
-                          },
-                          child: CommonText(
-                            text:
-                                currentVideo.movieId?.title ??
-                                currentVideo.title,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.white,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.start,
-                          ),
+                        CommonText(
+                          text: currentEpisode.title,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                         ),
+                        SizedBox(height: 4.h),
                         CommonText(
                           text:
-                              "Update to EP.$currentEpisode${totalEpisodes > 0 ? '/EP.$totalEpisodes' : ''}",
+                              "Episode ${currentEpisode.episodeNumber} of $totalEpisodes",
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.white.withValues(alpha: .8),
+                          textAlign: TextAlign.start,
+                        ),
+                        SizedBox(height: 6.h),
+                        CommonText(
+                          text: currentEpisode.description,
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w400,
                           color: AppColors.white.withValues(alpha: .6),
-                          bottom: 10.h,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                         ),
-                        if (currentVideo.seasonId != null)
-                          Wrap(
-                            spacing: 6.w,
-                            runSpacing: 6.w,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CommonText(
-                                text: "Season",
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.white,
-                                textAlign: TextAlign.start,
-                              ),
-                              TagCard(tag: currentVideo.seasonId!.title),
-                            ],
-                          ),
                       ],
                     ),
                   ),
@@ -151,79 +125,84 @@ class ListBottomSheet extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
 
-              //// Episode selection info
-              CommonText(
-                text: "Select Episode ($totalEpisodes Episodes)",
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.white,
-                bottom: 8.h,
-                textAlign: TextAlign.start,
-              ),
-
-              /// GridView.builder for episodes
-              if (relatedEpisodes.isNotEmpty)
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: relatedEpisodes.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    crossAxisSpacing: 8.w,
-                    mainAxisSpacing: 8.h,
-                    childAspectRatio: 2,
+              //// Episode Selection Info
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonText(
+                    text: "Select Episode",
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.white,
+                    textAlign: TextAlign.start,
                   ),
-                  itemBuilder: (context, index) {
-                    final episode = relatedEpisodes[index];
-                    final episodeNumber = episode.episodeNumber;
-                    final isCurrentEpisode = episode.id == currentVideo.id;
-                    final hasAccess = episode.isAccess;
-                    final isSubscribed = episode.isSubscribed;
-
-                    return EpisodSelectBtn(
-                      onPressed: () {
-                        if (!hasAccess && !isSubscribed) {
-                          // Show subscription bottom sheet
-                          Get.back();
-                          showModalBottomSheet(
-                            scrollControlDisabledMaxHeightRatio: 0.75,
-                            context: context,
-                            isScrollControlled: false,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) =>
-                                const SubscriptionBottomSheet(),
-                          );
-                        } else {
-                          // Navigate to this episode
-                          Get.back();
-
-                          // Find the index of this episode in the main list
-                          final episodeIndex = controller.shortsVideosList
-                              .indexWhere((v) => v.id == episode.id);
-
-                          if (episodeIndex != -1) {
-                            // Jump to that page
-                            controller.pageController.jumpToPage(episodeIndex);
-                          }
-                        }
-                      },
-                      isRunning: isCurrentEpisode,
-                      isAvilable: hasAccess || isSubscribed,
-                      isLock: !hasAccess && !isSubscribed,
-                      text: episodeNumber.toString(),
-                    );
-                  },
-                )
-              else
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.h),
-                    child: const CommonText(
-                      text: "No episodes available",
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withValues(alpha: .2),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: CommonText(
+                      text: "$totalEpisodes Episodes",
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.white,
                     ),
                   ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+
+              /// GridView.builder for episodes
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.episodeVideos.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  crossAxisSpacing: 8.w,
+                  mainAxisSpacing: 8.h,
+                  childAspectRatio: 2,
                 ),
+                itemBuilder: (context, index) {
+                  final episode = controller.episodeVideos[index];
+                  final episodeNumber = episode.episodeNumber;
+                  final isCurrentEpisode = index == currentIndex;
+                  final hasAccess = episode.isAccess;
+                  final isSubscribed = episode.isSubscribed;
+
+                  return EpisodSelectBtn(
+                    onPressed: () {
+                      if (!hasAccess && !isSubscribed) {
+                        // Show subscription bottom sheet
+                        Get.back();
+                        showModalBottomSheet(
+                          scrollControlDisabledMaxHeightRatio: 0.75,
+                          context: context,
+                          isScrollControlled: false,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => const SubscriptionBottomSheet(),
+                        );
+                      } else {
+                        // Navigate to this episode
+                        Get.back();
+
+                        // Jump to that page
+                        controller.pageController.jumpToPage(index);
+                      }
+                    },
+                    isRunning: isCurrentEpisode,
+                    isAvilable: hasAccess || isSubscribed,
+                    isLock: !hasAccess && !isSubscribed,
+                    text: episodeNumber.toString(),
+                  );
+                },
+              ),
+
+              SizedBox(height: 12.h),
             ],
           ),
         ),

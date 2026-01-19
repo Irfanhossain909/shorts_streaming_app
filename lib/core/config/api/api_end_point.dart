@@ -39,6 +39,7 @@ class ApiEndPoint {
   final String addRecentVideos = "/users/add-recently-viewed/";
   final String getRecentVideos = "/users/recently-viewed";
   final String getShortsVideos = "/video/shorts-videos";
+  final String toggleLikeVideo = "/like/toggle";
   // // App endpoints
   final String user = "users";
   final String notifications = "/notification";

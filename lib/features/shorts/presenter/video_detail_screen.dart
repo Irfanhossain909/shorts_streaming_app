@@ -347,7 +347,7 @@ class VideoDetailScreen extends StatelessWidget {
                               text: episode.episodeNumber.toString(),
                               onPressed: () {
                                 videoDetailsController.onSeasonTap(
-                                  episode.videoUrl,
+                                  episode.downloadUrl,
                                   episode.id,
                                   index,
                                 );

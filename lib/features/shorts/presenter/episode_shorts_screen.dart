@@ -6,87 +6,61 @@ import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
-import 'package:testemu/features/shorts/controller/shorts_controller.dart';
+import 'package:testemu/features/shorts/controller/episode_shorts_controller.dart';
 import 'package:testemu/features/shorts/widgets/reel_button.dart';
 import 'package:video_player/video_player.dart';
 
-class ShortsFeedScreen extends StatelessWidget {
-  ShortsFeedScreen({super.key});
-  final ShortsScontroller controller = Get.put(ShortsScontroller());
+/// Shorts-style screen for playing episode videos from video details
+/// Provides vertical swipe navigation between episodes
+class EpisodeShortsScreen extends StatelessWidget {
+  const EpisodeShortsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ShortsScontroller>(
+    // Initialize controller
+    Get.put(EpisodeShortsController());
+
+    return GetBuilder<EpisodeShortsController>(
       builder: (controller) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          body: Obx(() {
-            // Show shimmer loading while fetching videos
-            if (controller.isLoadingVideos.value) {
-              return const VideoPlayerShimmer();
-            }
+          body: Builder(
+            builder: (context) {
+              // Show empty state if no videos
+              if (controller.videos.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No episodes available",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                );
+              }
 
-            // Show error message if there's an error
-            if (controller.hasError.value) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      controller.errorMessage.value,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => controller.refreshVideos(),
-                      child: const Text("Retry"),
-                    ),
-                  ],
-                ),
+              // Show videos
+              return PageView.builder(
+                controller: controller.pageController,
+                scrollDirection: Axis.vertical,
+                itemCount: controller.videos.length,
+                onPageChanged: controller.onPageChanged,
+                itemBuilder: (context, index) {
+                  return EpisodeVideoPlayer(index: index);
+                },
               );
-            }
-
-            // Show empty state if no videos
-            if (controller.videos.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No videos available",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              );
-            }
-
-            // Show videos
-            return PageView.builder(
-              controller: controller.pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: controller.videos.length,
-              onPageChanged: controller.onPageChanged,
-              itemBuilder: (context, index) {
-                return ShortVideoPlayer(index: index);
-              },
-            );
-          }),
+            },
+          ),
         );
       },
     );
   }
 }
 
-class ShortVideoPlayer extends StatelessWidget {
+class EpisodeVideoPlayer extends StatelessWidget {
   final int index;
-  const ShortVideoPlayer({super.key, required this.index});
+  const EpisodeVideoPlayer({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ShortsScontroller>(
+    return GetBuilder<EpisodeShortsController>(
       builder: (controller) {
         final videoController = controller.getVideoController(index);
         final isLoading = controller.isLoadingVideo(index);
@@ -158,40 +132,44 @@ class ShortVideoPlayer extends StatelessWidget {
                   child: RepaintBoundary(
                     child: Builder(
                       builder: (context) {
-                        // Get metadata for current video
                         final metadata = index < controller.videoMetadata.length
                             ? controller.videoMetadata[index]
                             : null;
 
-                        if (metadata == null) {
-                          return const SizedBox.shrink();
-                        }
+                        if (metadata == null) return const SizedBox.shrink();
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            /// Title
                             CommonText(
-                              text: metadata['title'] ?? "Short Video",
+                              text: metadata['title'] ?? '',
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                               color: AppColors.background,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                            SizedBox(height: 4.h),
+
+                            /// Description
                             SizedBox(
                               width: 300.w,
                               child: CommonText(
-                                fontSize: 12.sp,
-                                color: AppColors.background.withValues(
-                                  alpha: 0.7,
-                                ),
                                 textAlign: TextAlign.justify,
-                                overflow: TextOverflow.ellipsis,
+                                text: metadata['description'] ?? '',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.background.withValues(
+                                  alpha: .7,
+                                ),
                                 maxLines: 3,
-                                text: metadata['description'] ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                bottom: 10.h,
                               ),
                             ),
-                            SizedBox(width: 8.h),
+
+                            /// Episode Badge
                             Row(
                               children: [
                                 CommonImage(
@@ -208,6 +186,8 @@ class ShortVideoPlayer extends StatelessWidget {
                                 ),
                               ],
                             ),
+
+                            /// Progress Bar
                             SizedBox(
                               height: 16.h,
                               child: VideoProgressIndicator(
@@ -291,7 +271,6 @@ class ShortVideoPlayer extends StatelessWidget {
                         child: ReelButton(
                           imgPath: AppIcons.icShare,
                           text: "Share",
-                          onTap: () => controller.showShareBottomSheet(),
                         ),
                       ),
                       // Download button with circular progress
@@ -359,6 +338,27 @@ class ShortVideoPlayer extends StatelessWidget {
                         );
                       }),
                     ],
+                  ),
+                ),
+              ),
+
+              /// Back Button (Top Left)
+              Positioned(
+                top: 50.h,
+                left: 16.w,
+                child: IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 22.w,
+                    ),
                   ),
                 ),
               ),

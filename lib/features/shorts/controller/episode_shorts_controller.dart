@@ -8,19 +8,23 @@ import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/services/video_progress/video_progress_service.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
 import 'package:testemu/features/download/service/download_service.dart';
-import 'package:testemu/features/shorts/model/shorts_video_model.dart';
+import 'package:testemu/features/shorts/model/season_video_details_model.dart';
 import 'package:testemu/features/shorts/repository/shorts_repository.dart';
-import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
-import 'package:testemu/features/shorts/widgets/share_bottom_sheet.dart';
+import 'package:testemu/features/shorts/widgets/episode_list_bottomsheet.dart';
 import 'package:video_player/video_player.dart';
 
-class ShortsScontroller extends GetxController {
+/// Controller for playing season/episode videos in shorts-style format
+/// This controller is optimized for episode playback from video details screen
+class EpisodeShortsController extends GetxController {
   final ShortsRepository repository = ShortsRepository.instance;
   final DownloadService downloadService = DownloadService.instance;
   final VideoProgressService progressService = VideoProgressService.instance;
 
-  // API data
-  RxList<ShortsVideoItem> shortsVideosList = <ShortsVideoItem>[].obs;
+  // Episode videos data
+  late List<SeasonVideo> episodeVideos;
+  late int initialIndex;
+
+  // Loading state
   RxBool isLoadingVideos = false.obs;
   RxBool hasError = false.obs;
   RxString errorMessage = ''.obs;
@@ -28,23 +32,23 @@ class ShortsScontroller extends GetxController {
   // Timer for periodic progress saving
   Timer? _progressSaveTimer;
 
-  // Video list - will be populated from API
+  // Video list - populated from episodes
   List<String> get videos {
-    return shortsVideosList
-        .map((video) => video.downloadUrls ?? '')
+    return episodeVideos
+        .map((video) => video.downloadUrl)
         .where((url) => url.isNotEmpty)
         .toList();
   }
 
-  // Video metadata - will be populated from API
+  // Video metadata
   List<Map<String, String>> get videoMetadata {
-    return shortsVideosList.map((video) {
+    return episodeVideos.map((video) {
       return {
         'title': video.title,
         'description': video.description,
         'thumbnailUrl': video.thumbnailUrl,
         'episodeNumber': video.episodeNumber.toString(),
-        'seasonNumber': video.seasonId?.seasonNumber.toString() ?? '1',
+        'seasonNumber': '1', // Will be updated from actual data if available
         'videoId': video.id,
         'likes': video.likes.toString(),
       };
@@ -55,10 +59,10 @@ class ShortsScontroller extends GetxController {
   late PageController pageController;
 
   // Current page index
-  RxInt currentIndex = 0.obs;
+  late RxInt currentIndex;
 
-  // Track if the Shorts screen is currently visible (active tab)
-  RxBool isScreenVisible = false.obs;
+  // Track if screen is visible
+  RxBool isScreenVisible = true.obs;
 
   // Map to store video controllers for each index
   final Map<int, VideoPlayerController> _videoControllers = {};
@@ -72,7 +76,7 @@ class ShortsScontroller extends GetxController {
   // Map to store playing states for each video
   final Map<int, bool> _playingStates = {};
 
-  // Map to store like states for each video (tracked locally for optimistic updates)
+  // Map to store like states for each video
   final Map<String, bool> _likeStates = {};
 
   // Getters for current video
@@ -100,109 +104,33 @@ class ShortsScontroller extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    printInfo(info: 'ShortsScontroller initialized');
-    pageController = PageController(initialPage: 0);
-    fetchShortsVideos();
 
-    // Check if opened via deep link with specific video ID
-    _handleDeepLinkArguments();
-  }
+    // Get arguments from navigation
+    final args = Get.arguments as Map<String, dynamic>;
+    episodeVideos = args['episodes'] as List<SeasonVideo>;
+    initialIndex = args['initialIndex'] as int? ?? 0;
 
-  /// Handle deep link arguments
-  void _handleDeepLinkArguments() {
-    // Check if we received a videoId from deep link
-    if (Get.arguments != null && Get.arguments is Map) {
-      final args = Get.arguments as Map;
-      if (args.containsKey('videoId')) {
-        final videoId = args['videoId'] as String;
-        printInfo(info: '🔗 Deep link detected with videoId: $videoId');
+    printInfo(
+      info:
+          '📺 EpisodeShortsController initialized with ${episodeVideos.length} episodes',
+    );
+    printInfo(info: '🎯 Starting at index: $initialIndex');
 
-        // Wait for videos to load, then navigate to specific video
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          _navigateToVideoById(videoId);
-        });
-      }
+    // Initialize reactive index
+    currentIndex = initialIndex.obs;
+
+    // Initialize page controller with initial index
+    pageController = PageController(initialPage: initialIndex);
+
+    // Initialize like states
+    for (var video in episodeVideos) {
+      _likeStates[video.id] = video.likedBy.isNotEmpty;
     }
-  }
 
-  /// Navigate to a specific video by ID
-  void _navigateToVideoById(String videoId) {
-    // Find the index of the video with matching ID
-    final index = shortsVideosList.indexWhere((video) => video.id == videoId);
-
-    if (index != -1) {
-      printInfo(info: '🎬 Found video at index $index, navigating...');
-
-      // Navigate to that video
-      pageController.jumpToPage(index);
-
-      Get.snackbar(
-        '✓ Video Found',
-        'Playing your requested video',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.green.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-    } else {
-      printInfo(info: '❌ Video with ID $videoId not found');
-
-      Get.snackbar(
-        'Video Not Found',
-        'The requested video is not available',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.orange.withOpacity(0.8),
-        colorText: Colors.white,
-      );
+    // Initialize first video
+    if (videos.isNotEmpty) {
+      _initializeVideoForIndex(initialIndex);
     }
-  }
-
-  // Fetch shorts videos from API
-  Future<void> fetchShortsVideos() async {
-    try {
-      isLoadingVideos.value = true;
-      hasError.value = false;
-      errorMessage.value = '';
-
-      printInfo(info: '🔄 Fetching shorts videos from API...');
-
-      final response = await repository.getShortsVideos();
-
-      if (response.success && response.data.isNotEmpty) {
-        shortsVideosList.value = response.data;
-        printInfo(
-          info: '✅ Successfully fetched ${response.data.length} videos',
-        );
-
-        // Initialize like states based on likedBy field
-        for (var video in response.data) {
-          _likeStates[video.id] = video.likedBy.isNotEmpty;
-        }
-
-        // Initialize first video after data is loaded
-        if (videos.isNotEmpty) {
-          _initializeVideoForIndex(0);
-        }
-      } else {
-        hasError.value = true;
-        errorMessage.value = response.message.isEmpty
-            ? 'No videos available'
-            : response.message;
-        printInfo(info: '❌ Failed to fetch videos: ${errorMessage.value}');
-      }
-    } catch (e) {
-      hasError.value = true;
-      errorMessage.value = 'Failed to load videos: $e';
-      printInfo(info: '❌ Error fetching shorts videos: $e');
-    } finally {
-      isLoadingVideos.value = false;
-    }
-  }
-
-  // Refresh videos
-  Future<void> refreshVideos() async {
-    await fetchShortsVideos();
   }
 
   Future<void> onPageChanged(int index) async {
@@ -214,11 +142,10 @@ class ShortsScontroller extends GetxController {
     // Update current index
     currentIndex.value = index;
 
-    // Strict Mode: Manage resources - keep only THE CURRENT controller
-    // Await this to ensure resources are freed before we try to allocate new ones
+    // Manage resources - keep only current controller
     await _manageControllerResources(index);
 
-    // CRITICAL: Add delay to allow native buffers to be fully released
+    // Delay to allow native buffers to be released
     await Future.delayed(const Duration(milliseconds: 100));
 
     // Initialize and play new video if not already initialized
@@ -237,24 +164,39 @@ class ShortsScontroller extends GetxController {
     _playingStates[index] = false;
     update();
 
-    final videoUrl = videos[index];
+    final downloadUrl = videos[index];
 
-    // Configure video player with optimized settings for low-end devices
+    printInfo(info: '🎬 Initializing video at index $index');
+    printInfo(info: '📹 Video URL: $downloadUrl');
+
+    // Validate URL
+    if (downloadUrl.isEmpty) {
+      printInfo(info: '❌ Video URL is empty');
+      _loadingStates[index] = false;
+      _errorStates[index] = true;
+      update();
+      return;
+    }
+
+    // Configure video player with optimized settings and proper headers
     final controller = VideoPlayerController.networkUrl(
-      Uri.parse(videoUrl),
+      Uri.parse(downloadUrl),
       videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: false, // Don't mix with other audio
-        allowBackgroundPlayback: false, // Prevent background playback
+        mixWithOthers: false,
+        allowBackgroundPlayback: false,
       ),
       httpHeaders: {
-        // Request lower quality if available (some CDNs support this)
-        'Accept': 'video/*;q=0.8',
+        'Accept': '*/*',
+        'User-Agent':
+            'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+        'Connection': 'keep-alive',
+        'Range': 'bytes=0-',
       },
     );
 
     _videoControllers[index] = controller;
 
-    // Add timeout for initialization (helpful for slow networks)
+    // Initialize with timeout
     controller
         .initialize()
         .timeout(
@@ -295,11 +237,12 @@ class ShortsScontroller extends GetxController {
         })
         .catchError((error) {
           printInfo(info: '❌ Error initializing video at index $index: $error');
+          printInfo(info: '📹 Failed URL: $downloadUrl');
 
           // Check if controller was disposed
           if (_videoControllers[index] != controller) return;
 
-          // Dispose the failed controller immediately to free up the decoder
+          // Dispose the failed controller
           try {
             controller.dispose();
           } catch (e) {
@@ -313,16 +256,32 @@ class ShortsScontroller extends GetxController {
 
           update();
 
-          // Provide user-friendly error messages
-          if (error.toString().contains('timeout')) {
+          // User-friendly error messages
+          final errorString = error.toString().toLowerCase();
+
+          if (errorString.contains('timeout')) {
             Get.snackbar(
               'Slow Network',
               'Video is taking too long to load. Check your internet connection.',
               snackPosition: SnackPosition.BOTTOM,
               duration: const Duration(seconds: 3),
             );
-          } else if (error.toString().contains('buffer') ||
-              error.toString().contains('decoder')) {
+          } else if (errorString.contains('unrecognizedinputformat') ||
+              errorString.contains('source error')) {
+            printInfo(
+              info:
+                  '⚠️ Video format not recognized - URL may be invalid or inaccessible',
+            );
+            Get.snackbar(
+              'Video Unavailable',
+              'This video cannot be played. The file may be corrupted or unavailable.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 4),
+              backgroundColor: Colors.red.withOpacity(0.8),
+              colorText: Colors.white,
+            );
+          } else if (errorString.contains('buffer') ||
+              errorString.contains('decoder')) {
             printInfo(
               info:
                   '⚠️ Buffer/Decoder error - device may not support this video quality',
@@ -333,10 +292,18 @@ class ShortsScontroller extends GetxController {
               snackPosition: SnackPosition.BOTTOM,
               duration: const Duration(seconds: 3),
             );
+          } else {
+            // Generic error
+            Get.snackbar(
+              'Playback Error',
+              'Unable to play this video. Please try another one.',
+              snackPosition: SnackPosition.BOTTOM,
+              duration: const Duration(seconds: 3),
+            );
           }
         });
 
-    // Listen for video completion and progress tracking
+    // Listen for video completion
     controller.addListener(() {
       if (controller.value.position >= controller.value.duration &&
           controller.value.duration.inMilliseconds > 0) {
@@ -398,34 +365,20 @@ class ShortsScontroller extends GetxController {
     }
   }
 
-  /// Public method to pause current video (called when navigating away)
+  /// Pause current video (called when navigating away)
   void pauseCurrentVideo() {
     isScreenVisible.value = false;
     final index = currentIndex.value;
     _pauseVideo(index);
-    // Save progress when navigating away
     _saveVideoProgress(index);
   }
 
-  /// Public method to resume current video (called when navigating back)
+  /// Resume current video (called when navigating back)
   void resumeCurrentVideo() {
     isScreenVisible.value = true;
     final index = currentIndex.value;
-    // Only play if video is already initialized
     if (_videoControllers.containsKey(index)) {
       _playVideo(index);
-    }
-  }
-
-  /// Called when Shorts tab becomes visible for the first time
-  void onScreenBecameVisible() {
-    isScreenVisible.value = true;
-    // If videos are loaded but no video is playing, start the first one
-    if (videos.isNotEmpty && !_videoControllers.containsKey(0)) {
-      _initializeVideoForIndex(0);
-    } else if (_videoControllers.containsKey(currentIndex.value)) {
-      // If video is already initialized, just play it
-      _playVideo(currentIndex.value);
     }
   }
 
@@ -438,11 +391,9 @@ class ShortsScontroller extends GetxController {
   }
 
   Future<void> _manageControllerResources(int focusedIndex) async {
-    // STRICT MODE: Keep only focusedIndex.
-    // Disposing immediate neighbors is necessary for low-end devices (Samsung A20).
+    // Keep only focused index for low-end devices
     final indicesToKeep = {focusedIndex};
 
-    // Create a list of keys to remove to avoid concurrent modification
     final keysToRemove = _videoControllers.keys
         .where((key) => !indicesToKeep.contains(key))
         .toList();
@@ -457,64 +408,53 @@ class ShortsScontroller extends GetxController {
     if (controller != null) {
       printInfo(info: 'Disposing video controller at index $index');
 
-      // 1. Stop playback and release audio resources first
       try {
         if (controller.value.isInitialized) {
           await controller.pause();
           await controller.setVolume(0);
-          // Seek to start to clear any buffered frames
           await controller.seekTo(Duration.zero);
         }
       } catch (e) {
         printInfo(info: 'Error pausing controller at index $index: $e');
       }
 
-      // 2. Remove from maps immediately to prevent UI from accessing it
       _videoControllers.remove(index);
       _loadingStates.remove(index);
       _errorStates.remove(index);
       _playingStates.remove(index);
 
-      // 3. Notify UI immediately to unmount the VideoPlayer widget
       update();
 
-      // 4. Small delay to ensure UI has unmounted the widget
       await Future.delayed(const Duration(milliseconds: 50));
 
-      // 5. Dispose the controller safely and wait for native cleanup
       try {
         await controller.dispose();
       } catch (e) {
         printInfo(info: 'Error disposing controller at index $index: $e');
       }
 
-      // 6. Additional delay to allow native decoder resources to be freed
       await Future.delayed(const Duration(milliseconds: 50));
     }
   }
 
   Future<void> toggleLikeVideo(int index) async {
-    if (index < 0 || index >= shortsVideosList.length) return;
+    if (index < 0 || index >= episodeVideos.length) return;
 
     final videoId = _getVideoIdAtIndex(index);
     if (videoId == null) return;
 
-    // Get current video item
-    final videoItem = shortsVideosList[index];
+    final videoItem = episodeVideos[index];
     final currentLikes = videoItem.likes;
-
-    // Check if video is currently liked (from local state or likedBy list)
     final isCurrentlyLiked =
         _likeStates[videoId] ?? videoItem.likedBy.isNotEmpty;
 
-    // Calculate new like count
     final newLikes = isCurrentlyLiked ? currentLikes - 1 : currentLikes + 1;
 
     // Update local like state
     _likeStates[videoId] = !isCurrentlyLiked;
 
-    // Optimistically update the likes count in the model
-    shortsVideosList[index] = ShortsVideoItem(
+    // Update in list (optimistic update)
+    episodeVideos[index] = SeasonVideo(
       id: videoItem.id,
       title: videoItem.title,
       description: videoItem.description,
@@ -527,99 +467,54 @@ class ShortsScontroller extends GetxController {
       seasonId: videoItem.seasonId,
       episodeNumber: videoItem.episodeNumber,
       views: videoItem.views,
-      likes: newLikes, // Updated like count
-      downloadUrls: videoItem.downloadUrls,
-      likedBy: !isCurrentlyLiked ? ['current_user'] : [], // Toggle liked state
+      likes: newLikes,
+      downloadUrl: videoItem.downloadUrl,
+      likedBy: !isCurrentlyLiked ? ['current_user'] : [],
       isDeleted: videoItem.isDeleted,
-      createdAt: videoItem.createdAt,
-      updatedAt: videoItem.updatedAt,
       isSubscribed: videoItem.isSubscribed,
       isAccess: videoItem.isAccess,
+      createdAt: videoItem.createdAt,
+      updatedAt: videoItem.updatedAt,
+      version: videoItem.version,
     );
 
-    // Trigger UI update immediately
-    shortsVideosList.refresh();
+    update();
 
     printInfo(
       info:
           '👍 Optimistically updated like count from $currentLikes to $newLikes',
     );
 
-    // Make API call in background (non-blocking)
+    // Make API call in background
     try {
       printInfo(info: '📡 Calling API to toggle like for video: $videoId');
       final response = await repository.toggleLikeVideo(videoId);
 
       if (response.isSuccess) {
         printInfo(info: '✅ Like toggled successfully on server');
-        // The accurate data will be fetched when the app is reopened
       } else {
         printInfo(info: '⚠️ API failed: ${response.message}');
-        // Revert the optimistic update if API fails
+        // Revert on failure
         _likeStates[videoId] = isCurrentlyLiked;
-        shortsVideosList[index] = ShortsVideoItem(
-          id: videoItem.id,
-          title: videoItem.title,
-          description: videoItem.description,
-          duration: videoItem.duration,
-          videoUrl: videoItem.videoUrl,
-          videoId: videoItem.videoId,
-          libraryId: videoItem.libraryId,
-          thumbnailUrl: videoItem.thumbnailUrl,
-          movieId: videoItem.movieId,
-          seasonId: videoItem.seasonId,
-          episodeNumber: videoItem.episodeNumber,
-          views: videoItem.views,
-          likes: currentLikes, // Revert to original
-          downloadUrls: videoItem.downloadUrls,
-          likedBy: videoItem.likedBy,
-          isDeleted: videoItem.isDeleted,
-          createdAt: videoItem.createdAt,
-          updatedAt: videoItem.updatedAt,
-          isSubscribed: videoItem.isSubscribed,
-          isAccess: videoItem.isAccess,
-        );
-        shortsVideosList.refresh();
+        episodeVideos[index] = videoItem;
+        update();
         printInfo(info: '🔄 Reverted like count back to $currentLikes');
       }
     } catch (e) {
       printInfo(info: '❌ Error toggling like: $e');
-      // Revert the optimistic update on error
       _likeStates[videoId] = isCurrentlyLiked;
-      shortsVideosList[index] = videoItem;
-      shortsVideosList.refresh();
+      episodeVideos[index] = videoItem;
+      update();
       printInfo(info: '🔄 Reverted like count due to error');
     }
   }
 
   void showEpisodeListBottomSheet() {
-    Get.bottomSheet(isScrollControlled: true, const ListBottomSheet());
-  }
-
-  void showShareBottomSheet() {
-    final index = currentIndex.value;
-    if (index >= 0 && index < shortsVideosList.length) {
-      final videoItem = shortsVideosList[index];
-
-      // Show the ShareBottomSheet widget
-      Get.bottomSheet(
-        isScrollControlled: true,
-        ShareBottomSheet(
-          videoId: videoItem.id,
-          title: videoItem.title,
-          thumbnailUrl: videoItem.thumbnailUrl,
-        ),
-      );
-    }
+    Get.bottomSheet(isScrollControlled: true, const EpisodeListBottomSheet());
   }
 
   void navigateToDownloadMenu() {
     Get.toNamed(AppRoutes.downloadMenu);
-  }
-
-  Future<String> getPrivateVideoPath(String videoId) async {
-    final dir = await getApplicationDocumentsDirectory();
-    return '${dir.path}/videos/$videoId.mp4';
   }
 
   Future<String> getVideoLocalPath(String videoId) async {
@@ -636,42 +531,6 @@ class ShortsScontroller extends GetxController {
     return File(path).exists();
   }
 
-  Future<bool> downloadVideo({
-    required String url,
-    required String savePath,
-  }) async {
-    try {
-      printInfo(info: '📥 Starting download from: $url');
-      printInfo(info: '💾 Saving to: $savePath');
-
-      final response = await repository.downloadVideo(
-        url,
-        savePath,
-        onProgress: (received, total) {
-          if (total != -1) {
-            final progress = (received / total * 100).toStringAsFixed(0);
-            downloadProgress.value = received / total;
-            printInfo(info: '⬇️ Download progress: $progress%');
-          }
-        },
-      );
-
-      if (response.statusCode == 200) {
-        printInfo(info: '✅ Download completed successfully');
-        return true;
-      } else {
-        printInfo(
-          info: '❌ Download failed with status: ${response.statusCode}',
-        );
-        printInfo(info: 'Response: ${response.data}');
-        return false;
-      }
-    } catch (e) {
-      printInfo(info: '❌ Download exception: $e');
-      return false;
-    }
-  }
-
   // Track download state
   RxBool isDownloading = false.obs;
   RxDouble downloadProgress = 0.0.obs;
@@ -679,7 +538,6 @@ class ShortsScontroller extends GetxController {
   Future<void> downloadCurrentVideo() async {
     printInfo(info: '🚀 downloadCurrentVideo called');
 
-    // Prevent multiple simultaneous downloads
     if (isDownloading.value) {
       printInfo(info: '⏸️ Already downloading, skipping');
       Get.snackbar(
@@ -692,8 +550,7 @@ class ShortsScontroller extends GetxController {
 
     final index = currentIndex.value;
 
-    // Check if we have valid data
-    if (index >= shortsVideosList.length) {
+    if (index >= episodeVideos.length) {
       Get.snackbar(
         "Error",
         "Video not found",
@@ -702,8 +559,8 @@ class ShortsScontroller extends GetxController {
       return;
     }
 
-    final videoItem = shortsVideosList[index];
-    final url = videoItem.downloadUrls ?? '';
+    final videoItem = episodeVideos[index];
+    final url = videoItem.downloadUrl;
     final videoId = videoItem.id;
 
     if (url.isEmpty) {
@@ -737,7 +594,7 @@ class ShortsScontroller extends GetxController {
       printInfo(info: '❌ Error checking download status: $e');
     }
 
-    // CRITICAL: Pause the video before downloading to free up resources
+    // Pause video before downloading
     printInfo(info: '⏸️ Pausing video before download');
     _pauseVideo(index);
 
@@ -756,37 +613,30 @@ class ShortsScontroller extends GetxController {
       final path = await getVideoLocalPath(videoId);
       printInfo(info: '💾 Save path: $path');
 
-      // Download in background (non-blocking)
-      printInfo(info: '⬇️ Calling downloadVideo method...');
-      final success = await downloadVideo(url: url, savePath: path);
-      printInfo(info: '✓ downloadVideo returned: $success');
+      final response = await repository.downloadVideo(
+        url,
+        path,
+        onProgress: (received, total) {
+          if (total != -1) {
+            downloadProgress.value = received / total;
+          }
+        },
+      );
 
-      if (success) {
-        printInfo(info: '✅ Download success flag is true');
+      if (response.statusCode == 200) {
+        printInfo(info: '✅ Download success');
 
-        // Wait a bit for file system to sync
         await Future.delayed(const Duration(milliseconds: 500));
 
-        // Get file size
         final file = File(path);
         final exists = await file.exists();
-        printInfo(info: '📁 File exists check: $exists');
 
         if (!exists) {
-          printInfo(info: '❌ File not found at: $path');
           throw Exception('Downloaded file not found at: $path');
         }
 
         final fileSize = await file.length();
-        printInfo(
-          info:
-              '📦 File size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB',
-        );
 
-        // Get video item for metadata
-        final videoItem = shortsVideosList[index];
-
-        // Create downloaded video model
         final downloadedVideo = DownloadedVideoModel(
           videoId: videoId,
           title: videoItem.title,
@@ -797,10 +647,9 @@ class ShortsScontroller extends GetxController {
           downloadedAt: DateTime.now(),
           fileSize: fileSize,
           episodeNumber: videoItem.episodeNumber.toString(),
-          seasonNumber: videoItem.seasonId?.seasonNumber.toString() ?? '1',
+          seasonNumber: '1',
         );
 
-        // Save metadata
         final saved = await downloadService.saveDownloadedVideo(
           downloadedVideo,
         );
@@ -815,14 +664,7 @@ class ShortsScontroller extends GetxController {
             colorText: Colors.white,
           );
 
-          // Resume video playback after successful download
           _playVideo(index);
-        } else {
-          Get.snackbar(
-            "Warning",
-            "Video downloaded but metadata not saved",
-            snackPosition: SnackPosition.BOTTOM,
-          );
         }
       } else {
         throw Exception('Download failed');
@@ -838,7 +680,6 @@ class ShortsScontroller extends GetxController {
         duration: const Duration(seconds: 3),
       );
 
-      // Resume video playback after error
       _playVideo(index);
     } finally {
       isDownloading.value = false;
@@ -846,13 +687,11 @@ class ShortsScontroller extends GetxController {
     }
   }
 
-  /// Get video ID for the video at given index
   String? _getVideoIdAtIndex(int index) {
     if (index < 0 || index >= videoMetadata.length) return null;
     return videoMetadata[index]['videoId'];
   }
 
-  /// Load saved video progress and seek to that position
   Future<void> _loadVideoProgress(int index) async {
     final videoId = _getVideoIdAtIndex(index);
     if (videoId == null) return;
@@ -865,7 +704,6 @@ class ShortsScontroller extends GetxController {
       if (savedPosition != null && savedPosition > 0) {
         final duration = controller.value.duration.inSeconds;
 
-        // Only seek if the saved position is valid and less than video duration
         if (savedPosition < duration) {
           await controller.seekTo(Duration(seconds: savedPosition));
           printInfo(info: '▶️ Resumed video $videoId from ${savedPosition}s');
@@ -876,7 +714,6 @@ class ShortsScontroller extends GetxController {
     }
   }
 
-  /// Save current video progress
   Future<void> _saveVideoProgress(int index) async {
     final videoId = _getVideoIdAtIndex(index);
     if (videoId == null) return;
@@ -900,7 +737,6 @@ class ShortsScontroller extends GetxController {
     }
   }
 
-  /// Start timer to periodically save progress
   void _startProgressSaveTimer(int index) {
     _stopProgressSaveTimer();
 
@@ -911,7 +747,6 @@ class ShortsScontroller extends GetxController {
     });
   }
 
-  /// Stop progress save timer
   void _stopProgressSaveTimer() {
     _progressSaveTimer?.cancel();
     _progressSaveTimer = null;
@@ -919,11 +754,9 @@ class ShortsScontroller extends GetxController {
 
   @override
   void onClose() {
-    // Save progress before closing
     _saveVideoProgress(currentIndex.value);
     _stopProgressSaveTimer();
 
-    // Dispose all video controllers
     for (var controller in _videoControllers.values) {
       controller.dispose();
     }

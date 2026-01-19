@@ -41,6 +41,31 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <!-- 🔗 Deep Link Intent Filter - Custom Scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- testemu://shorts/VIDEO_ID -->
+                <data
+                    android:scheme="testemu"
+                    android:host="shorts"
+                    android:pathPrefix="/"/>
+            </intent-filter>
+
+            <!-- 🔗 Deep Link Intent Filter - HTTPS (Universal Links) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- https://your-domain.com/shorts/VIDEO_ID -->
+                <!-- Replace 'your-domain.com' with your actual domain -->
+                <data
+                    android:scheme="https"
+                    android:host="your-domain.com"
+                    android:pathPrefix="/shorts"/>
+            </intent-filter>
+
         </activity>
 
         <!-- ⚡ UCrop Activity for image cropping -->

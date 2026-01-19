@@ -54,7 +54,9 @@ class VipMoviesSection extends StatelessWidget {
         );
       }
 
-      final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
+      // Use currentVipMovies which filters based on Daily/Weekly selection
+      final List<Movie> movies = controller.currentVipMovies;
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,12 +79,41 @@ class VipMoviesSection extends StatelessWidget {
 
           20.height,
 
-          // VIP Movies Grid
-          _buildVipMoviesGrid(movies),
-          10.height,
-          _buildVipMoviesGrid(movies),
-          10.height,
-          _buildVipMoviesGrid(movies),
+          // Show message if no movies for selected filter
+          if (movies.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.video_library_outlined,
+                      size: 48.sp,
+                      color: AppColors.white.withValues(alpha: 0.5),
+                    ),
+                    10.height,
+                    Text(
+                      controller.selectedVipFilter.value == 'Daily'
+                          ? 'No videos released today'
+                          : 'No videos in weekly archive',
+                      style: TextStyle(
+                        color: AppColors.white.withValues(alpha: 0.7),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else ...[
+            // VIP Movies Grid
+            _buildVipMoviesGrid(movies),
+            10.height,
+            _buildVipMoviesGrid(movies),
+            10.height,
+            _buildVipMoviesGrid(movies),
+          ],
 
           30.height,
 
@@ -91,7 +122,9 @@ class VipMoviesSection extends StatelessWidget {
 
           20.height,
 
-          _buildOnlyOnThisflixSection(movies),
+          _buildOnlyOnThisflixSection(
+            controller.filteredMoviesBySelectedCategory,
+          ),
         ],
       );
     });
