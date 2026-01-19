@@ -274,7 +274,10 @@ class ShortVideoPlayer extends StatelessWidget {
                       RepaintBoundary(
                         child: ReelButton(
                           imgPath: AppIcons.icStar,
-                          text: "125.5K",
+                          text:
+                              "${(controller.videoMetadata[index]['likes'] ?? '0')} likes",
+                          onTap: () async =>
+                              await controller.toggleLikeVideo(index),
                         ),
                       ),
                       RepaintBoundary(

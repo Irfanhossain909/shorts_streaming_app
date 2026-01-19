@@ -209,24 +209,39 @@ class HomeController extends GetxController {
     String id,
     ReferenceType referenceType,
   ) async {
+    // Check current bookmark state before toggling
+    final wasBookmarked = bookmarkedMovies.contains(id);
+
     final result = await categoryRepository.toggleBookmark(
       id,
       referenceType.name,
     );
     result.fold(
       (l) {
+        // Error occurred
         Get.snackbar(
-          'Bookmark',
-          'Added $title to bookmarks',
+          'Error',
+          'Failed to update bookmark: $l',
           colorText: AppColors.background,
         );
       },
       (r) {
-        Get.snackbar(
-          'Bookmark',
-          'Removed $title from bookmarks',
-          colorText: AppColors.background,
-        );
+        // Success - toggle completed
+        if (wasBookmarked) {
+          bookmarkedMovies.remove(id);
+          Get.snackbar(
+            'Bookmark',
+            'Removed $title from bookmarks',
+            colorText: AppColors.background,
+          );
+        } else {
+          bookmarkedMovies.add(id);
+          Get.snackbar(
+            'Bookmark',
+            'Added $title to bookmarks',
+            colorText: AppColors.background,
+          );
+        }
       },
     );
   }

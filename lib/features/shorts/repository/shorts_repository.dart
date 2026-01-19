@@ -155,4 +155,30 @@ class ShortsRepository {
       );
     }
   }
+
+  Future<ApiResponseModel> toggleLikeVideo(String videoId) async {
+    try {
+      final response = await apiService.post(
+        apiEndPoint.toggleLikeVideo,
+        body: {"videoId": videoId},
+      );
+      if (response.statusCode == 200) {
+        return ApiResponseModel(response.statusCode, {
+          'message': response.message,
+          'success': true,
+        });
+      } else {
+        return ApiResponseModel(response.statusCode, {
+          'message': response.message,
+          'success': false,
+        });
+      }
+    } catch (e) {
+      errorLog(e, source: 'Toggle Like Video');
+      return ApiResponseModel(500, {
+        'message': 'Failed to toggle like video',
+        'success': false,
+      });
+    }
+  }
 }

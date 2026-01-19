@@ -45,6 +45,7 @@ class ShortsScontroller extends GetxController {
         'episodeNumber': video.episodeNumber.toString(),
         'seasonNumber': video.seasonId?.seasonNumber.toString() ?? '1',
         'videoId': video.id,
+        'likes': video.likes.toString(),
       };
     }).toList();
   }
@@ -69,6 +70,9 @@ class ShortsScontroller extends GetxController {
 
   // Map to store playing states for each video
   final Map<int, bool> _playingStates = {};
+
+  // Map to store like states for each video (tracked locally for optimistic updates)
+  final Map<String, bool> _likeStates = {};
 
   // Getters for current video
   VideoPlayerController? getCurrentVideoController() {
@@ -116,6 +120,11 @@ class ShortsScontroller extends GetxController {
         printInfo(
           info: '✅ Successfully fetched ${response.data.length} videos',
         );
+
+        // Initialize like states based on likedBy field
+        for (var video in response.data) {
+          _likeStates[video.id] = video.likedBy.isNotEmpty;
+        }
 
         // Initialize first video after data is loaded
         if (videos.isNotEmpty) {
@@ -427,6 +436,105 @@ class ShortsScontroller extends GetxController {
 
       // 6. Additional delay to allow native decoder resources to be freed
       await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
+  Future<void> toggleLikeVideo(int index) async {
+    if (index < 0 || index >= shortsVideosList.length) return;
+
+    final videoId = _getVideoIdAtIndex(index);
+    if (videoId == null) return;
+
+    // Get current video item
+    final videoItem = shortsVideosList[index];
+    final currentLikes = videoItem.likes;
+
+    // Check if video is currently liked (from local state or likedBy list)
+    final isCurrentlyLiked =
+        _likeStates[videoId] ?? videoItem.likedBy.isNotEmpty;
+
+    // Calculate new like count
+    final newLikes = isCurrentlyLiked ? currentLikes - 1 : currentLikes + 1;
+
+    // Update local like state
+    _likeStates[videoId] = !isCurrentlyLiked;
+
+    // Optimistically update the likes count in the model
+    shortsVideosList[index] = ShortsVideoItem(
+      id: videoItem.id,
+      title: videoItem.title,
+      description: videoItem.description,
+      duration: videoItem.duration,
+      videoUrl: videoItem.videoUrl,
+      videoId: videoItem.videoId,
+      libraryId: videoItem.libraryId,
+      thumbnailUrl: videoItem.thumbnailUrl,
+      movieId: videoItem.movieId,
+      seasonId: videoItem.seasonId,
+      episodeNumber: videoItem.episodeNumber,
+      views: videoItem.views,
+      likes: newLikes, // Updated like count
+      downloadUrls: videoItem.downloadUrls,
+      likedBy: !isCurrentlyLiked ? ['current_user'] : [], // Toggle liked state
+      isDeleted: videoItem.isDeleted,
+      createdAt: videoItem.createdAt,
+      updatedAt: videoItem.updatedAt,
+      isSubscribed: videoItem.isSubscribed,
+      isAccess: videoItem.isAccess,
+    );
+
+    // Trigger UI update immediately
+    shortsVideosList.refresh();
+
+    printInfo(
+      info:
+          '👍 Optimistically updated like count from $currentLikes to $newLikes',
+    );
+
+    // Make API call in background (non-blocking)
+    try {
+      printInfo(info: '📡 Calling API to toggle like for video: $videoId');
+      final response = await repository.toggleLikeVideo(videoId);
+
+      if (response.isSuccess) {
+        printInfo(info: '✅ Like toggled successfully on server');
+        // The accurate data will be fetched when the app is reopened
+      } else {
+        printInfo(info: '⚠️ API failed: ${response.message}');
+        // Revert the optimistic update if API fails
+        _likeStates[videoId] = isCurrentlyLiked;
+        shortsVideosList[index] = ShortsVideoItem(
+          id: videoItem.id,
+          title: videoItem.title,
+          description: videoItem.description,
+          duration: videoItem.duration,
+          videoUrl: videoItem.videoUrl,
+          videoId: videoItem.videoId,
+          libraryId: videoItem.libraryId,
+          thumbnailUrl: videoItem.thumbnailUrl,
+          movieId: videoItem.movieId,
+          seasonId: videoItem.seasonId,
+          episodeNumber: videoItem.episodeNumber,
+          views: videoItem.views,
+          likes: currentLikes, // Revert to original
+          downloadUrls: videoItem.downloadUrls,
+          likedBy: videoItem.likedBy,
+          isDeleted: videoItem.isDeleted,
+          createdAt: videoItem.createdAt,
+          updatedAt: videoItem.updatedAt,
+          isSubscribed: videoItem.isSubscribed,
+          isAccess: videoItem.isAccess,
+        );
+        shortsVideosList.refresh();
+        printInfo(info: '🔄 Reverted like count back to $currentLikes');
+      }
+    } catch (e) {
+      printInfo(info: '❌ Error toggling like: $e');
+      // Revert the optimistic update on error
+      _likeStates[videoId] = isCurrentlyLiked;
+      shortsVideosList[index] = videoItem;
+      shortsVideosList.refresh();
+      printInfo(info: '🔄 Reverted like count due to error');
     }
   }
 
@@ -752,6 +860,7 @@ class ShortsScontroller extends GetxController {
     _loadingStates.clear();
     _errorStates.clear();
     _playingStates.clear();
+    _likeStates.clear();
     if (pageController.hasClients) {
       pageController.dispose();
     }
