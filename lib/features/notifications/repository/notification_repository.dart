@@ -22,11 +22,9 @@ class NotificationRepository {
         queryParameters: {"page": page, "limit": limit},
       );
 
-      if (response.data != null) {
-        return NotificationModel.fromJson(
-          Map<String, dynamic>.from(response.data),
-        );
-      }
+      return NotificationModel.fromJson(
+        Map<String, dynamic>.from(response.data),
+      );
     } catch (e) {
       errorLog(e);
       rethrow;
@@ -48,9 +46,12 @@ class NotificationRepository {
     }
     return false;
   }
+
   Future<bool> readAllNotification() async {
     try {
-      final response = await apiService.patch(ApiEndPoint.instance.notifications);
+      final response = await apiService.patch(
+        ApiEndPoint.instance.notifications,
+      );
 
       if (response.statusCode == 200) {
         return true;

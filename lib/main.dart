@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:testemu/core/services/socket/socket_all_oparations.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 
 import 'app.dart';
