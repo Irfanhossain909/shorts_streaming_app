@@ -76,7 +76,7 @@ class HomeController extends GetxController {
   final List<Trailer> bannersList = RxList<Trailer>();
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
     carouselPageController = PageController(
@@ -86,14 +86,19 @@ class HomeController extends GetxController {
     carouselPageController.addListener(_onPageControllerChanged);
     _startAutoScroll();
 
-    appLog("${LocalStorage.userId}<<== Uid");
-
     getCategories();
     getTrailers();
     getMovies();
     getReminders();
     _connectSocket();
-    _listenNotification();
+    // Reactive listening
+    ever(profileController.profileModel, (profile) {
+      final userId = profile?.id;
+      if (userId != null) {
+        appLog("UserId available: $userId -> Calling notification listener");
+        _listenNotification(userId);
+      }
+    });
   }
 
   // ------- socket notification
@@ -110,9 +115,19 @@ class HomeController extends GetxController {
     SocketService.instance.connect(ApiEndPoint.domain);
   }
 
-  String uid = "695c921e9e1b1350d63bce40";
+  // void listenNotificationIfProfileExists() {
+  //   final userId = profileController.profileModel.value?.id;
 
-  void _listenNotification() {
+  //   if (userId != null) {
+  //     // Profile er id thakle notification listener call koro
+  //     _listenNotification(userId);
+  //   } else {
+  //     appLog("Profile ID not available, notifications not listening.");
+  //   }
+  // }
+
+  // _listenNotification update koro userId parameter accept korar jonno
+  void _listenNotification(String uid) {
     SocketService.instance.onEvent('notification::$uid', (data) {
       appLog("Notification received: $data");
 
@@ -123,6 +138,19 @@ class HomeController extends GetxController {
       notificationController.notificationList.insert(0, newNotification);
     });
   }
+
+  // void _listenNotification() {
+
+  //   SocketService.instance.onEvent('notification::$uid', (data) {
+  //     appLog("Notification received: $data");
+
+  //     // Convert raw data to Result model
+  //     Result newNotification = Result.fromJson(data);
+
+  //     // Insert into your controller's notification list
+  //     notificationController.notificationList.insert(0, newNotification);
+  //   });
+  // }
 
   // Current filtered movies based on selected category
   List<Movie> get currentMovies {
