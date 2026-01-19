@@ -157,11 +157,37 @@ class HomeController extends GetxController {
     searchController.clear();
   }
 
-  // Current VIP movies based on selected filter
+  // Current VIP movies based on selected filter (Daily/Weekly)
   List<Movie> get currentVipMovies {
-    return filteredMoviesBySelectedCategory
-        .where((movie) => movie.categoryId == selectedVipFilter.value)
-        .toList();
+    final vipMovies = filteredMoviesBySelectedCategory;
+    
+    // Get today's date (without time)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (selectedVipFilter.value == 'Daily') {
+      // Show only videos created today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isAtSameMomentAs(today);
+      }).toList();
+    } else if (selectedVipFilter.value == 'Weekly') {
+      // Show videos created before today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isBefore(today);
+      }).toList();
+    }
+
+    return vipMovies;
   }
 
   // Current ranking movies based on selected filter
