@@ -69,5 +69,24 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location may be used to improve app performance and deliver better content experience.</string>
 
+	<!-- 🔗 Deep Link Configuration - Custom URL Scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.victorsaulmendozamena.creepyshorts</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>testemu</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- 🔗 Universal Links (HTTPS) - Optional -->
+	<!-- To enable: Add your domain to Associated Domains capability in Xcode -->
+	<!-- Format: applinks:your-domain.com -->
+
 </dict>
 </plist>

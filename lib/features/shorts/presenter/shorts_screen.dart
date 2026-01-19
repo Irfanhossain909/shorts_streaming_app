@@ -291,6 +291,7 @@ class ShortVideoPlayer extends StatelessWidget {
                         child: ReelButton(
                           imgPath: AppIcons.icShare,
                           text: "Share",
+                          onTap: () => controller.showShareBottomSheet(),
                         ),
                       ),
                       // Download button with circular progress

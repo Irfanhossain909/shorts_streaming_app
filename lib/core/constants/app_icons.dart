@@ -29,4 +29,8 @@ class AppIcons {
   // List Icons
   static const String icList = "$baseurl/list.svg";
   static const String icList2 = "$baseurl/list2.svg";
+
+  // Social Media Icons
+  static const String icFacebook = "$baseurl/facebook.svg";
+  static const String icGoogle = "$baseurl/google.svg";
 }

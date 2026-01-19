@@ -11,6 +11,7 @@ import 'package:testemu/features/download/service/download_service.dart';
 import 'package:testemu/features/shorts/model/shorts_video_model.dart';
 import 'package:testemu/features/shorts/repository/shorts_repository.dart';
 import 'package:testemu/features/shorts/widgets/episod_list_bottomsheet.dart';
+import 'package:testemu/features/shorts/widgets/share_bottom_sheet.dart';
 import 'package:video_player/video_player.dart';
 
 class ShortsScontroller extends GetxController {
@@ -102,6 +103,59 @@ class ShortsScontroller extends GetxController {
     printInfo(info: 'ShortsScontroller initialized');
     pageController = PageController(initialPage: 0);
     fetchShortsVideos();
+
+    // Check if opened via deep link with specific video ID
+    _handleDeepLinkArguments();
+  }
+
+  /// Handle deep link arguments
+  void _handleDeepLinkArguments() {
+    // Check if we received a videoId from deep link
+    if (Get.arguments != null && Get.arguments is Map) {
+      final args = Get.arguments as Map;
+      if (args.containsKey('videoId')) {
+        final videoId = args['videoId'] as String;
+        printInfo(info: '🔗 Deep link detected with videoId: $videoId');
+
+        // Wait for videos to load, then navigate to specific video
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          _navigateToVideoById(videoId);
+        });
+      }
+    }
+  }
+
+  /// Navigate to a specific video by ID
+  void _navigateToVideoById(String videoId) {
+    // Find the index of the video with matching ID
+    final index = shortsVideosList.indexWhere((video) => video.id == videoId);
+
+    if (index != -1) {
+      printInfo(info: '🎬 Found video at index $index, navigating...');
+
+      // Navigate to that video
+      pageController.jumpToPage(index);
+
+      Get.snackbar(
+        '✓ Video Found',
+        'Playing your requested video',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+    } else {
+      printInfo(info: '❌ Video with ID $videoId not found');
+
+      Get.snackbar(
+        'Video Not Found',
+        'The requested video is not available',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.orange.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+    }
   }
 
   // Fetch shorts videos from API
@@ -540,6 +594,23 @@ class ShortsScontroller extends GetxController {
 
   void showEpisodeListBottomSheet() {
     Get.bottomSheet(isScrollControlled: true, const ListBottomSheet());
+  }
+
+  void showShareBottomSheet() {
+    final index = currentIndex.value;
+    if (index >= 0 && index < shortsVideosList.length) {
+      final videoItem = shortsVideosList[index];
+
+      // Show the ShareBottomSheet widget
+      Get.bottomSheet(
+        isScrollControlled: true,
+        ShareBottomSheet(
+          videoId: videoItem.id,
+          title: videoItem.title,
+          thumbnailUrl: videoItem.thumbnailUrl,
+        ),
+      );
+    }
   }
 
   void navigateToDownloadMenu() {
