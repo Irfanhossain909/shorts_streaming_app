@@ -159,7 +159,7 @@ class AppRoutes {
       page: () => EditProfile(),
     ),
     GetPage(name: setting, page: () => const SettingScreen()),
-    GetPage(name: deleteAccount, page: () => const DeleteAccountScreen()),
+    GetPage(name: deleteAccount, binding: AppBinding(), page: () => const DeleteAccountScreen()),
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
     GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),

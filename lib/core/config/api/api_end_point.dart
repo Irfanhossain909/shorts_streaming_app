@@ -47,7 +47,7 @@ class ApiEndPoint {
   final String chats = "chats";
   final String messages = "messages";
   final String userAgreement = "user-agreement";
-  final String deleteAccount = "delete-account";
+  final String deleteAccount = "/users/delete-account";
 }
 
 // Helper function to get domain based on environment

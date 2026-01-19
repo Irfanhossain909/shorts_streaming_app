@@ -74,4 +74,21 @@ class SettingRepository {
       );
     }
   }
+
+  Future<dynamic> deleteAccount({required String password}) async {
+    try {
+      final response = await apiService.delete(
+        apiEndPoint.deleteAccount,
+        body: {"password": password},
+      );
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        errorLog(response.data, source: "Delete Account");
+      }
+    } catch (e) {
+      errorLog(e, source: "Delete Account");
+      return null;
+    }
+  }
 }
