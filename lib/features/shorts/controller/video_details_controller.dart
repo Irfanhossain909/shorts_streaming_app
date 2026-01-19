@@ -92,7 +92,7 @@ class VideoDetailsController extends GetxController {
   void getSeasonVideoDetailsSuccess(List<SeasonVideo>? response) {
     seasonVideoIsSuccess.value = true;
     seasonVideoData.value = response;
-    listOfVideos.value = response?.map((e) => e.videoUrl).toList();
+    listOfVideos.value = response?.map((e) => e.downloadUrl).toList();
     appLog('List of Videos: ${listOfVideos.value}', source: 'List of Videos');
   }
 
@@ -105,26 +105,25 @@ class VideoDetailsController extends GetxController {
   }
 
   Future<void> onSeasonTap(String videoUrl, String videoId, int index) async {
-    // Sanitize URL before passing
-    String sanitizedUrl = _sanitizeUrl(videoUrl);
-    appLog('Original VideoUrl: $videoUrl', source: 'VideoUrl');
-    appLog('Sanitized VideoUrl: $sanitizedUrl', source: 'VideoUrl');
-    if (listOfVideos.value != null &&
-        (listOfVideos.value?.isNotEmpty ?? false)) {
-      appLog('List of Videos is not empty', source: 'List of Videos');
-      await addRecentVideo(videoId);
-      Get.toNamed(
-        AppRoutes.videoPlayer,
-        arguments: {'index': index, 'listOfVideos': listOfVideos.value!},
+    appLog('🎬 Opening episode in shorts-style player', source: 'VideoUrl');
+    appLog('Episode index: $index', source: 'VideoUrl');
+
+    if (seasonVideoData.value != null && seasonVideoData.value!.isNotEmpty) {
+      appLog(
+        'Found ${seasonVideoData.value!.length} episodes',
+        source: 'List of Videos',
       );
-    } else if (videoUrl.isNotEmpty) {
+
+      // Add to recent videos before navigation
       await addRecentVideo(videoId);
+
+      // Navigate to shorts-style episode player
       Get.toNamed(
-        AppRoutes.videoPlayer,
-        arguments: {'videoUrl': videoUrl, 'index': index},
+        AppRoutes.episodeShorts,
+        arguments: {'episodes': seasonVideoData.value!, 'initialIndex': index},
       );
     } else {
-      appLog('Video URL is empty after sanitization', source: 'VideoUrl');
+      appLog('No episode data available', source: 'VideoUrl');
     }
   }
 
@@ -133,19 +132,6 @@ class VideoDetailsController extends GetxController {
       selectedSeasonId.value = seasonId;
       getSeasonVideoDetails(seasonId);
     }
-  }
-
-  String _sanitizeUrl(String url) {
-    if (url.isEmpty) return '';
-
-    // Remove all whitespace, newlines, and trim
-    String sanitized = url
-        .replaceAll(RegExp(r'\s+'), '') // Remove all whitespace
-        .replaceAll('\n', '') // Remove newlines
-        .replaceAll('\r', '') // Remove carriage returns
-        .trim();
-
-    return sanitized;
   }
 
   Future<void> addRecentVideo(String videoId) async {
@@ -165,9 +151,14 @@ class VideoDetailsController extends GetxController {
         .getRecentVideos();
     if (response.success && response.statusCode == 200) {
       // Filter out items with null videoId
-      final validVideos = response.data.where((item) => item.videoId != null).toList();
+      final validVideos = response.data
+          .where((item) => item.videoId != null)
+          .toList();
       recentVideos.value = validVideos;
-      appLog('Recent videos: ${validVideos.length} valid items (filtered from ${response.data.length} total)', source: 'Recent Videos');
+      appLog(
+        'Recent videos: ${validVideos.length} valid items (filtered from ${response.data.length} total)',
+        source: 'Recent Videos',
+      );
       appLog('Recent videos fetched successfully', source: 'Recent Videos');
     } else {
       appLog(

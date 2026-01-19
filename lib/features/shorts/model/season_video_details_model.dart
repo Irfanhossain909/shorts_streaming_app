@@ -37,6 +37,7 @@ class SeasonVideo {
   final int episodeNumber;
   final int views;
   final int likes;
+  final String downloadUrl;
   final List<String> likedBy;
   final bool isDeleted;
   final bool isSubscribed;
@@ -59,6 +60,7 @@ class SeasonVideo {
     required this.episodeNumber,
     required this.views,
     required this.likes,
+    required this.downloadUrl,
     required this.likedBy,
     required this.isDeleted,
     required this.isSubscribed,
@@ -76,7 +78,22 @@ class SeasonVideo {
         .replaceAll('\n', '') // Remove newlines
         .replaceAll('\r', '') // Remove carriage returns
         .trim();
-    
+
+    // Sanitize thumbnailUrl and add https:// if missing
+    String rawThumbnailUrl = json['thumbnailUrl'] ?? '';
+    String sanitizedThumbnailUrl = rawThumbnailUrl
+        .replaceAll(RegExp(r'\s+'), '') // Remove all whitespace
+        .replaceAll('\n', '') // Remove newlines
+        .replaceAll('\r', '') // Remove carriage returns
+        .trim();
+
+    // Add https:// protocol if missing
+    if (sanitizedThumbnailUrl.isNotEmpty &&
+        !sanitizedThumbnailUrl.startsWith('http://') &&
+        !sanitizedThumbnailUrl.startsWith('https://')) {
+      sanitizedThumbnailUrl = 'https://$sanitizedThumbnailUrl';
+    }
+
     return SeasonVideo(
       id: json['_id'] ?? '',
       title: json['title'] ?? '',
@@ -85,12 +102,13 @@ class SeasonVideo {
       videoUrl: sanitizedVideoUrl,
       videoId: json['videoId'] ?? '',
       libraryId: json['libraryId'] ?? '',
-      thumbnailUrl: json['thumbnailUrl'] ?? '',
+      thumbnailUrl: sanitizedThumbnailUrl,
       movieId: json['movieId'] ?? '',
       seasonId: json['seasonId'] ?? '',
       episodeNumber: json['episodeNumber'] ?? 0,
       views: json['views'] ?? 0,
       likes: json['likes'] ?? 0,
+      downloadUrl: json['downloadUrls'] ?? '',
       likedBy: (json['likedBy'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
@@ -118,6 +136,7 @@ class SeasonVideo {
       'episodeNumber': episodeNumber,
       'views': views,
       'likes': likes,
+      'downloadUrls': downloadUrl,
       'likedBy': likedBy,
       'isDeleted': isDeleted,
       'isSubscribed': isSubscribed,
