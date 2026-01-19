@@ -41,7 +41,8 @@ class ApiEndPoint {
   final String getShortsVideos = "/video/shorts-videos";
   // // App endpoints
   final String user = "users";
-  final String notifications = "notifications";
+  final String notifications = "/notification";
+  String readNotification({required String notificationId}) => "/notification/$notificationId/read";
   final String privacyPolicies = "privacy-policies";
   final String termsOfServices = "terms-and-conditions";
   final String chats = "chats";

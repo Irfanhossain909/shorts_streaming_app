@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/services/socket/socket_all_oparations.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
@@ -11,10 +14,17 @@ import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
+import 'package:testemu/features/notifications/data/model/notification_model.dart';
+import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
 
 class HomeController extends GetxController {
   CategoryRepository categoryRepository = CategoryRepository.instance;
+
+  SocketService socketService = SocketService.instance;
+  NotificationsController notificationController = Get.put(
+    NotificationsController(),
+  );
 
   ProfileController profileController = Get.find<ProfileController>();
 
@@ -68,7 +78,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Initialize carousel
+
     carouselPageController = PageController(
       viewportFraction: 0.45,
       initialPage: 0,
@@ -76,10 +86,42 @@ class HomeController extends GetxController {
     carouselPageController.addListener(_onPageControllerChanged);
     _startAutoScroll();
 
+    appLog("${LocalStorage.userId}<<== Uid");
+
     getCategories();
     getTrailers();
     getMovies();
     getReminders();
+    _connectSocket();
+    _listenNotification();
+  }
+
+  // ------- socket notification
+
+  RxInt unreadNotificationCount = 0.obs;
+
+  void _connectSocket() {
+    SocketService.instance.initSocket(
+      onConnected: () {
+        appLog('✅ Socket connected from controller');
+      },
+    );
+
+    SocketService.instance.connect(ApiEndPoint.domain);
+  }
+
+  String uid = "695c921e9e1b1350d63bce40";
+
+  void _listenNotification() {
+    SocketService.instance.onEvent('notification::$uid', (data) {
+      appLog("Notification received: $data");
+
+      // Convert raw data to Result model
+      Result newNotification = Result.fromJson(data);
+
+      // Insert into your controller's notification list
+      notificationController.notificationList.insert(0, newNotification);
+    });
   }
 
   // Current filtered movies based on selected category

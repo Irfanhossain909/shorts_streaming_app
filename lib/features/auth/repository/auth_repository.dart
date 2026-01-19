@@ -31,6 +31,12 @@ class AuthRepository {
         appLog("Access Token stored successfully");
 
         return true;
+      } else if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something was wrong"}",
+          "Login",
+        );
       } else {
         // Handle the error if the response or data is null
         appLog("Error: Access Token not found!", source: "Login Response");
@@ -203,6 +209,7 @@ class AuthRepository {
           "Reset Password",
         );
       }
+
       return false;
     } on DioException catch (error) {
       if (error.response?.data["message"].runtimeType != Null) {
