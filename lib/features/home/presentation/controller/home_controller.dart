@@ -160,7 +160,7 @@ class HomeController extends GetxController {
   // Current VIP movies based on selected filter (Daily/Weekly)
   List<Movie> get currentVipMovies {
     final vipMovies = filteredMoviesBySelectedCategory;
-    
+
     // Get today's date (without time)
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
