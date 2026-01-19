@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           milliseconds: 200,
         ), // Reduced from 300ms
         initialRoute: AppRoutes.splash,
-        // initialRoute: AppRoutes.editProfile,
+        // initialRoute: AppRoutes.verifyEmail,
         getPages: AppRoutes.routes,
         // Performance optimizations
         smartManagement: SmartManagement.keepFactory,

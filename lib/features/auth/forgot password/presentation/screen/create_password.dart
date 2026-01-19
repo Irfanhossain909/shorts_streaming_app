@@ -29,90 +29,96 @@ class CreatePassword extends StatelessWidget {
       body: GetBuilder<CreatePasswordController>(
         init: CreatePasswordController(),
         builder: (controller) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Log In Instruction
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 18.h,
+          return ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              overscroll: false, // ✅ IMPORTANT FIX
+            ),
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// Log In Instruction
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 18.h,
+                      ),
+
+                      child: Column(
+                        spacing: 8.h,
+                        children: [
+                          CommonImage(
+                            width: 120.w,
+                            height: 120.h,
+                            imageSrc: AppImages.logo,
+                          ),
+                          CommonText(
+                            text: "Set Your New Password",
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.background,
+                          ),
+                          CommonText(
+                            maxLines: 3,
+                            textAlign: TextAlign.center,
+                            text:
+                                "Create a new password for your account. Make sure it’s strong and secure.",
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.background,
+                          ),
+                        ],
+                      ),
                     ),
+                    44.height,
 
-                    child: Column(
-                      spacing: 8.h,
-                      children: [
-                        CommonImage(
-                          width: 120.w,
-                          height: 120.h,
-                          imageSrc: AppImages.logo,
-                        ),
-                        CommonText(
-                          text: "Set Your New Password",
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.background,
-                        ),
-                        CommonText(
-                          maxLines: 3,
-                          textAlign: TextAlign.center,
-                          text:
-                              "Create a new password for your account. Make sure it’s strong and secure.",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.background,
-                        ),
-                      ],
+                    CommonTextField(
+                      controller: controller.newPasswordController,
+                      borderColor: AppColors.background,
+                      textColor: AppColors.background,
+                      hintTextColor: AppColors.background,
+                      borderRadius: 30.w,
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      hintText: AppString.password,
+                      isPassword: true,
+                      validator: OtherHelper.passwordValidator,
                     ),
-                  ),
-                  44.height,
+                    16.height,
+                    CommonTextField(
+                      controller: controller.confirmPasswordController,
+                      borderColor: AppColors.background,
+                      textColor: AppColors.background,
+                      hintTextColor: AppColors.background,
+                      borderRadius: 30.w,
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      hintText: AppString.newPassword,
+                      isPassword: true,
+                      validator: OtherHelper.passwordValidator,
+                    ),
+                    38.height,
 
-                  CommonTextField(
-                    controller: controller.newPasswordController,
-                    borderColor: AppColors.background,
-                    textColor: AppColors.background,
-                    hintTextColor: AppColors.background,
-                    borderRadius: 30.w,
-                    fillColor: AppColors.background.withValues(alpha: 0.3),
-                    hintText: AppString.password,
-                    isPassword: true,
-                    validator: OtherHelper.passwordValidator,
-                  ),
-                  16.height,
-                  CommonTextField(
-                    controller: controller.confirmPasswordController,
-                    borderColor: AppColors.background,
-                    textColor: AppColors.background,
-                    hintTextColor: AppColors.background,
-                    borderRadius: 30.w,
-                    fillColor: AppColors.background.withValues(alpha: 0.3),
-                    hintText: AppString.newPassword,
-                    isPassword: true,
-                    validator: OtherHelper.passwordValidator,
-                  ),
-                  38.height,
-
-                  /// Submit Button
-                  Obx(() {
-                    return controller.isLoading.value
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
-                        : CommonButtonPro(
-                            onTap: () {
-                              controller.createPassword();
-                            },
-                            text: "Save New Password",
-                          );
-                  }),
-                ],
+                    /// Submit Button
+                    Obx(() {
+                      return controller.isLoading.value
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : CommonButtonPro(
+                              onTap: () {
+                                controller.createPassword();
+                              },
+                              text: "Save New Password",
+                            );
+                    }),
+                  ],
+                ),
               ),
             ),
           );

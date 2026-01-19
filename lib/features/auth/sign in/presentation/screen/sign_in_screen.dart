@@ -16,161 +16,179 @@ import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_acco
 import '../controller/sign_in_controller.dart';
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: CommonAppBar(title: ""),
+      resizeToAvoidBottomInset: true,
 
-      bottomNavigationBar: SafeArea(child: DoNotHaveAccount()),
+      appBar: const CommonAppBar(isShowBackButton: false, title: ""),
 
-      /// Body Sections Starts here
-      body: GetBuilder<SignInController>(
-        builder: (controller) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-            child: Form(
-              key: formKey,
-              child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  24.height,
+      bottomNavigationBar: const SafeArea(child: DoNotHaveAccount()),
 
-                  /// Log In Instruction here
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 18.h),
+      body: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          overscroll: false, // ✅ IMPORTANT FIX
+        ),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+          child: GetBuilder<SignInController>(
+            builder: (controller) {
+              return Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    24.height,
 
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: AppColors.background),
-                    //   borderRadius: BorderRadius.circular(30.w),
-                    //   color: AppColors.white.withValues(alpha: 0.3),
-                    // ),
-                    child: Column(
+                    /// Logo + Title
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 18.h),
+                      child: Column(
+                        children: [
+                          CommonImage(
+                            width: 120.w,
+                            height: 120.h,
+                            imageSrc: AppImages.appLogoSvg,
+                          ),
+                          CommonText(
+                            text: "Let's Get Started!",
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.background,
+                          ),
+                          CommonText(
+                            text: "Let's dive in into your account",
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.background,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    24.height,
+
+                    /// Email
+                    CommonTextField(
+                      controller: controller.emailController,
+                      borderColor: AppColors.background,
+                      borderRadius: 30.w,
+                      textColor: AppColors.background,
+                      hintTextColor: AppColors.background,
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      hintText: AppString.email,
+                      validator: OtherHelper.emailValidator,
+                    ),
+
+                    20.height,
+
+                    /// Password
+                    CommonTextField(
+                      controller: controller.passwordController,
+                      borderColor: AppColors.background,
+                      textColor: AppColors.background,
+                      hintTextColor: AppColors.background,
+                      borderRadius: 30.w,
+                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      isPassword: true,
+                      hintText: AppString.password,
+                      // validator: OtherHelper.passwordValidator,
+                    ),
+
+                    /// Forgot password
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () => Get.toNamed(AppRoutes.forgotPassword),
+                        child: const CommonText(
+                          text: AppString.forgotThePassword,
+                          top: 10,
+                          bottom: 30,
+                          color: AppColors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+
+                    /// Sign In Button / Loader
+                    Obx(() {
+                      return controller.isLoading.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: CircularProgressIndicator(
+                                color: AppColors.white,
+                              ),
+                            )
+                          : CommonButtonPro(
+                              onTap: () {
+                                FocusScope.of(
+                                  context,
+                                ).unfocus(); // ✅ keyboard close safe
+                                controller.signInUser(formKey: _formKey);
+                              },
+                              text: "Sign In",
+                            );
+                    }),
+
+                    24.height,
+
+                    CommonText(
+                      text: "Or",
+                      fontSize: 18.sp,
+                      color: AppColors.background,
+                    ),
+
+                    24.height,
+
+                    /// Social buttons
+                    Row(
                       children: [
-                        CommonImage(
-                          width: 120.w,
-                          height: 120.h,
-                          imageSrc: AppImages.logo,
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 18.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.w),
+                              color: AppColors.background,
+                            ),
+                            child: Center(
+                              child: CommonImage(
+                                imageSrc: AppImages.google,
+                                width: 24.w,
+                              ),
+                            ),
+                          ),
                         ),
-                        CommonText(
-                          text: "Let's Get Started!",
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
-                        ),
-                        CommonText(
-                          text: "Let's dive in into your occount",
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
+                        12.width,
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 18.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.w),
+                              color: AppColors.blue,
+                            ),
+                            child: Center(
+                              child: CommonImage(
+                                imageSrc: AppImages.facebook,
+                                width: 24.w,
+                                imageColor: AppColors.background,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  24.height,
-
-                  CommonTextField(
-                    controller: controller.emailController,
-                    borderColor: AppColors.background,
-                    borderRadius: 30.w,
-                    textColor: AppColors.background,
-                    hintTextColor: AppColors.background,
-                    fillColor: AppColors.background.withValues(alpha: 0.3),
-                    hintText: AppString.email,
-                    validator: OtherHelper.emailValidator,
-                  ),
-                  20.height,
-                  CommonTextField(
-                    controller: controller.passwordController,
-                    borderColor: AppColors.background,
-                    textColor: AppColors.background,
-                    hintTextColor: AppColors.background,
-                    borderRadius: 30.w,
-                    fillColor: AppColors.background.withValues(alpha: 0.3),
-                    isPassword: true,
-                    hintText: AppString.password,
-                    validator: OtherHelper.passwordValidator,
-                  ),
-
-                  /// Forget Password Button here
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.forgotPassword),
-                      child: const CommonText(
-                        text: AppString.forgotThePassword,
-                        top: 10,
-                        bottom: 30,
-                        color: AppColors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-
-                  Obx(() {
-                    return controller.isLoading.value
-                        ? const CircularProgressIndicator(
-                            color: AppColors.white,
-                          )
-                        : CommonButtonPro(
-                            onTap: () {
-                              controller.signInUser(formKey: formKey);
-                            },
-                            text: "Sign In",
-                          );
-                  }),
-                  24.height,
-                  CommonText(
-                    text: "Or",
-                    fontSize: 18.sp,
-                    color: AppColors.background,
-                  ),
-                  24.height,
-                  Row(
-                    spacing: 12.w,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.w),
-                            color: AppColors.background,
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 18.h),
-                          child: Center(
-                            child: CommonImage(
-                              imageSrc: AppImages.google,
-                              width: 24.w,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.w),
-                            color: AppColors.blue,
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 18.h),
-                          child: Center(
-                            child: CommonImage(
-                              imageSrc: AppImages.facebook,
-                              width: 24.w,
-                              imageColor: AppColors.background,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

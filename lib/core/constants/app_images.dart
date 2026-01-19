@@ -7,9 +7,10 @@ class AppImages {
   static const String profile = "$baseurl/profile.png";
   static const String employer = "$baseurl/employer.png";
   static const String seeker = "$baseurl/seeker.png";
-  static const String google = "$baseurl/google.png";
-  static const String logo = "$baseurl/logo.png";
-  static const String facebook = "$baseurl/facebook.png";
+  static const String google = "assets/icons/google.svg";
+  static const String logo = "assets/icons/appLogoSvg.svg";
+  // static const String logo = "$baseurl/logo.png";
+  static const String facebook = "assets/icons/facebook.svg";
   static const String apple = "$baseurl/apple.png";
   static const String map = "$baseurl/map.png";
   static const String defaultProfile = "assets/images/defult_image.png";
@@ -117,5 +118,6 @@ class AppImages {
   static const String m1 = "$baseurl/m1.webp";
 
   static const String markIcon = "assets/images/mark.svg";
+  static const String appLogoSvg = "assets/icons/appLogoSvg.svg";
   // static const String icFireIcon = "$baseurl/fire_icon.png";
 }
