@@ -37,6 +37,50 @@ class NotificationsController extends GetxController {
 
   // ------------------ <<<<<<<=================>>>>> ------------------
 
+  void allNotificationRead() async {
+    try {
+      final response = await notificationRepository.readAllNotification();
+
+      if (response) {
+        // Loop through all notifications and mark unread ones as read
+        for (var notification in notificationList) {
+          if (notification.read == false) {
+            notification.read = true;
+          }
+        }
+
+        // Refresh the list to update UI (if using GetX RxList)
+        notificationList.refresh();
+      }
+    } catch (e) {
+      appLog("Error reading all notifications: $e");
+    }
+  }
+
+  void singleNotificationRead({required String notificationId}) async {
+    try {
+      final response = await notificationRepository.readNotification(
+        notificationId: notificationId,
+      );
+
+      if (response) {
+        // Find the notification in the list
+        final index = notificationList.indexWhere(
+          (element) => element.id == notificationId,
+        );
+        if (index != -1) {
+          // Mark it as read
+          notificationList[index].read = true;
+
+          // Refresh the list to update UI (if using GetX RxList)
+          notificationList.refresh();
+        }
+      }
+    } catch (e) {
+      appLog("Error reading notification: $e");
+    }
+  }
+
   Future<void> fetchNorification() async {
     if (isNotificationLoding.value) return;
 

@@ -32,4 +32,33 @@ class NotificationRepository {
       rethrow;
     }
   }
+
+  Future<bool> readNotification({required String notificationId}) async {
+    try {
+      final response = await apiService.patch(
+        ApiEndPoint.instance.readNotification(notificationId: notificationId),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+    return false;
+  }
+  Future<bool> readAllNotification() async {
+    try {
+      final response = await apiService.patch(ApiEndPoint.instance.notifications);
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+    return false;
+  }
 }

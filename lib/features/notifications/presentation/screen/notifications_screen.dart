@@ -18,7 +18,21 @@ class NotificationScreen extends StatelessWidget {
       builder: (controller) {
         return Obx(() {
           return Scaffold(
-            appBar: CommonAppBar(title: ""),
+            appBar: CommonAppBar(
+              title: "",
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    controller.allNotificationRead();
+                  },
+                  child: CommonText(
+                    text: "Read All",
+                    color: AppColors.white,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ],
+            ),
 
             body:
                 controller.isNotificationLoding.value &&
@@ -75,6 +89,11 @@ class NotificationScreen extends StatelessWidget {
                           title: notification.title,
                           subTitle: notification.message,
                           time: notification.createdAt.toString(),
+                          onTap: () {
+                            controller.singleNotificationRead(
+                              notificationId: notification.id ?? "",
+                            );
+                          },
                         );
                       },
                     ),

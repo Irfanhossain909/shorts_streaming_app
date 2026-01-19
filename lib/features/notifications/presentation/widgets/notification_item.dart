@@ -9,80 +9,87 @@ class NotificationItem extends StatelessWidget {
   final String? title;
   final String? subTitle;
   final String? time;
+  final VoidCallback? onTap;
   const NotificationItem({
     super.key,
     this.isUnread = true,
     this.title,
     this.subTitle,
     this.time,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(12.sp),
-      decoration: BoxDecoration(
-        color: !isUnread ? AppColors.buton.withOpacity(0.4) : null,
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.buton),
-      ),
-      child: Row(
-        children: [
-          /// icon or image here
-          CircleAvatar(
-            backgroundColor: AppColors.buton,
-            radius: 24.r,
-            child: const ClipOval(
-              child: Icon(
-                Icons.notifications_active,
-                color: AppColors.white,
-                size: 24,
+    return InkWell(
+      splashColor: Colors.transparent, // ripple effect off
+      highlightColor: Colors.transparent,
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(12.sp),
+        decoration: BoxDecoration(
+          color: !isUnread ? AppColors.buton.withOpacity(0.9) : null,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: AppColors.buton),
+        ),
+        child: Row(
+          children: [
+            /// icon or image here
+            CircleAvatar(
+              backgroundColor: AppColors.buton,
+              radius: 24.r,
+              child: const ClipOval(
+                child: Icon(
+                  Icons.notifications_active,
+                  color: AppColors.white,
+                  size: 24,
+                ),
               ),
             ),
-          ),
-          16.width,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CommonText(
-                  text: title ?? "item.type",
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  textAlign: TextAlign.start,
-                  maxLines: 1,
-                  color: AppColors.white,
-                ),
-
-                /// Notification Message here
-                CommonText(
-                  text: subTitle ?? "item.message",
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  maxLines: 2,
-                  color: AppColors.white,
-                  textAlign: TextAlign.start,
-                  bottom: 10,
-                  top: 4,
-                ),
-
-                /// Notification Time here
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: CommonText(
-                    text: formatNotificationTime(time),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w400,
+            16.width,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonText(
+                    text: title ?? "item.type",
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
                     textAlign: TextAlign.start,
-                    color: AppColors.white,
                     maxLines: 1,
+                    color: AppColors.white,
                   ),
-                ),
-              ],
+
+                  /// Notification Message here
+                  CommonText(
+                    text: subTitle ?? "item.message",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    maxLines: 2,
+                    color: AppColors.white,
+                    textAlign: TextAlign.start,
+                    bottom: 10,
+                    top: 4,
+                  ),
+
+                  /// Notification Time here
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: CommonText(
+                      text: formatNotificationTime(time),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w400,
+                      textAlign: TextAlign.start,
+                      color: AppColors.white,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
