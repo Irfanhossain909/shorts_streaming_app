@@ -21,12 +21,6 @@ class SettingScreen extends StatelessWidget {
           spacing: 16.h,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonText(
-              text: "else",
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.background,
-            ),
             ProfileRow(
               onTap: () {
                 Get.toNamed(AppRoutes.privacyPolicy);

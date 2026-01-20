@@ -57,6 +57,9 @@ class DeleteAccountScreen extends StatelessWidget {
                       titleText: "Delete Account",
                     ),
                     CommonButton(
+                      onTap: () {
+                        Get.back();
+                      },
                       borderColor: AppColors.white200.withValues(alpha: 0.2),
                       buttonColor: AppColors.black,
                       isGradient: false,
