@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/main.dart' as AppToast;
 
 import 'core/config/route/app_routes.dart';
 import 'core/config/theme/light_theme.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,
         navigatorKey: Get.key,
+        
         //showPerformanceOverlay:true, // ✅ Performance testing এর জন্য enable করা হয়েছে
         //locale: DevicePreview.locale(context),
         //builder: DevicePreview.appBuilder,
