@@ -361,7 +361,7 @@ class HomeController extends GetxController {
 
   //--- Get Categories ---//
 
-  Future<void> getCategories() async {
+  Future<void> getCategories({bool preserveSelection = false}) async {
     isLoading.value = true;
     try {
       final result = await categoryRepository.getCategories();
@@ -374,8 +374,9 @@ class HomeController extends GetxController {
           isError.value = false;
           categories.assignAll(r);
 
-          // If selectedCategory isn't coming from backend yet, default to first
-          if (r.isNotEmpty) {
+          // Only set default category on initial load (when preserveSelection is false)
+          // If preserveSelection is true (e.g., during refresh), keep current selection
+          if (!preserveSelection && r.isNotEmpty) {
             final firstName = r.first.name.trim();
             if (firstName.isNotEmpty) {
               selectedCategory.value = firstName.toLowerCase();
@@ -467,8 +468,9 @@ class HomeController extends GetxController {
   Future<void> refreshHomeData() async {
     try {
       // Load all data in parallel for better performance
+      // preserveSelection: true ensures current category selection is maintained
       await Future.wait([
-        getCategories(),
+        getCategories(preserveSelection: true),
         getMovies(),
         getTrailers(),
         getReminders(),
