@@ -290,11 +290,9 @@ class VideoDetailScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       GestureDetector(
-                        onTap: () {
-                          Get.back();
-                        },
+                        onTap: () {},
                         child: CommonText(
-                          text: "Episode ${seasonVideoData?.length} >",
+                          text: "Episode ${seasonVideoData?.length}",
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w300,
                           color: AppColors.white,
