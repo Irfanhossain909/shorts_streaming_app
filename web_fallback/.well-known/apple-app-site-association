@@ -1,0 +1,19 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "TEAM_ID.com.victorsaulmendozamena.creepyshorts",
+                "paths": [
+                    "/shorts/*",
+                    "/video/*"
+                ]
+            }
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "TEAM_ID.com.victorsaulmendozamena.creepyshorts"
+        ]
+    }
+}

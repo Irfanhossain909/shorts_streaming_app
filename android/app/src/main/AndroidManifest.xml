@@ -46,9 +46,9 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!-- testemu://shorts/VIDEO_ID -->
+                <!-- creepyshorts://shorts/VIDEO_ID -->
                 <data
-                    android:scheme="testemu"
+                    android:scheme="creepyshorts"
                     android:host="shorts"
                     android:pathPrefix="/"/>
             </intent-filter>
@@ -58,11 +58,32 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!-- https://your-domain.com/shorts/VIDEO_ID -->
-                <!-- Replace 'your-domain.com' with your actual domain -->
+                <!-- https://api.creepy-shorts.com/shorts/VIDEO_ID -->
                 <data
                     android:scheme="https"
-                    android:host="your-domain.com"
+                    android:host="api.creepy-shorts.com"
+                    android:pathPrefix="/shorts"/>
+            </intent-filter>
+            
+            <!-- 🔗 Additional Deep Link - Support for www subdomain -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.api.creepy-shorts.com"
+                    android:pathPrefix="/shorts"/>
+            </intent-filter>
+            
+            <!-- 🔗 HTTP fallback (for testing) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="http"
+                    android:host="api.creepy-shorts.com"
                     android:pathPrefix="/shorts"/>
             </intent-filter>
 

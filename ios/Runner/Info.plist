@@ -79,14 +79,15 @@
 			<string>com.victorsaulmendozamena.creepyshorts</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>testemu</string>
+				<string>creepyshorts</string>
 			</array>
 		</dict>
 	</array>
 
-	<!-- 🔗 Universal Links (HTTPS) - Optional -->
-	<!-- To enable: Add your domain to Associated Domains capability in Xcode -->
-	<!-- Format: applinks:your-domain.com -->
+	<!-- 🔗 Universal Links (HTTPS) Support -->
+	<!-- Note: You must also add Associated Domains in Xcode -->
+	<!-- Go to: Target → Signing & Capabilities → Add Capability → Associated Domains -->
+	<!-- Add: applinks:api.creepy-shorts.com -->
 
 </dict>
 </plist>

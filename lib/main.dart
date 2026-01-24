@@ -7,6 +7,7 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'app.dart';
 import 'core/config/dependency/dependency_injection.dart';
 import 'core/config/performance/performance_config.dart';
+import 'core/services/deep_link_service.dart';
 import 'core/services/storage/storage_services.dart';
 
 Future<void> main() async {
@@ -19,6 +20,10 @@ Future<void> main() async {
   PerformanceConfig.init();
 
   await init.tryCatch();
+
+  // 🔗 Initialize Deep Link Service
+  await DeepLinkService.instance.initialize();
+
   runApp(
     const MyApp(), // Wrap your app
   );

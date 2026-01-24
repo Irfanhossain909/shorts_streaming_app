@@ -23,8 +23,8 @@ class ShareBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Web link that will be shared (customize this to your actual domain)
-    final webLink = 'https://your-domain.com/shorts/$videoId';
+    // Web link that will be shared - using your domain
+    final webLink = 'https://api.creepy-shorts.com/shorts/$videoId';
 
     return Container(
       decoration: BoxDecoration(

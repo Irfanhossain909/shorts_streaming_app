@@ -65,8 +65,8 @@ class DeepLinkService {
       }
 
       // Handle different deep link patterns
-      // Pattern 1: testemu://shorts/:videoId
-      // Pattern 2: https://your-domain.com/shorts/:videoId
+      // Pattern 1: creepyshorts://shorts/:videoId
+      // Pattern 2: https://api.creepy-shorts.com/shorts/:videoId
 
       if (uri.pathSegments.isNotEmpty) {
         final firstSegment = uri.pathSegments[0];
