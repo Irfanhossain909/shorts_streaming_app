@@ -48,4 +48,31 @@ class MyListRepository {
       return Left(e.toString());
     }
   }
+
+  //--- Toggle Bookmark ---//
+
+  Future<Either<String, void>> toggleBookmark(
+    String referenceId,
+    String referenceType,
+  ) async {
+    try {
+      Map<String, String> body = {
+        "referenceId": referenceId,
+        "referenceType": referenceType,
+      };
+      final apiResponse = await apiService.post(
+        apiEndPoint.toggleBookmark,
+        body: body,
+      );
+      if (apiResponse.statusCode == 200) {
+        return Right(null);
+      } else {
+        errorLog(apiResponse.data, source: 'Toggle Bookmark Repository');
+        return Left(apiResponse.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Toggle Bookmark Repository');
+      return Left(e.toString());
+    }
+  }
 }

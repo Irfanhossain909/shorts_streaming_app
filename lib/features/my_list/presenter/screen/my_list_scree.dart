@@ -193,6 +193,12 @@ class MyListScree extends StatelessWidget {
         itemBuilder: (context, index) {
           final movie = controller.bookmarks[index];
           return MovieCard(
+            isBookmarked: true,
+            onBookmarkTap: () => controller.onBookmarkTap(
+              movie.trailer?.title ?? '',
+              movie.trailer?.id ?? '',
+              movie.referenceType,
+            ),
             title: movie.trailer?.title ?? '',
             imageUrl: (movie.trailer?.thumbnailUrl ?? ''),
             badge: movie.trailer?.contentName ?? '',

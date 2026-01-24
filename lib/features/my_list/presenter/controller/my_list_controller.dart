@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
@@ -14,6 +15,8 @@ class MyListController extends GetxController {
   final RxString selectedMyListCategory = 'Recently Watched'.obs;
   RxList<String> bookmarkCategories = <String>[].obs;
   RxList<RecentlyViewedItem> recentVideos = <RecentlyViewedItem>[].obs;
+  final RxSet<String> bookmarkedMovies = <String>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -94,5 +97,45 @@ class MyListController extends GetxController {
         backgroundColor: Get.theme.colorScheme.error,
       );
     }
+  }
+
+  Future<void> onBookmarkTap(
+    String title,
+    String id,
+    String referenceType,
+  ) async {
+    // Check current bookmark state before toggling
+    final wasBookmarked = bookmarkedMovies.contains(id);
+
+    final result = await myListRepository.toggleBookmark(id, referenceType);
+    result.fold(
+      (l) {
+        // Error occurred
+        Get.snackbar(
+          'Error',
+          'Failed to update bookmark: $l',
+          colorText: AppColors.background,
+        );
+      },
+      (r) async {
+        // Success - toggle completed
+        await getBookmarks();
+        if (wasBookmarked) {
+          bookmarkedMovies.remove(id);
+          Get.snackbar(
+            'Bookmark',
+            'Removed $title from bookmarks',
+            colorText: AppColors.background,
+          );
+        } else {
+          bookmarkedMovies.add(id);
+          Get.snackbar(
+            'Bookmark',
+            'Added $title to bookmarks',
+            colorText: AppColors.background,
+          );
+        }
+      },
+    );
   }
 }
