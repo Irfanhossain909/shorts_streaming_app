@@ -236,25 +236,94 @@ class ShareBottomSheet extends StatelessWidget {
   }
 
   void _shareToFacebook(String link, String title) async {
-    // Facebook sharing
-    final url =
-        'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(link)}';
-    _launchUrl(url);
+    try {
+      // Try Facebook app first
+      final facebookAppUrl = Uri.parse(
+        'fb://facewebmodal/f?href=${Uri.encodeComponent(link)}',
+      );
+
+      if (await canLaunchUrl(facebookAppUrl)) {
+        await launchUrl(facebookAppUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // Fallback to web browser
+      final webUrl = Uri.parse(
+        'https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(link)}',
+      );
+      if (await canLaunchUrl(webUrl)) {
+        await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // If both fail, use system share sheet
+      _shareViaSystemSheet(link, title);
+    } catch (e) {
+      // Last resort: use system share sheet
+      _shareViaSystemSheet(link, title);
+    }
   }
 
   void _shareToTwitter(String link, String title) async {
-    // Twitter sharing
-    final text = Uri.encodeComponent('Check out this video: $title');
-    final url =
-        'https://twitter.com/intent/tweet?text=$text&url=${Uri.encodeComponent(link)}';
-    _launchUrl(url);
+    try {
+      final text = Uri.encodeComponent('Check out this video: $title');
+
+      // Try Twitter/X app first
+      final twitterAppUrl = Uri.parse(
+        'twitter://post?message=$text ${Uri.encodeComponent(link)}',
+      );
+
+      if (await canLaunchUrl(twitterAppUrl)) {
+        await launchUrl(twitterAppUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // Fallback to web browser
+      final webUrl = Uri.parse(
+        'https://twitter.com/intent/tweet?text=$text&url=${Uri.encodeComponent(link)}',
+      );
+      if (await canLaunchUrl(webUrl)) {
+        await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // If both fail, use system share sheet
+      _shareViaSystemSheet(link, title);
+    } catch (e) {
+      // Last resort: use system share sheet
+      _shareViaSystemSheet(link, title);
+    }
   }
 
   void _shareToWhatsApp(String link, String title) async {
-    // WhatsApp sharing
-    final text = Uri.encodeComponent('Check out this video: $title\n$link');
-    final url = 'whatsapp://send?text=$text';
-    _launchUrl(url);
+    try {
+      final text = 'Check out this video: $title\n$link';
+
+      // Try WhatsApp app first
+      final whatsappUrl = Uri.parse(
+        'whatsapp://send?text=${Uri.encodeComponent(text)}',
+      );
+
+      if (await canLaunchUrl(whatsappUrl)) {
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // Try WhatsApp web as fallback
+      final whatsappWebUrl = Uri.parse(
+        'https://api.whatsapp.com/send?text=${Uri.encodeComponent(text)}',
+      );
+      if (await canLaunchUrl(whatsappWebUrl)) {
+        await launchUrl(whatsappWebUrl, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // If both fail, use system share sheet
+      _shareViaSystemSheet(link, title);
+    } catch (e) {
+      // Last resort: use system share sheet
+      _shareViaSystemSheet(link, title);
+    }
   }
 
   void _shareViaSystemSheet(String link, String title) async {
@@ -266,27 +335,10 @@ class ShareBottomSheet extends StatelessWidget {
         "Error",
         "Could not share the video",
         snackPosition: SnackPosition.BOTTOM,
-      );
-    }
-  }
-
-  void _launchUrl(String url) async {
-    try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        Get.snackbar(
-          "Error",
-          "Could not open the app",
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Could not launch URL",
-        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+        margin: EdgeInsets.all(16.w),
       );
     }
   }
