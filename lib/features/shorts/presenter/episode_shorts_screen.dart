@@ -1,0 +1,371 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
+import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_icons.dart';
+import 'package:testemu/features/shorts/controller/episode_shorts_controller.dart';
+import 'package:testemu/features/shorts/widgets/reel_button.dart';
+import 'package:video_player/video_player.dart';
+
+/// Shorts-style screen for playing episode videos from video details
+/// Provides vertical swipe navigation between episodes
+class EpisodeShortsScreen extends StatelessWidget {
+  const EpisodeShortsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Initialize controller
+    Get.put(EpisodeShortsController());
+
+    return GetBuilder<EpisodeShortsController>(
+      builder: (controller) {
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          body: Builder(
+            builder: (context) {
+              // Show empty state if no videos
+              if (controller.videos.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No episodes available",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                );
+              }
+
+              // Show videos
+              return PageView.builder(
+                controller: controller.pageController,
+                scrollDirection: Axis.vertical,
+                itemCount: controller.videos.length,
+                onPageChanged: controller.onPageChanged,
+                itemBuilder: (context, index) {
+                  return EpisodeVideoPlayer(index: index);
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class EpisodeVideoPlayer extends StatelessWidget {
+  final int index;
+  const EpisodeVideoPlayer({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<EpisodeShortsController>(
+      builder: (controller) {
+        final videoController = controller.getVideoController(index);
+        final isLoading = controller.isLoadingVideo(index);
+        final hasError = controller.hasVideoError(index);
+        final isPlaying = controller.isVideoPlaying(index);
+
+        return GestureDetector(
+          onTap: () => controller.togglePlayPause(),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              /// Background video with shimmer
+              isLoading
+                  ? const VideoPlayerShimmer()
+                  : hasError
+                  ? const Center(
+                      child: Text(
+                        "Error loading video",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  : videoController != null &&
+                        videoController.value.isInitialized
+                  ? SizedBox.expand(
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: videoController.value.size.width,
+                          height: videoController.value.size.height,
+                          child: VideoPlayer(videoController),
+                        ),
+                      ),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+
+              /// Play icon overlay
+              if (!isPlaying && !isLoading && !hasError)
+                const Icon(Icons.play_arrow, size: 64, color: Colors.white),
+
+              /// 🔥 Gradient Shadow from bottom
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: RepaintBoundary(
+                  child: Container(
+                    height: 550.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: .8),
+                          Colors.black.withValues(alpha: .5),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              /// Texts + Progress bar
+              if (!isLoading && !hasError && videoController != null)
+                Positioned(
+                  bottom: 110.h,
+                  left: 20,
+                  right: 20,
+                  child: RepaintBoundary(
+                    child: Builder(
+                      builder: (context) {
+                        final metadata = index < controller.videoMetadata.length
+                            ? controller.videoMetadata[index]
+                            : null;
+
+                        if (metadata == null) return const SizedBox.shrink();
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Title
+                            CommonText(
+                              text: metadata['title'] ?? '',
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.background,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 4.h),
+
+                            /// Description
+                            SizedBox(
+                              width: 300.w,
+                              child: CommonText(
+                                textAlign: TextAlign.justify,
+                                text: metadata['description'] ?? '',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.background.withValues(
+                                  alpha: .7,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                bottom: 10.h,
+                              ),
+                            ),
+
+                            /// Episode Badge
+                            Row(
+                              children: [
+                                CommonImage(
+                                  imageSrc: AppIcons.icList,
+                                  width: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                CommonText(
+                                  text:
+                                      "EP.${metadata['episodeNumber'] ?? '1'}",
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.white,
+                                ),
+                              ],
+                            ),
+
+                            /// Progress Bar
+                            SizedBox(
+                              height: 16.h,
+                              child: VideoProgressIndicator(
+                                videoController,
+                                allowScrubbing: true,
+                                colors: VideoProgressColors(
+                                  playedColor: AppColors.red2,
+                                  bufferedColor: Colors.grey.withValues(
+                                    alpha: .5,
+                                  ),
+                                  backgroundColor: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+              /// Right side action buttons
+              Positioned(
+                bottom: 146.h,
+                right: 10,
+                child: RepaintBoundary(
+                  child: Column(
+                    spacing: 18.h,
+                    children: [
+                      RepaintBoundary(
+                        child: InkWell(
+                          onTap: () => controller.showEpisodeListBottomSheet(),
+                          child: Builder(
+                            builder: (context) {
+                              final metadata =
+                                  index < controller.videoMetadata.length
+                                  ? controller.videoMetadata[index]
+                                  : null;
+
+                              return Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: CommonImage(
+                                  fill: BoxFit.cover,
+                                  borderRadius: 28,
+                                  imageSrc:
+                                      metadata?['thumbnailUrl'] ??
+                                      "https://cdn.pixabay.com/photo/2025/08/09/18/23/knight-9765068_640.jpg",
+                                  width: 56,
+                                  height: 56,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppIcons.icStar,
+                          text:
+                              "${(controller.videoMetadata[index]['likes'] ?? '0')} likes",
+                          onTap: () async =>
+                              await controller.toggleLikeVideo(index),
+                        ),
+                      ),
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppIcons.icList,
+                          text: "List",
+                          onTap: () => controller.showEpisodeListBottomSheet(),
+                        ),
+                      ),
+                      RepaintBoundary(
+                        child: ReelButton(
+                          imgPath: AppIcons.icShare,
+                          text: "Share",
+                        ),
+                      ),
+                      // Download button with circular progress
+                      Obx(() {
+                        final isDownloading = controller.isDownloading.value;
+                        final progress = controller.downloadProgress.value;
+
+                        return InkWell(
+                          onTap: isDownloading
+                              ? null
+                              : () => controller.downloadCurrentVideo(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 4.h,
+                            children: [
+                              // Icon with circular progress
+                              SizedBox(
+                                width: 40.w,
+                                height: 40.w,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Circular progress indicator
+                                    if (isDownloading)
+                                      SizedBox(
+                                        width: 40.w,
+                                        height: 40.w,
+                                        child: CircularProgressIndicator(
+                                          value: progress,
+                                          strokeWidth: 2.5,
+                                          backgroundColor: AppColors.white
+                                              .withOpacity(0.3),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                Color
+                                              >(AppColors.red2),
+                                        ),
+                                      ),
+
+                                    // Download icon
+                                    CommonImage(
+                                      imageColor: isDownloading
+                                          ? AppColors.red2
+                                          : AppColors.background,
+                                      imageSrc: AppIcons.icDownload,
+                                      width: 24.w,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Text showing progress or "Download"
+                              CommonText(
+                                text: isDownloading
+                                    ? "${(progress * 100).toInt()}%"
+                                    : "Download",
+                                fontSize: 14.h,
+                                fontWeight: FontWeight.w600,
+                                color: isDownloading
+                                    ? AppColors.red2
+                                    : AppColors.background,
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ),
+
+              /// Back Button (Top Left)
+              Positioned(
+                top: 50.h,
+                left: 16.w,
+                child: IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 22.w,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

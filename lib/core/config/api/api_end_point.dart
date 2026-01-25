@@ -36,21 +36,26 @@ class ApiEndPoint {
   final String getReminders = "/reminder/for-user";
   final String toggleBookmark = "/bookmark/toggle";
   final String getBookmarks = "/bookmark";
+  final String addRecentVideos = "/users/add-recently-viewed/";
+  final String getRecentVideos = "/users/recently-viewed";
+  final String getShortsVideos = "/video/shorts-videos";
+  final String toggleLikeVideo = "/like/toggle";
   // // App endpoints
   final String user = "users";
-  final String notifications = "notifications";
+  final String notifications = "/notification";
+  String readNotification({required String notificationId}) => "/notification/$notificationId/read";
   final String privacyPolicies = "privacy-policies";
   final String termsOfServices = "terms-and-conditions";
   final String chats = "chats";
   final String messages = "messages";
   final String userAgreement = "user-agreement";
-  final String deleteAccount = "delete-account";
+  final String deleteAccount = "/users/delete-account";
 }
 
 // Helper function to get domain based on environment
 String _getDomain() {
-  String liveServer = "https://rakibur5003.binarybards.online";
-  String localServer = "https://rakibur5003.binarybards.online";
+  String liveServer = "http://72.62.164.122:5000";
+  String localServer = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {
@@ -65,8 +70,8 @@ String _getDomain() {
 
 // Helper function to get image URL
 String _getImageUrl() {
-  String liveImageUrl = "https://rakibur5003.binarybards.online";
-  String localImageUrl = "https://rakibur5003.binarybards.online";
+  String liveImageUrl = "http://72.62.164.122:5000";
+  String localImageUrl = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {
@@ -81,8 +86,8 @@ String _getImageUrl() {
 
 // Helper function to get socket URL
 String _getSocketUrl() {
-  String liveSocket = "https://rakibur5003.binarybards.online";
-  String localSocket = "https://rakibur5003.binarybards.online";
+  String liveSocket = "http://72.62.164.122:5000";
+  String localSocket = "http://72.62.164.122:5000";
 
   try {
     if (kDebugMode) {

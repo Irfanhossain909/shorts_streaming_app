@@ -19,6 +19,8 @@ class CategoryFilter extends StatelessWidget {
     return SizedBox(
       height: 40.h,
       child: ListView.builder(
+        addRepaintBoundaries: true,
+        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -28,39 +30,69 @@ class CategoryFilter extends StatelessWidget {
               category.trim().toLowerCase() ==
               selectedCategory.trim().toLowerCase();
 
-          return GestureDetector(
+          // Extract to separate widget to isolate rebuilds
+          return _CategoryChip(
+            key: ValueKey(category),
+            category: category,
+            isSelected: isSelected,
             onTap: () => onCategorySelected(category),
-            child: Container(
-              margin: EdgeInsets.only(right: 12.w),
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.red : AppColors.transparent,
-                gradient: isSelected
-                    ? LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [AppColors.red2, AppColors.red],
-                      )
-                    : null,
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.red
-                      : AppColors.white.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                category,
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 14.sp,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                ),
-              ),
-            ),
           );
         },
+      ),
+    );
+  }
+}
+
+// Separate widget to isolate rebuilds and enable const optimizations
+class _CategoryChip extends StatelessWidget {
+  final String category;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _CategoryChip({
+    super.key,
+    required this.category,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  // Cache gradient
+  static const _selectedGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [AppColors.red2, AppColors.red],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    // Use RepaintBoundary to isolate repaints
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          margin: EdgeInsets.only(right: 12.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.red : AppColors.transparent,
+            gradient: isSelected ? _selectedGradient : null,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.red
+                  : AppColors.white.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            category,
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 14.sp,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ),
       ),
     );
   }

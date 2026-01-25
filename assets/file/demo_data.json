@@ -1,0 +1,288 @@
+{
+    "featuredMovies": [
+        {
+            "title": "The Stairs of Terror",
+            "duration": "in 45 min",
+            "imageUrl": "ASSET_M3"
+        },
+        {
+            "title": "The Human Beast",
+            "duration": "in 60 min",
+            "imageUrl": "ASSET_M5"
+        },
+        {
+            "title": "The Mayan Mummies",
+            "duration": "in 38 min",
+            "imageUrl": "ASSET_M6"
+        },
+        {
+            "title": "The Guardian of the Threshold",
+            "duration": "in 55 min",
+            "imageUrl": "ASSET_M7"
+        }
+    ],
+    "vipMovies": {
+        "Daily": [
+            {
+                "title": "The Stairs of Terror",
+                "imageUrl": "ASSET_M13",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "1"
+            },
+            {
+                "title": "The Wilson Sisters",
+                "imageUrl": "ASSET_M12",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "2"
+            },
+            {
+                "title": "The Human Beast",
+                "imageUrl": "ASSET_M11",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "3"
+            },
+            {
+                "title": "The Mayan Mummies",
+                "imageUrl": "ASSET_M9",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "5"
+            },
+            {
+                "title": "The Guardian of the Threshold",
+                "imageUrl": "ASSET_M13",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "6"
+            }
+        ],
+        "Weekly": [
+            {
+                "title": "The Mayan Mummies",
+                "imageUrl": "ASSET_M9",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "5"
+            },
+            {
+                "title": "The Guardian of the Threshold",
+                "imageUrl": "ASSET_M13",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "6"
+            },
+            {
+                "title": "The Mayan Mummies",
+                "imageUrl": "ASSET_M9",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "5"
+            },
+            {
+                "title": "The Guardian of the Threshold",
+                "imageUrl": "ASSET_M13",
+                "subtitle": "During the appointment ceremony...",
+                "badge": "VIP",
+                "ranking": "6"
+            }
+        ]
+    },
+    "comingSoonMovies": [
+        {
+            "title": "Eternal Fog",
+            "imageUrl": "ASSET_M1",
+            "subtitle": "During the appointment ceremony...",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "Paranormal Phenomeno",
+            "imageUrl": "ASSET_M2",
+            "subtitle": "During the appointment ceremony...",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Stairs of Terror",
+            "imageUrl": "ASSET_M3",
+            "subtitle": "During the appointment ceremony...",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Wilson Sisters",
+            "imageUrl": "ASSET_M4",
+            "subtitle": "During the appointment ceremony...",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Human Beast",
+            "imageUrl": "ASSET_M5",
+            "subtitle": "During the appointment ceremony...",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Mayan Mummies",
+            "imageUrl": "ASSET_M6",
+            "subtitle": "Married First, Loved Later",
+            "releaseDate": "03/24/2025"
+        },
+        {
+            "title": "The Mayan Mummies",
+            "imageUrl": "ASSET_M7",
+            "subtitle": "Reborn True Princess Returns",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Guardian of the Threshold",
+            "imageUrl": "ASSET_M13",
+            "subtitle": "Alpha's Fake or Fated Mate",
+            "releaseDate": "04/24/2025"
+        },
+        {
+            "title": "The Mark of Hell",
+            "imageUrl": "ASSET_M8",
+            "subtitle": "Married First, Loved Later",
+            "releaseDate": "03/24/2025"
+        }
+    ],
+    "onlyOnThisflixMovies": [
+        {
+            "title": "Eternal Fog",
+            "imageUrl": "ASSET_M1",
+            "subtitle": "Exclusive series",
+            "views": "48.2K"
+        },
+        {
+            "title": "Paranormal Phenomenon",
+            "imageUrl": "ASSET_M2",
+            "subtitle": "Romance drama",
+            "views": "69.3K"
+        },
+        {
+            "title": "The Stairs of Terror",
+            "imageUrl": "ASSET_M3",
+            "subtitle": "Romance drama",
+            "views": "69.3K"
+        },
+        {
+            "title": "The Wilson Sisters",
+            "imageUrl": "ASSET_M4",
+            "subtitle": "Romance drama",
+            "views": "69.3K"
+        },
+        {
+            "title": "The Human Beast",
+            "imageUrl": "ASSET_M5",
+            "subtitle": "Romance drama",
+            "views": "69.3K"
+        }
+    ],
+    "categoryMovies": {
+        "Popular": [
+            {
+                "title": "The Stairs of Terror",
+                "imageUrl": "ASSET_M13",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Wilson Sisters",
+                "imageUrl": "ASSET_M12",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Human Beast",
+                "imageUrl": "ASSET_M11",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Mayan Mummies",
+                "imageUrl": "ASSET_M9",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Guardian of the Threshold",
+                "imageUrl": "ASSET_M13",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Mark of Hell",
+                "imageUrl": "ASSET_M8",
+                "badge": "POPULAR"
+            }
+        ],
+        "New": [
+            {
+                "title": "The Stairs of Terror",
+                "imageUrl": "ASSET_M7",
+                "badge": "NEW"
+            },
+            {
+                "title": "The Stairs of Terror",
+                "imageUrl": "ASSET_M13",
+                "badge": "POPULAR"
+            },
+            {
+                "title": "The Wilson Sisters",
+                "imageUrl": "ASSET_M12",
+                "badge": "POPULAR"
+            }
+        ],
+        "VIP": [
+            {
+                "title": "The Hyena of Terror",
+                "imageUrl": "ASSET_M4",
+                "badge": "VIP"
+            },
+            {
+                "title": "The Silent Echo",
+                "imageUrl": "ASSET_M3",
+                "badge": "VIP"
+            },
+            {
+                "title": "Shadows of Awakening",
+                "imageUrl": "ASSET_M2",
+                "badge": "VIP"
+            }
+        ],
+        "Ranking": [
+            {
+                "title": "The Last Page",
+                "imageUrl": "ASSET_M1",
+                "badge": "#1"
+            }
+        ]
+    },
+    "rankingMovies": {
+        "Most Popular": [
+            {
+                "title": "Shadows of Awakening",
+                "imageUrl": "ASSET_M2",
+                "subtitle": "The Wolf King love opera her coldest and the set...",
+                "ranking": 1,
+                "isHot": true
+            },
+            {
+                "title": "The Silent Echo",
+                "imageUrl": "ASSET_M3",
+                "subtitle": "The Wolf King love opera her coldest and the set...",
+                "ranking": 2,
+                "isHot": true
+            }
+        ],
+        "Mystery": [
+            {
+                "title": "The Mystery Case",
+                "imageUrl": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=300&fit=crop",
+                "badge": "MYSTERY"
+            }
+        ],
+        "Romance": [
+            {
+                "title": "Love Story",
+                "imageUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=300&fit=crop",
+                "badge": "ROMANCE"
+            }
+        ]
+    }
+}

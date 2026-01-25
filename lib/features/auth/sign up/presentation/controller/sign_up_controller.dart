@@ -45,33 +45,8 @@ class SignUpController extends GetxController {
     super.dispose();
   }
 
-  signUpUser() async {
-    if (nameController.text.isEmpty) {
-      Utils.errorSnackBar(Get.context!, "Name is required", "Sign Up");
-      return;
-    }
-    if (emailController.text.isEmpty) {
-      Utils.errorSnackBar(Get.context!, "Email is required", "Sign Up");
-      return;
-    }
-    if (passwordController.text.isEmpty) {
-      Utils.errorSnackBar(Get.context!, "Password is required", "Sign Up");
-      return;
-    }
-    if (confirmPasswordController.text.isEmpty) {
-      Utils.errorSnackBar(
-        Get.context!,
-        "Confirm Password is required",
-        "Sign Up",
-      );
-      return;
-    }
-    if (passwordController.text != confirmPasswordController.text) {
-      Utils.errorSnackBar(
-        Get.context!,
-        "Password and Confirm Password do not match",
-        "Sign Up",
-      );
+  signUpUser({GlobalKey<FormState>? formKey}) async {
+    if (formKey?.currentState?.validate() == false) {
       return;
     }
     isLoading.value = true;

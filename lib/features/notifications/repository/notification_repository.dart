@@ -1,24 +1,65 @@
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/utils/log/error_log.dart';
 
 import '../data/model/notification_model.dart';
 
-Future<List<NotificationModel>> notificationRepository(int page) async {
-  var response = await ApiService.instance.get(
-    "${ApiEndPoint.instance.notifications}?page=$page",
-  );
+class NotificationRepository {
+  NotificationRepository._();
 
-  if (response.statusCode == 200) {
-    var notificationList = response.data['data'] ?? [];
+  static final NotificationRepository _instance = NotificationRepository._();
+  static NotificationRepository get instance => _instance;
 
-    List<NotificationModel> list = [];
+  ApiService apiService = ApiService.instance;
 
-    for (var notification in notificationList) {
-      list.add(NotificationModel.fromJson(notification));
+  Future<NotificationModel> getNotifications({
+    required String page,
+    required String limit,
+  }) async {
+    try {
+      final response = await apiService.get(
+        ApiEndPoint.instance.notifications,
+        queryParameters: {"page": page, "limit": limit},
+      );
+
+      return NotificationModel.fromJson(
+        Map<String, dynamic>.from(response.data),
+      );
+    } catch (e) {
+      errorLog(e);
+      rethrow;
     }
+  }
 
-    return list;
-  } else {
-    return [];
+  Future<bool> readNotification({required String notificationId}) async {
+    try {
+      final response = await apiService.patch(
+        ApiEndPoint.instance.readNotification(notificationId: notificationId),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+    return false;
+  }
+
+  Future<bool> readAllNotification() async {
+    try {
+      final response = await apiService.patch(
+        ApiEndPoint.instance.notifications,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+    return false;
   }
 }

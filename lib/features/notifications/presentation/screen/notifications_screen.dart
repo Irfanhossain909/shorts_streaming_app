@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
-import 'package:testemu/core/component/other_widgets/common_loader.dart';
-import 'package:testemu/core/component/other_widgets/no_data.dart';
-
-import '../../data/model/notification_model.dart';
+import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/features/notifications/presentation/widgets/notification_shimmer.dart';
 import '../controller/notifications_controller.dart';
 import '../widgets/notification_item.dart';
 
@@ -14,60 +13,94 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(title: ""),
+    return GetBuilder<NotificationsController>(
+      init: NotificationsController(),
+      builder: (controller) {
+        return Obx(() {
+          return Scaffold(
+            appBar: CommonAppBar(
+              title: "",
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    controller.allNotificationRead();
+                  },
+                  child: CommonText(
+                    text: "Read All",
+                    color: AppColors.white,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ],
+            ),
 
-      /// App Bar Section starts here
-
-      /// Body Section starts here
-      body: Container(
-        // decoration: BoxDecoration(
-        //   gradient: LinearGradient(
-        //     colors: [
-        //       AppColors.red2,
-        //       Colors.transparent,
-        //       Colors.transparent,
-        //       Colors.transparent,
-        //       Colors.transparent,
-        //       Colors.transparent,
-        //     ],
-        //     begin: Alignment.topCenter,
-        //     end: Alignment.bottomCenter,
-        //   ),
-        // ),
-        child: GetBuilder<NotificationsController>(
-          builder: (controller) {
-            return controller.isLoading
-                /// Loading bar here
-                ? const CommonLoader()
-                : controller.notifications.isEmpty
-                ///  data is Empty then show default Data
-                ? const NoData()
-                /// show all Notifications here
-                : ListView.builder(
-                    controller: controller.scrollController,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.sp,
-                      vertical: 10.sp,
-                    ),
-                    itemCount: controller.isLoadingMore
-                        ? controller.notifications.length + 1
-                        : controller.notifications.length,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      ///  Notification More Data Loading Bar
-                      if (index > controller.notifications.length) {
-                        return CommonLoader(size: 40, strokeWidth: 2);
-                      }
-                      NotificationModel item = controller.notifications[index];
-
-                      ///  Notification card item
-                      return NotificationItem(item: item);
+            body:
+                controller.isNotificationLoding.value &&
+                    controller.notificationList.isEmpty
+                ? ListView.builder(
+                    padding: EdgeInsets.all(12),
+                    itemCount: 6,
+                    itemBuilder: (_, index) {
+                      return const NotificationShimmerCard();
                     },
-                  );
-          },
-        ),
-      ),
+                  )
+                : controller.notificationList.isEmpty
+                ? Center(child: CommonText(text: "No notifications"))
+                : RefreshIndicator(
+                    onRefresh: () async {
+                      controller.refreshNotification();
+                    },
+                    child: ListView.builder(
+                      controller: controller.scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.sp,
+                        vertical: 10.sp,
+                      ),
+                      itemCount: controller.notificationList.length + 1,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        if (index == controller.notificationList.length) {
+                          return Obx(() {
+                            if (controller.isNotificationMoreLode.value) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            } else {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: CommonText(
+                                    text: 'No more notifications',
+                                    color: AppColors.background,
+                                  ),
+                                ),
+                              );
+                            }
+                          });
+                        }
+                        final notification = controller.notificationList[index];
+
+                        ///  Notification card item
+                        return NotificationItem(
+                          isUnread: notification.read ?? true,
+                          title: notification.title,
+                          subTitle: notification.message,
+                          time: notification.createdAt.toString(),
+                          onTap: () {
+                            controller.singleNotificationRead(
+                              notificationId: notification.id ?? "",
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+          );
+        });
+      },
     );
   }
 }

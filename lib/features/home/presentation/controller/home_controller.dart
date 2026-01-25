@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
-import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/services/socket/socket_all_oparations.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
@@ -12,9 +13,19 @@ import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
+import 'package:testemu/features/notifications/data/model/notification_model.dart';
+import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
+import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
 
 class HomeController extends GetxController {
   CategoryRepository categoryRepository = CategoryRepository.instance;
+
+  SocketService socketService = SocketService.instance;
+  NotificationsController notificationController = Get.put(
+    NotificationsController(),
+  );
+
+  ProfileController profileController = Get.find<ProfileController>();
 
   // Observable variables
   var selectedCategory = 'popular'.obs;
@@ -22,8 +33,10 @@ class HomeController extends GetxController {
   var selectedLibraryCategory = 'Most Popular'.obs;
   var selectedVipFilter = 'Daily'.obs;
   var selectedRankingFilter = 'Most Popular'.obs;
-  var userName = 'Designjot'.obs;
+  var userName = 'user'.obs;
   var isHeaderSticky = false.obs;
+  var searchQuery = ''.obs;
+  final TextEditingController searchController = TextEditingController();
 
   // Debounce timer for smooth state updates
   Timer? _debounceTimer;
@@ -56,15 +69,15 @@ class HomeController extends GetxController {
   final List<String> vipFilters = ['Daily', 'Weekly'];
 
   // Ranking sub-filters
-  final List<String> rankingFilters = ['Most Popular', 'Hottest', 'New Series'];
+  final List<String> rankingFilters = ['Most Popular'];
 
   // Banners List
   final List<Trailer> bannersList = RxList<Trailer>();
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    // Initialize carousel
+
     carouselPageController = PageController(
       viewportFraction: 0.45,
       initialPage: 0,
@@ -76,578 +89,71 @@ class HomeController extends GetxController {
     getTrailers();
     getMovies();
     getReminders();
+    _connectSocket();
+    // Reactive listening
+    ever(profileController.profileModel, (profile) {
+      final userId = profile?.id;
+      if (userId != null) {
+        appLog("UserId available: $userId -> Calling notification listener");
+        _listenNotification(userId);
+      }
+    });
   }
 
-  // Featured movies for carousel
-  final List<Map<String, dynamic>> featuredMovies = [
-    {
-      'title': 'Eternal Fog',
-      'duration': 'in 50 min',
-      'imageUrl': AppImages.m1,
-      // 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop',
-    },
-    {
-      'title': ' The Stairs of Terror',
-      'duration': 'in 45 min',
-      'imageUrl': AppImages.m3,
-      // 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&h=300&fit=crop',
-    },
-    {
-      'title': 'The Human Beast',
-      'duration': 'in 60 min',
-      'imageUrl': AppImages.m5,
-      // 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=500&h=300&fit=crop',
-    },
-    {
-      'title': 'The Mayan Mummies',
-      'duration': 'in 38 min',
-      'imageUrl': AppImages.m6,
-      // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=500&h=300&fit=crop',
-    },
-    {
-      'title': ' The Guardian of the Threshold',
-      'duration': 'in 55 min',
-      'imageUrl': AppImages.m7,
-      // 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&h=300&fit=crop',
-    },
-  ];
+  // ------- socket notification
 
-  // VIP Movies data with Daily/Weekly filters
-  final Map<String, List<Map<String, dynamic>>> vipMovies = {
-    'Daily': [
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
+  RxInt unreadNotificationCount = 0.obs;
 
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '1',
+  void _connectSocket() {
+    SocketService.instance.initSocket(
+      onConnected: () {
+        appLog('✅ Socket connected from controller');
       },
-      {
-        'title': 'The Wilson Sisters ',
-        'imageUrl': AppImages.m12,
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '2',
-      },
-      {
-        'title': ' The Human Beast',
-        'imageUrl': AppImages.m11,
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '3',
-      },
-      {
-        'title': ' The Mayan Mummies',
-        'imageUrl': AppImages.m9,
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '5',
-      },
-      {
-        'title': ' The Guardian of the Threshold',
-        'imageUrl': AppImages.m13,
+    );
 
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '6',
-      },
-    ],
-    'Weekly': [
-      {
-        'title': ' The Mayan Mummies',
-        'imageUrl': AppImages.m9,
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '5',
-      },
-      {
-        'title': ' The Guardian of the Threshold',
-        'imageUrl': AppImages.m13,
+    SocketService.instance.connect(ApiEndPoint.domain);
+  }
 
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '6',
-      },
-      {
-        'title': ' The Mayan Mummies',
-        'imageUrl': AppImages.m9,
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '5',
-      },
-      {
-        'title': ' The Guardian of the Threshold',
-        'imageUrl': AppImages.m13,
+  // void listenNotificationIfProfileExists() {
+  //   final userId = profileController.profileModel.value?.id;
 
-        'subtitle': 'During the appointment ceremony...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-        'ranking': '6',
-      },
-    ],
-  };
+  //   if (userId != null) {
+  //     // Profile er id thakle notification listener call koro
+  //     _listenNotification(userId);
+  //   } else {
+  //     appLog("Profile ID not available, notifications not listening.");
+  //   }
+  // }
 
-  // Coming Soon movies
-  final List<Map<String, dynamic>> comingSoonMovies = [
-    {
-      'title': 'Eternal Fog',
-      'imageUrl': AppImages.m1,
+  // _listenNotification update koro userId parameter accept korar jonno
+  void _listenNotification(String uid) {
+    SocketService.instance.onEvent('notification::$uid', (data) {
+      appLog("Notification received: $data");
 
-      'subtitle': 'During the appointment ceremony...',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': ' Paranormal Phenomeno',
-      'imageUrl': AppImages.m2,
-      'subtitle': 'During the appointment ceremony...',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': ' The Stairs of Terror',
-      'imageUrl': AppImages.m3,
-      'subtitle': 'During the appointment ceremony...',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': '  The Wilson Sisters',
-      'imageUrl': AppImages.m4,
-      'subtitle': 'During the appointment ceremony...',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': ' The Human Beast',
-      'imageUrl': AppImages.m5,
+      // Convert raw data to Result model
+      Result newNotification = Result.fromJson(data);
 
-      'subtitle': 'During the appointment ceremony...',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': ' The Mayan Mummies',
-      'imageUrl': AppImages.m6,
+      // Insert into your controller's notification list
+      notificationController.notificationList.insert(0, newNotification);
+    });
+  }
 
-      'subtitle': 'Married First, Loved Later',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-      'releaseDate': '03/24/2025',
-    },
-    {
-      'title': ' The Mayan Mummies',
-      'imageUrl': AppImages.m7,
+  // void _listenNotification() {
 
-      'subtitle': 'Reborn True Princess Returns',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': ' The Guardian of the Threshold',
-      'imageUrl': AppImages.m13,
-      'subtitle': 'Alpha\'s Fake or Fated Mate',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-      'releaseDate': '04/24/2025',
-    },
-    {
-      'title': 'The Mark of Hell',
-      'imageUrl': AppImages.m8,
+  //   SocketService.instance.onEvent('notification::$uid', (data) {
+  //     appLog("Notification received: $data");
 
-      'subtitle': 'Married First, Loved Later',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-      'releaseDate': '03/24/2025',
-    },
-  ];
+  //     // Convert raw data to Result model
+  //     Result newNotification = Result.fromJson(data);
 
-  // Only on Thisflix movies
-  final List<Map<String, dynamic>> onlyOnThisflixMovies = [
-    {
-      'title': ' Eternal Fog',
-      'imageUrl': AppImages.m1,
-
-      'subtitle': 'Exclusive series',
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-      'views': '48.2K',
-    },
-    {
-      'title': ' Paranormal Phenomenon',
-      'subtitle': 'Romance drama',
-      'imageUrl': AppImages.m2,
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-      'views': '69.3K',
-    },
-    {
-      'title': ' The Stairs of Terror',
-      'subtitle': 'Romance drama',
-      'imageUrl': AppImages.m3,
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-      'views': '69.3K',
-    },
-    {
-      'title': ' The Wilson Sisters',
-      'subtitle': 'Romance drama',
-      'imageUrl': AppImages.m4,
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-      'views': '69.3K',
-    },
-    {
-      'title': ' The Human Beast',
-      'subtitle': 'Romance drama',
-      'imageUrl': AppImages.m5,
-      // 'imageUrl':
-      //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-      'views': '69.3K',
-    },
-  ];
-
-  // Category-specific movie data
-  final Map<String, List<Map<String, dynamic>>> categoryMovies = {
-    'Popular': [
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': 'The Wilson Sisters ',
-        'imageUrl': AppImages.m12,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Human Beast',
-        'imageUrl': AppImages.m11,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Mayan Mummies',
-        'imageUrl': AppImages.m9,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Guardian of the Threshold',
-        'imageUrl': AppImages.m13,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': 'The Mark of Hell',
-        'imageUrl': AppImages.m8,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-    ],
-    'New': [
-      {
-        'title': 'The Stairs of Terror ',
-        'imageUrl': AppImages.m7,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&h=300&fit=crop',
-        'badge': 'NEW',
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        // 'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': 'The Wilson Sisters ',
-        'imageUrl': AppImages.m12,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Human Beast',
-        'imageUrl': AppImages.m11,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Mayan Mummies',
-        'imageUrl': AppImages.m9,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': ' The Guardian of the Threshold',
-        'imageUrl': AppImages.m13,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-      {
-        'title': 'The Mark of Hell',
-        'imageUrl': AppImages.m8,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'POPULAR',
-      },
-    ],
-    'VIP': [
-      {
-        'title': ' The Hyena of Terror',
-        'imageUrl': AppImages.m4,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-      },
-      {
-        'title': 'The Silent Echo ',
-        'imageUrl': AppImages.m3,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-      },
-      {
-        'title': ' Shadows of Awakening',
-        'imageUrl': AppImages.m2,
-        // 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-      },
-    ],
-    'Ranking': [
-      {
-        'title': 'The Last Page ',
-        'imageUrl': AppImages.m1,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'badge': '#1',
-      },
-      {
-        'title': 'The Silent Echo ',
-        'imageUrl': AppImages.m3,
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-      },
-      {
-        'title': ' Shadows of Awakening',
-        'imageUrl': AppImages.m2,
-        // 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=200&h=300&fit=crop',
-        'badge': 'VIP',
-      },
-    ],
-  };
-
-  // Ranking movies data with different filters
-  final Map<String, List<Map<String, dynamic>>> rankingMovies = {
-    'Most Popular': [
-      {
-        'title': ' Shadows of Awakening',
-        'imageUrl': AppImages.m2,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'ranking': 1,
-        'isHot': true,
-      },
-      {
-        'title': 'The Silent Echo ',
-        'imageUrl': AppImages.m3,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'ranking': 2,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'ranking': 3,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m12,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'ranking': 4,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'ranking': 5,
-        'isHot': true,
-      },
-    ],
-    'Hottest': [
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m12,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'ranking': 4,
-        'isHot': true,
-      },
-      {
-        'title': ' Shadows of Awakening',
-        'imageUrl': AppImages.m2,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'ranking': 1,
-        'isHot': true,
-      },
-      {
-        'title': 'The Silent Echo ',
-        'imageUrl': AppImages.m3,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'ranking': 2,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'ranking': 3,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'ranking': 5,
-        'isHot': true,
-      },
-    ],
-    'New Series': [
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop',
-        'ranking': 3,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m12,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=300&fit=crop',
-        'ranking': 4,
-        'isHot': true,
-      },
-      {
-        'title': 'The Stairs of Terror',
-        'imageUrl': AppImages.m13,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=300&fit=crop',
-        'ranking': 5,
-        'isHot': true,
-      },
-      {
-        'title': ' Shadows of Awakening',
-        'imageUrl': AppImages.m2,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1489599735734-79b4fe286040?w=200&h=300&fit=crop',
-        'ranking': 1,
-        'isHot': true,
-      },
-      {
-        'title': 'The Silent Echo ',
-        'imageUrl': AppImages.m3,
-        'subtitle': 'The Wolf King love opera her coldest and the set...',
-        // 'imageUrl':
-        //     'https://images.unsplash.com/photo-1494790108755-2616c9c0b8d3?w=200&h=300&fit=crop',
-        'ranking': 2,
-        'isHot': true,
-      },
-    ],
-    'Mystery': [
-      {
-        'title': 'The Mystery Case',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=300&fit=crop',
-        'badge': 'MYSTERY',
-      },
-      {
-        'title': 'Hidden Secrets',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=200&h=300&fit=crop',
-        'badge': 'MYSTERY',
-      },
-    ],
-    'Romance': [
-      {
-        'title': 'Love Story',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=300&fit=crop',
-        'badge': 'ROMANCE',
-      },
-      {
-        'title': 'Heart to Heart',
-        'imageUrl':
-            'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=300&fit=crop',
-        'badge': 'ROMANCE',
-      },
-    ],
-  };
+  //     // Insert into your controller's notification list
+  //     notificationController.notificationList.insert(0, newNotification);
+  //   });
+  // }
 
   // Current filtered movies based on selected category
-  List<Map<String, dynamic>> get currentMovies {
-    return categoryMovies[selectedCategory.value] ?? [];
+  List<Movie> get currentMovies {
+    return filteredMoviesBySelectedCategory;
   }
 
   // Movies filtered from backend list based on selected category name
@@ -688,14 +194,76 @@ class HomeController extends GetxController {
         .toList();
   }
 
-  // Current VIP movies based on selected filter
-  List<Map<String, dynamic>> get currentVipMovies {
-    return vipMovies[selectedVipFilter.value] ?? [];
+  // Movies filtered by search query
+  List<Movie> get searchedMovies {
+    if (searchQuery.value.trim().isEmpty) {
+      return [];
+    }
+
+    final query = searchQuery.value.trim().toLowerCase();
+    return movies
+        .where(
+          (movie) =>
+              movie.title.toLowerCase().contains(query) ||
+              (movie.description.toLowerCase().contains(query)) ||
+              movie.genre.toLowerCase().contains(query) ||
+              movie.tags.any((tag) => tag.toLowerCase().contains(query)),
+        )
+        .toList();
+  }
+
+  // Check if search is active
+  bool get isSearchActive => searchQuery.value.trim().isNotEmpty;
+
+  // Update search query
+  void updateSearchQuery(String query) {
+    searchQuery.value = query;
+  }
+
+  // Clear search
+  void clearSearch() {
+    searchQuery.value = '';
+    searchController.clear();
+  }
+
+  // Current VIP movies based on selected filter (Daily/Weekly)
+  List<Movie> get currentVipMovies {
+    final vipMovies = filteredMoviesBySelectedCategory;
+
+    // Get today's date (without time)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (selectedVipFilter.value == 'Daily') {
+      // Show only videos created today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isAtSameMomentAs(today);
+      }).toList();
+    } else if (selectedVipFilter.value == 'Weekly') {
+      // Show videos created before today
+      return vipMovies.where((movie) {
+        final movieDate = DateTime(
+          movie.createdAt.year,
+          movie.createdAt.month,
+          movie.createdAt.day,
+        );
+        return movieDate.isBefore(today);
+      }).toList();
+    }
+
+    return vipMovies;
   }
 
   // Current ranking movies based on selected filter
-  List<Map<String, dynamic>> get currentRankingMovies {
-    return rankingMovies[selectedRankingFilter.value] ?? [];
+  List<Movie> get currentRankingMovies {
+    return filteredMoviesBySelectedCategory
+        .where((movie) => movie.categoryId == selectedRankingFilter.value)
+        .toList();
   }
 
   // Methods
@@ -727,6 +295,7 @@ class HomeController extends GetxController {
 
   void onWatchTap(String videoUrl) {
     appLog('onWatchTap: $videoUrl');
+    // VideoPlayerController will automatically generate videoId from URL if not provided
     Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
   }
 
@@ -735,24 +304,39 @@ class HomeController extends GetxController {
     String id,
     ReferenceType referenceType,
   ) async {
+    // Check current bookmark state before toggling
+    final wasBookmarked = bookmarkedMovies.contains(id);
+
     final result = await categoryRepository.toggleBookmark(
       id,
       referenceType.name,
     );
     result.fold(
       (l) {
+        // Error occurred
         Get.snackbar(
-          'Bookmark',
-          'Added $title to bookmarks',
+          'Error',
+          'Failed to update bookmark: $l',
           colorText: AppColors.background,
         );
       },
       (r) {
-        Get.snackbar(
-          'Bookmark',
-          'Removed $title from bookmarks',
-          colorText: AppColors.background,
-        );
+        // Success - toggle completed
+        if (wasBookmarked) {
+          bookmarkedMovies.remove(id);
+          Get.snackbar(
+            'Bookmark',
+            'Removed $title from bookmarks',
+            colorText: AppColors.background,
+          );
+        } else {
+          bookmarkedMovies.add(id);
+          Get.snackbar(
+            'Bookmark',
+            'Added $title to bookmarks',
+            colorText: AppColors.background,
+          );
+        }
       },
     );
   }
@@ -777,7 +361,7 @@ class HomeController extends GetxController {
 
   //--- Get Categories ---//
 
-  Future<void> getCategories() async {
+  Future<void> getCategories({bool preserveSelection = false}) async {
     isLoading.value = true;
     try {
       final result = await categoryRepository.getCategories();
@@ -790,8 +374,9 @@ class HomeController extends GetxController {
           isError.value = false;
           categories.assignAll(r);
 
-          // If selectedCategory isn't coming from backend yet, default to first
-          if (r.isNotEmpty) {
+          // Only set default category on initial load (when preserveSelection is false)
+          // If preserveSelection is true (e.g., during refresh), keep current selection
+          if (!preserveSelection && r.isNotEmpty) {
             final firstName = r.first.name.trim();
             if (firstName.isNotEmpty) {
               selectedCategory.value = firstName.toLowerCase();
@@ -821,6 +406,8 @@ class HomeController extends GetxController {
         (r) {
           isError.value = false;
           bannersList.assignAll(r);
+          // Only update the carousel widget when list initially loads
+          update(['banners_list']);
         },
       );
     } catch (e) {
@@ -877,25 +464,63 @@ class HomeController extends GetxController {
     }
   }
 
+  //--- Refresh All Data (Pull to Refresh) ---//
+  Future<void> refreshHomeData() async {
+    try {
+      // Load all data in parallel for better performance
+      // preserveSelection: true ensures current category selection is maintained
+      await Future.wait([
+        getCategories(preserveSelection: true),
+        getMovies(),
+        getTrailers(),
+        getReminders(),
+      ]);
+
+      Get.snackbar(
+        'Refreshed',
+        'Home data updated successfully',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2.withValues(alpha: 0.8),
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh data',
+        colorText: AppColors.white,
+        backgroundColor: AppColors.red2,
+      );
+    }
+  }
+
   //--- Carousel Methods ---//
   void _onPageControllerChanged() {
     if (!carouselPageController.hasClients) return;
 
+    // Only update when scrolling is complete to avoid jank during animation
     if (!carouselPageController.position.isScrollingNotifier.value) {
       final page = carouselPageController.page?.round() ?? 0;
       if (carouselCurrentIndex.value != page) {
         final oldIndex = carouselCurrentIndex.value;
         carouselCurrentIndex.value = page;
-        // Only update the specific cards that changed (old center and new center)
-        update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+        // Use post-frame callback to batch updates and reduce jank
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Only update the specific cards that changed (old center and new center)
+          // This minimizes rebuilds during auto-scroll
+          update(['carousel_index_$oldIndex', 'carousel_index_$page']);
+        });
       }
     }
   }
 
   void _startAutoScroll() {
-    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (!isUserScrolling.value && bannersList.isNotEmpty) {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (!isUserScrolling.value &&
+          bannersList.isNotEmpty &&
+          carouselPageController.hasClients) {
         final nextIndex = (carouselCurrentIndex.value + 1) % bannersList.length;
+        // Use a smoother animation curve and slightly longer duration
+        // This reduces jank by giving the GPU more time to render
         carouselPageController.animateToPage(
           nextIndex,
           duration: const Duration(milliseconds: 800),
@@ -906,15 +531,23 @@ class HomeController extends GetxController {
   }
 
   void onCarouselPageChanged(int index) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (carouselCurrentIndex.value != index) {
-        final oldIndex = carouselCurrentIndex.value;
-        carouselCurrentIndex.value = index;
+    // Debounce rapid page changes to prevent excessive rebuilds
+    if (carouselCurrentIndex.value != index) {
+      final oldIndex = carouselCurrentIndex.value;
+      carouselCurrentIndex.value = index;
+      // Use post-frame callback to batch updates and reduce jank
+      // This ensures updates happen after the frame is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         // Only update the specific cards that changed (old center and new center)
-        // This minimizes rebuilds
-        update(['carousel_index_$oldIndex', 'carousel_index_$index']);
-      }
-    });
+        // This minimizes rebuilds during auto-scroll
+        if (oldIndex >= 0 && oldIndex < bannersList.length) {
+          update(['carousel_index_$oldIndex']);
+        }
+        if (index >= 0 && index < bannersList.length) {
+          update(['carousel_index_$index']);
+        }
+      });
+    }
   }
 
   void onCarouselScrollStart() {
@@ -952,6 +585,7 @@ class HomeController extends GetxController {
     _autoScrollTimer?.cancel();
     carouselPageController.removeListener(_onPageControllerChanged);
     carouselPageController.dispose();
+    searchController.dispose();
     super.onClose();
   }
 }

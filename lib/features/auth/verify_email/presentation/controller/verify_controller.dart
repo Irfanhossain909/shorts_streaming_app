@@ -85,9 +85,7 @@ class VerifyController extends GetxController {
         if (response is String) {
           Get.toNamed(
             AppRoutes.createPassword,
-            arguments: {
-              "verifyToken": response,
-            },
+            arguments: {"verifyToken": response},
           );
         } else {
           Utils.successSnackBar(

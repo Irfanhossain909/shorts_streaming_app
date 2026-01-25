@@ -23,65 +23,73 @@ class FeaturedMoviesCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Only observe bannersList changes, not the entire widget tree
-    return Obx(() {
-      final bannersList = controller.bannersList;
+    // Use GetBuilder instead of Obx to avoid unnecessary rebuilds
+    // Only rebuild when bannersList actually changes (initial load)
+    return GetBuilder<HomeController>(
+      id: 'banners_list',
+      init: controller,
+      builder: (ctrl) {
+        final bannersList = ctrl.bannersList;
 
-      if (bannersList.isEmpty) {
-        return const SizedBox.shrink();
-      }
+        if (bannersList.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 20.w),
-            child: CommonText(
-              text: 'Trailers Coming Soon',
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.white,
-            ).start,
-          ),
-          10.height,
-          SizedBox(
-            height: 288.h,
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollStartNotification) {
-                  controller.onCarouselScrollStart();
-                } else if (notification is ScrollEndNotification) {
-                  controller.onCarouselScrollEnd();
-                }
-                return false;
-              },
-              child: PageView.builder(
-                controller: controller.carouselPageController,
-                physics: const BouncingScrollPhysics(),
-                onPageChanged: controller.onCarouselPageChanged,
-                itemCount: bannersList.length,
-                itemBuilder: (context, index) {
-                  final trailer = bannersList[index];
-                  // Use a separate widget that only rebuilds when this specific index changes
-                  return _CarouselCard(
-                    key: ValueKey('${trailer.id}_$index'),
-                    index: index,
-                    trailer: trailer,
-                    controller: controller,
-                    onWatchTap: onWatchTap,
-                  );
-                },
+        // Wrap the static content in RepaintBoundary to prevent rebuilds
+        return RepaintBoundary(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 20.w),
+                child: CommonText(
+                  text: 'Trailers Coming Soon',
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.white,
+                ).start,
               ),
-            ),
+              10.height,
+              SizedBox(
+                height: 288.h,
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollStartNotification) {
+                      controller.onCarouselScrollStart();
+                    } else if (notification is ScrollEndNotification) {
+                      controller.onCarouselScrollEnd();
+                    }
+                    return false;
+                  },
+                  child: PageView.builder(
+                    controller: controller.carouselPageController,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: controller.onCarouselPageChanged,
+                    itemCount: bannersList.length,
+                    itemBuilder: (context, index) {
+                      final trailer = bannersList[index];
+                      // Use a stable key to help Flutter optimize rebuilds
+                      return _CarouselCard(
+                        key: ValueKey('carousel_${trailer.id}_$index'),
+                        index: index,
+                        trailer: trailer,
+                        controller: controller,
+                        onWatchTap: onWatchTap,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      );
-    });
+        );
+      },
+    );
   }
 }
 
-// Separate widget that only rebuilds when this specific card's state changes
-// Using GetBuilder with selective updates to minimize rebuilds
+// Optimized card widget that minimizes rebuilds
+// Only rebuilds when this specific card's state changes (index or bookmark)
 class _CarouselCard extends StatelessWidget {
   final int index;
   final Trailer trailer;
@@ -100,8 +108,9 @@ class _CarouselCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = trailer.title;
 
-    // Use GetBuilder for both index and bookmark changes with specific IDs
-    // This ensures only the affected cards rebuild
+    // Use GetBuilder with specific IDs to only rebuild when needed
+    // 'carousel_index_$index' is only updated when THIS card becomes center/not center
+    // 'carousel_bookmark_$index' is only updated when THIS card's bookmark changes
     return GetBuilder<HomeController>(
       id: 'carousel_index_$index',
       init: controller,
@@ -109,20 +118,29 @@ class _CarouselCard extends StatelessWidget {
         final currentIndex = ctrl.carouselCurrentIndex.value;
         final isCenter = index == currentIndex;
 
-        // Use GetBuilder for bookmark state too (only this card rebuilds)
+        // Nested GetBuilder for bookmark state (only this card rebuilds)
         return GetBuilder<HomeController>(
           id: 'carousel_bookmark_$index',
           init: controller,
           builder: (ctrl) {
             final isBookmarked = ctrl.bookmarkedMovies.contains(title);
 
-            // Use Transform and Opacity for better performance (no animation overhead)
+            // Use AnimatedScale and AnimatedOpacity for smooth transitions
+            // These widgets are optimized by Flutter and don't rebuild the child widget tree
+            // RepaintBoundary isolates repaints to this card only
             return RepaintBoundary(
-              child: Transform.scale(
+              child: AnimatedScale(
                 scale: isCenter ? 1.0 : 0.85,
-                child: Opacity(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOutCubic,
+                child: AnimatedOpacity(
                   opacity: isCenter ? 1.0 : 0.7,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOutCubic,
+                  // Cache the expensive card widget with a stable key
+                  // This prevents the card from rebuilding unnecessarily
                   child: FeaturedMovieCard(
+                    key: ValueKey('card_${trailer.id}'),
                     title: title,
                     duration: trailer.duration,
                     imageUrl: "https://${trailer.thumbnailUrl}",

@@ -1,76 +1,134 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../data/model/notification_model.dart';
-import '../../repository/notification_repository.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
+import 'package:testemu/features/notifications/data/model/notification_model.dart';
+import 'package:testemu/features/notifications/repository/notification_repository.dart';
 
 class NotificationsController extends GetxController {
-  /// Notification List
-  List notifications = [];
+  int limit = 12;
+  int page = 1;
 
-  /// Notification Loading Bar
-  bool isLoading = false;
+  final NotificationRepository notificationRepository =
+      NotificationRepository.instance;
 
-  /// Notification more Data Loading Bar
-  bool isLoadingMore = false;
+  RxList<Result> notificationList = <Result>[].obs;
 
-  /// No more notification data
-  bool hasNoData = false;
-
-  /// page no here
-  int page = 0;
-
-  /// Notification Scroll Controller
   ScrollController scrollController = ScrollController();
 
-  /// Notification More data Loading function
+  RxBool isNotificationMoreLode = true.obs;
+  RxBool isNotificationLoding = false.obs;
 
-  void moreNotification() {
-    scrollController.addListener(() async {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        if (isLoadingMore || hasNoData) return;
-        isLoadingMore = true;
-        update();
-        page++;
-        List<NotificationModel> list = await notificationRepository(page);
-        if (list.isEmpty) {
-          hasNoData = true;
-        } else {
-          notifications.addAll(list);
-        }
-        isLoadingMore = false;
-        update();
-      }
-    });
-  }
+  // ------------------ Main function ------------------
 
-  /// Notification data Loading function
-  getNotificationsRepo() async {
-    return;
-    // if (isLoading || hasNoData) return;
-    // isLoading = true;
-    // update();
-
-    // page++;
-    // List<NotificationModel> list = await notificationRepository(page);
-    // if (list.isEmpty) {
-    //   hasNoData = true;
-    // } else {
-    //   notifications.addAll(list);
-    // }
-    // isLoading = false;
-    // update();
-  }
-
-  /// Notification Controller Instance create here
-  static NotificationsController get instance =>
-      Get.put(NotificationsController());
-
-  /// Controller on Init
   @override
   void onInit() {
-    getNotificationsRepo();
-    moreNotification();
     super.onInit();
+    scrollController.addListener(() {
+      _scrollNotification();
+    });
+    fetchNorification();
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  // ------------------ <<<<<<<=================>>>>> ------------------
+
+  void allNotificationRead() async {
+    try {
+      final response = await notificationRepository.readAllNotification();
+
+      if (response) {
+        // Loop through all notifications and mark unread ones as read
+        for (var notification in notificationList) {
+          if (notification.read == false) {
+            notification.read = true;
+          }
+        }
+
+        // Refresh the list to update UI (if using GetX RxList)
+        notificationList.refresh();
+      }
+    } catch (e) {
+      appLog("Error reading all notifications: $e");
+    }
+  }
+
+  void singleNotificationRead({required String notificationId}) async {
+    try {
+      final response = await notificationRepository.readNotification(
+        notificationId: notificationId,
+      );
+
+      if (response) {
+        // Find the notification in the list
+        final index = notificationList.indexWhere(
+          (element) => element.id == notificationId,
+        );
+        if (index != -1) {
+          // Mark it as read
+          notificationList[index].read = true;
+
+          // Refresh the list to update UI (if using GetX RxList)
+          notificationList.refresh();
+        }
+      }
+    } catch (e) {
+      appLog("Error reading notification: $e");
+    }
+  }
+
+  Future<void> fetchNorification() async {
+    if (isNotificationLoding.value) return;
+
+    try {
+      if (page == 1) {
+        isNotificationLoding.value = true;
+      }
+
+      final response = await notificationRepository.getNotifications(
+        page: page.toString(),
+        limit: limit.toString(),
+      );
+
+      if (response.data != null) {
+        final notifications = response.data?.result ?? [];
+        notificationList.addAll(notifications);
+
+        if (response.meta != null) {
+          if (page >= (response.meta?.totalPage ?? 1)) {
+            isNotificationMoreLode.value = false;
+          }
+        } else {
+          isNotificationMoreLode.value = false;
+        }
+      } else {
+        isNotificationMoreLode.value = false;
+      }
+    } catch (e) {
+      appLog("Error fetching notifications: $e");
+    } finally {
+      isNotificationLoding.value = false;
+    }
+  }
+
+  void refreshNotification() async {
+    page = 1;
+    isNotificationMoreLode.value = true;
+    notificationList.clear();
+    await fetchNorification();
+  }
+
+  void _scrollNotification() {
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent) {
+      if (isNotificationMoreLode.value && !isNotificationLoding.value) {
+        page++;
+        fetchNorification();
+      }
+    }
   }
 }

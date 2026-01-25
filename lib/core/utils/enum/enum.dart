@@ -8,4 +8,5 @@ enum ApplicationStatus { applied, shortlisted, interviewed, hired, rejected }
 
 enum ApplyJobStatus { applied, pending, approved, rejected, saved, none }
 
+// ignore: constant_identifier_names
 enum ReferenceType { Trailer, Movie }

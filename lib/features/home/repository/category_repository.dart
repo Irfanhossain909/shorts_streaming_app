@@ -65,17 +65,40 @@ class CategoryRepository {
 
   Future<Either<String, List<Movie>>> getAllMovies() async {
     try {
-      final apiResponse = await apiService.get(apiEndPoint.getAllMovies);
-      if (apiResponse.statusCode == 200) {
-        final response = MovieResponse.fromJson(
-          apiResponse.data as Map<String, dynamic>,
+      List<Movie> allMovies = [];
+      int currentPage = 1;
+      int totalPages = 1;
+
+      // Fetch all pages
+      while (currentPage <= totalPages) {
+        final apiResponse = await apiService.get(
+          apiEndPoint.getAllMovies,
+          queryParameters: {
+            'page': currentPage.toString(),
+            'limit': '50', // Fetch 50 items per page for efficiency
+          },
         );
-        final movies = response.data;
-        return Right(movies);
-      } else {
-        errorLog(apiResponse.data, source: 'Movie Repository');
-        return Left(apiResponse.message);
+
+        if (apiResponse.statusCode == 200) {
+          final response = MovieResponse.fromJson(
+            apiResponse.data as Map<String, dynamic>,
+          );
+
+          // Add movies from this page
+          allMovies.addAll(response.data);
+
+          // Update total pages from meta
+          totalPages = response.meta.totalPage;
+
+          // Move to next page
+          currentPage++;
+        } else {
+          errorLog(apiResponse.data, source: 'Movie Repository');
+          return Left(apiResponse.message);
+        }
       }
+
+      return Right(allMovies);
     } catch (e) {
       errorLog(e, source: 'Movie Repository');
       return Left(e.toString());

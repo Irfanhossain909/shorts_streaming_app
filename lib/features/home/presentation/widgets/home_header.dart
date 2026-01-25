@@ -24,7 +24,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Obx(
                   () => Text(
-                    'Good Evening, ${controller.userName.value}!',
+                    'Good Evening, ${controller.profileController.profileModel.value?.name ?? 'Guest'} ',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.8),
                       fontSize: 24.sp,

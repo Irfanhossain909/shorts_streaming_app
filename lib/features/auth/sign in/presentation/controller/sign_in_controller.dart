@@ -25,9 +25,9 @@ class SignInController extends GetxController {
   /// Sign in Api call here
 
   Future<void> signInUser({GlobalKey<FormState>? formKey}) async {
-    // if (formKey?.currentState?.validate() ?? false) {
-    //   return;
-    // }
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      return;
+    }
     isLoading.value = true;
     final response = await authRepository.login(
       email: emailController.text,

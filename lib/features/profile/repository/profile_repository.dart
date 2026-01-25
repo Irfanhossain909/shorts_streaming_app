@@ -5,7 +5,9 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
-import 'package:testemu/core/utils/log/app_log.dart' as AppPrint;
+import 'package:testemu/core/services/storage/storage_keys.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/profile/model/faqs_model.dart';
 import 'package:testemu/features/profile/model/profile_model.dart';
@@ -46,17 +48,15 @@ class ProfileRepository {
         }
       }
 
-      // BASIC FIELDS
+      // BASIC FIELDS (don't add image path as string field)
       addIfValid("name", firstName);
-
-      addIfValid("image", image);
 
       // -------------------------------
       // FORM DATA (Multipart if image)
       // -------------------------------
       FormData formData = FormData.fromMap(data);
 
-      // IMAGE FILE
+      // IMAGE FILE (add as multipart file, not as string field)
       if (image != null && image.isNotEmpty) {
         try {
           final file = File(image);
@@ -91,14 +91,14 @@ class ProfileRepository {
       );
 
       if (response.isSuccess) {
-        AppPrint.appLog("✅ Profile updated successfully");
+        appLog("✅ Profile updated successfully");
         return true;
       } else {
-        AppPrint.appLog("❌ Profile update failed");
+        appLog("❌ Profile update failed");
         return false;
       }
     } catch (e) {
-      AppPrint.appLog(e);
+      appLog(e);
       return false;
     }
   }
@@ -109,6 +109,10 @@ class ProfileRepository {
       if (response.isSuccess) {
         final data = response.data['data'] as Map<String, dynamic>? ?? {};
         final result = ProfileModelData.fromJson(data);
+        await LocalStorage.setString(
+          LocalStorageKeys.myName,
+          result.name ?? '',
+        );
         return result;
       }
       throw Exception(response.message);

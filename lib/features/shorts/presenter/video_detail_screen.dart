@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/card/movie_card.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/shimmer/video_detail_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -41,8 +43,10 @@ class VideoDetailScreen extends StatelessWidget {
       body: Obx(() {
         final data = videoDetailsController.data.value;
         final seasonVideoData = videoDetailsController.seasonVideoData.value;
+
+        // Show beautiful shimmer while loading
         if (data == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const VideoDetailShimmer();
         }
         return Container(
           height: Get.height,
@@ -69,7 +73,12 @@ class VideoDetailScreen extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.only(top: 80.h, left: 16.w, right: 16.w),
+            padding: EdgeInsets.only(
+              top: 80.h,
+              left: 16.w,
+              right: 16.w,
+              bottom: 20.h,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,46 +114,48 @@ class VideoDetailScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 10.w),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              //print("Reborn True Princess Returns");
-                              Get.toNamed(AppRoutes.videoDetail);
-                            },
-                            child: CommonText(
-                              text: data.movie.title,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.white,
-                            ),
-                          ),
-                          CommonText(
-                            text:
-                                "Update to EP.${data.totalSeasons}/EP.${data.totalSeasons}",
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.white.withValues(alpha: .6),
-                            bottom: 10.h,
-                          ),
-                          Wrap(
-                            spacing: 6.w,
-                            runSpacing: 6.w,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CommonText(
-                                text: "Tags",
-                                fontSize: 12.sp,
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                //print("Reborn True Princess Returns");
+                                Get.toNamed(AppRoutes.videoDetail);
+                              },
+                              child: CommonText(
+                                text: data.movie.title,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.white,
                               ),
-                              for (var tag in data.movie.tags)
-                                TagCard(tag: tag),
-                            ],
-                          ),
-                        ],
+                            ),
+                            CommonText(
+                              text:
+                                  "Update to EP.${data.totalSeasons}/EP.${data.totalSeasons}",
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.white.withValues(alpha: .6),
+                              bottom: 10.h,
+                            ),
+                            Wrap(
+                              spacing: 6.w,
+                              runSpacing: 6.w,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                CommonText(
+                                  text: "Tags",
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.white,
+                                ),
+                                for (var tag in data.movie.tags)
+                                  TagCard(tag: tag),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -171,101 +182,117 @@ class VideoDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CommonText(
-                            text: "Episode",
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.white,
-                          ),
-                          SizedBox(width: 10.w),
-                          Obx(() {
-                            final seasons =
-                                videoDetailsController.data.value?.seasons ??
-                                [];
-                            final selectedId =
-                                videoDetailsController.selectedSeasonId.value;
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CommonText(
+                              text: "Episode",
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.white,
+                            ),
+                            SizedBox(width: 10.w),
+                            Flexible(
+                              child: Obx(() {
+                                final seasons =
+                                    videoDetailsController
+                                        .data
+                                        .value
+                                        ?.seasons ??
+                                    [];
+                                final selectedId = videoDetailsController
+                                    .selectedSeasonId
+                                    .value;
 
-                            if (seasons.isEmpty) {
-                              return SizedBox.shrink();
-                            }
+                                if (seasons.isEmpty) {
+                                  return SizedBox.shrink();
+                                }
 
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 4.h,
-                                horizontal: 4.w,
-                              ),
-                              height: 32.h,
-                              decoration: BoxDecoration(
-                                color: AppColors.red,
-                                borderRadius: BorderRadius.circular(40.r),
-                              ),
-                              child: DropdownButton<String>(
-                                value: selectedId ?? seasons.first.id,
-                                selectedItemBuilder: (BuildContext context) {
-                                  return seasons.map((season) {
-                                    final displayText =
-                                        season.seasonTitle?.isNotEmpty == true
-                                        ? season.seasonTitle!
-                                        : (season.seasonNumber != null
-                                              ? "Series ${season.seasonNumber}"
-                                              : "Series");
-                                    return CommonText(
-                                      text: displayText,
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 4.h,
+                                    horizontal: 4.w,
+                                  ),
+                                  height: 32.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.red,
+                                    borderRadius: BorderRadius.circular(40.r),
+                                  ),
+                                  child: DropdownButton<String>(
+                                    value: selectedId ?? seasons.first.id,
+                                    isExpanded: true,
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return seasons.map((season) {
+                                        final displayText =
+                                            season.seasonTitle?.isNotEmpty ==
+                                                true
+                                            ? season.seasonTitle!
+                                            : (season.seasonNumber != null
+                                                  ? "Series ${season.seasonNumber}"
+                                                  : "Series");
+                                        return Center(
+                                          child: CommonText(
+                                            text: displayText,
+                                            color: AppColors.white,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
+                                    items: seasons.map((season) {
+                                      final displayText =
+                                          season.seasonTitle?.isNotEmpty == true
+                                          ? season.seasonTitle!
+                                          : (season.seasonNumber != null
+                                                ? "Series ${season.seasonNumber}"
+                                                : "Series");
+                                      return DropdownMenuItem<String>(
+                                        value: season.id,
+                                        child: CommonText(
+                                          text: displayText,
+                                          color: AppColors.white,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        videoDetailsController.onSeasonChanged(
+                                          value,
+                                        );
+                                      }
+                                    },
+                                    icon: const SizedBox.shrink(),
+                                    style: TextStyle(
                                       color: AppColors.white,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    );
-                                  }).toList();
-                                },
-                                items: seasons.map((season) {
-                                  final displayText =
-                                      season.seasonTitle?.isNotEmpty == true
-                                      ? season.seasonTitle!
-                                      : (season.seasonNumber != null
-                                            ? "Series ${season.seasonNumber}"
-                                            : "Series");
-                                  return DropdownMenuItem<String>(
-                                    value: season.id,
-                                    child: CommonText(
-                                      text: displayText,
-                                      color: AppColors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    videoDetailsController.onSeasonChanged(
-                                      value,
-                                    );
-                                  }
-                                },
-                                icon: const SizedBox.shrink(),
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                iconSize: 0,
-                                dropdownColor: AppColors.red,
-                                underline: Container(),
-                                borderRadius: BorderRadius.circular(10.r),
-                                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              ),
-                            );
-                          }),
-                        ],
+                                    iconSize: 0,
+                                    dropdownColor: AppColors.red,
+                                    underline: Container(),
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
                       ),
+                      SizedBox(width: 8.w),
                       GestureDetector(
-                        onTap: () {
-                          Get.back();
-                        },
+                        onTap: () {},
                         child: CommonText(
-                          text: "Episode ${seasonVideoData?.length} >",
+                          text: "Episode ${seasonVideoData?.length}",
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w300,
                           color: AppColors.white,
@@ -277,8 +304,15 @@ class VideoDetailScreen extends StatelessWidget {
 
                   /// Horizontal ListView for episodes
                   Obx(() {
+                    // Show shimmer while loading season videos
+                    if (videoDetailsController.seasonVideoIsLoading.value) {
+                      return const EpisodeButtonsShimmer();
+                    }
+
                     final episodes =
                         videoDetailsController.seasonVideoData.value ?? [];
+
+                    // Show empty state if no episodes
                     if (episodes.isEmpty) {
                       return SizedBox(
                         height: 40.h,
@@ -311,7 +345,8 @@ class VideoDetailScreen extends StatelessWidget {
                               text: episode.episodeNumber.toString(),
                               onPressed: () {
                                 videoDetailsController.onSeasonTap(
-                                  episode.videoUrl,
+                                  episode.downloadUrl,
+                                  episode.id,
                                   index,
                                 );
                               },
@@ -329,29 +364,54 @@ class VideoDetailScreen extends StatelessWidget {
                     color: AppColors.white,
                   ),
                   SizedBox(height: 10.h),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(vertical: 10.h),
-                  //   height: 280
-                  //       .h, // Increased height to accommodate full MovieCard content
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.horizontal,
-                  //     itemCount: data.seasons.length,
-                  //     itemBuilder: (context, index) {
-                  //       return MovieCard(
-                  //         title:
-                  //             data.seasons[index].title,
-                  //         imageUrl: data.seasons[index].imageUrl,
-                  //             data.seasons[index].imageUrl,
-                  //         badge:
-                  //             data.seasons[index].badge,
-                  //         date: data.seasons[index].releaseDate,
-                  //         onTap: () => videoDetailsController.onSeasonTap(
-                  //           data.seasons[index].id,
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
+                  Obx(() {
+                    final recentVideos =
+                        videoDetailsController.recentVideos.value ?? [];
+
+                    // Show shimmer if loading, else show empty state
+                    if (recentVideos.isEmpty) {
+                      return videoDetailsController.isLoading.value
+                          ? const RecommendedVideosShimmer()
+                          : Container(
+                              padding: EdgeInsets.symmetric(vertical: 20.h),
+                              child: Center(
+                                child: CommonText(
+                                  text: "No recommendations available",
+                                  fontSize: 14.sp,
+                                  color: AppColors.white.withValues(alpha: 0.7),
+                                ),
+                              ),
+                            );
+                    }
+
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      height: 280
+                          .h, // Increased height to accommodate full MovieCard content
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: recentVideos.length,
+                        itemBuilder: (context, index) {
+                          final recentItem = recentVideos[index];
+                          final video = recentItem
+                              .videoId!; // Safe because we filter nulls in controller
+                          return MovieCard(
+                            title: video.title,
+                            imageUrl: video.thumbnailUrl,
+                            badge: "Episode ${video.episodeNumber}",
+                            date: recentItem.viewedAt
+                                .toLocal()
+                                .toString()
+                                .split(' ')[0],
+                            onTap: () => Get.toNamed(
+                              AppRoutes.videoDetail,
+                              arguments: {'videoId': video.movieId},
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

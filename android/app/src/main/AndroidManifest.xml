@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.testemu">
+    package="com.victorsaulmendozamena.creepyshorts">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -7,9 +7,43 @@
 
     <!-- Queries for Android 11+ to handle external files & intents -->
     <queries>
+        <!-- Generic intent for processing text -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        
+        <!-- WhatsApp -->
+        <package android:name="com.whatsapp" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="whatsapp" />
+        </intent>
+        
+        <!-- Facebook -->
+        <package android:name="com.facebook.katana" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="fb" />
+        </intent>
+        
+        <!-- Twitter/X -->
+        <package android:name="com.twitter.android" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="twitter" />
+        </intent>
+        
+        <!-- Generic web browsing for fallbacks -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http" />
         </intent>
     </queries>
 
@@ -18,7 +52,8 @@
         android:label="Creepy Shorts"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:largeHeap="true">
 
         <!-- Main Flutter Activity -->
         <activity
@@ -38,6 +73,52 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- 🔗 Deep Link Intent Filter - Custom Scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- creepyshorts://shorts/VIDEO_ID -->
+                <data
+                    android:scheme="creepyshorts"
+                    android:host="shorts"
+                    android:pathPrefix="/"/>
+            </intent-filter>
+
+            <!-- 🔗 Deep Link Intent Filter - HTTPS (Universal Links) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <!-- https://api.creepy-shorts.com/shorts/VIDEO_ID -->
+                <data
+                    android:scheme="https"
+                    android:host="api.creepy-shorts.com"
+                    android:pathPrefix="/shorts"/>
+            </intent-filter>
+            
+            <!-- 🔗 Additional Deep Link - Support for www subdomain -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="www.api.creepy-shorts.com"
+                    android:pathPrefix="/shorts"/>
+            </intent-filter>
+            
+            <!-- 🔗 HTTP fallback (for testing) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="http"
+                    android:host="api.creepy-shorts.com"
+                    android:pathPrefix="/shorts"/>
             </intent-filter>
 
         </activity>

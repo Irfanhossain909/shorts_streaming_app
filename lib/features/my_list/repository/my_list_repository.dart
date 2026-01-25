@@ -3,6 +3,7 @@ import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/my_list/model/my_list_model.dart';
+import 'package:testemu/features/shorts/model/recent_videos_model.dart';
 
 class MyListRepository {
   MyListRepository._();
@@ -26,6 +27,51 @@ class MyListRepository {
       return Left(apiResponse.message);
     } catch (e) {
       errorLog(e, source: 'My List Repository');
+      return Left(e.toString());
+    }
+  }
+
+  Future<Either<String, List<RecentlyViewedItem>>> getRecentVideos() async {
+    try {
+      final response = await apiService.get(apiEndPoint.getRecentVideos);
+      if (response.statusCode == 200) {
+        final recentVideosResponse = RecentVideosResponse.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        // recentVideosResponse.data is already List<RecentlyViewedItem>
+        return Right(recentVideosResponse.data);
+      } else {
+        return Left(response.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Get Recent Videos');
+      return Left(e.toString());
+    }
+  }
+
+  //--- Toggle Bookmark ---//
+
+  Future<Either<String, void>> toggleBookmark(
+    String referenceId,
+    String referenceType,
+  ) async {
+    try {
+      Map<String, String> body = {
+        "referenceId": referenceId,
+        "referenceType": referenceType,
+      };
+      final apiResponse = await apiService.post(
+        apiEndPoint.toggleBookmark,
+        body: body,
+      );
+      if (apiResponse.statusCode == 200) {
+        return Right(null);
+      } else {
+        errorLog(apiResponse.data, source: 'Toggle Bookmark Repository');
+        return Left(apiResponse.message);
+      }
+    } catch (e) {
+      errorLog(e, source: 'Toggle Bookmark Repository');
       return Left(e.toString());
     }
   }

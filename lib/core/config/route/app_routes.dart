@@ -1,63 +1,57 @@
 import 'package:get/get.dart';
-
 /* =======================
   🔗 COMMON / CORE SCREENS
 ======================= */
 import 'package:testemu/core/component/screen/no_internet.dart';
-import 'package:testemu/features/splash/splash_screen.dart';
-import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
-
-/* =======================
-  🔐 AUTH SCREENS
-======================= */
-import 'package:testemu/core/config/route/binding/auth_binding.dart';
-import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
-import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/forgot_password.dart';
-import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
-import 'package:testemu/features/auth/change_password/presentation/screen/change_password_screen.dart';
-import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
-
 /* =======================
   🧠 APP / MAIN SCREENS
 ======================= */
 import 'package:testemu/core/config/route/binding/app_binding.dart';
-import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
-import 'package:testemu/features/home/presentation/screen/home_screen.dart';
-import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
-
 /* =======================
-  💬 MESSAGE SCREENS
+  🔐 AUTH SCREENS
 ======================= */
-import 'package:testemu/features/message/presentation/screen/chat_screen.dart';
-import 'package:testemu/features/message/presentation/screen/message_screen.dart';
-
-/* =======================
-  👤 PROFILE & SETTINGS
-======================= */
-import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
-import 'package:testemu/features/profile/presentation/screen/edit_profile.dart';
-import 'package:testemu/features/profile/presentation/screen/faqs_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
-import 'package:testemu/features/setting/presentation/screen/privacy_policy_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/user_agreement_screen.dart';
-import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
-
-/* =======================
-  🎬 CONTENT / MEDIA
-======================= */
-import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
-import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
-import 'package:testemu/features/shorts/presenter/video_player_screen.dart';
-import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
-
+import 'package:testemu/core/config/route/binding/auth_binding.dart';
+import 'package:testemu/features/auth/change_password/presentation/screen/change_password_screen.dart';
+import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
+import 'package:testemu/features/auth/forgot%20password/presentation/screen/forgot_password.dart';
+import 'package:testemu/features/auth/sign%20in/presentation/screen/sign_in_screen.dart';
+import 'package:testemu/features/auth/sign%20up/presentation/screen/sign_up_screen.dart';
+import 'package:testemu/features/auth/verify_email/presentation/screen/verify_screen.dart';
+import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
 /* =======================
   ⬇️ DOWNLOAD SCREENS
 ======================= */
 import 'package:testemu/features/download/presenter/download_menu_screen.dart';
 import 'package:testemu/features/download/presenter/download_sesone_list_screen.dart';
-import 'package:testemu/features/download/presenter/download_episod_list_screen.dart';
+import 'package:testemu/features/download/presenter/downloaded_shorts_player_screen.dart';
+import 'package:testemu/features/download/presenter/downloaded_shorts_screen.dart';
+import 'package:testemu/features/home/presentation/screen/home_screen.dart';
+/* =======================
+  💬 MESSAGE SCREENS
+======================= */
+import 'package:testemu/features/my_list/presenter/screen/my_list_scree.dart';
+import 'package:testemu/features/navigation_bar/presentation/screen/navigation_screen.dart';
+import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
+import 'package:testemu/features/onboarding_screen/onboarding_screen.dart';
+import 'package:testemu/features/profile/presentation/screen/edit_profile.dart';
+import 'package:testemu/features/profile/presentation/screen/faqs_screen.dart';
+/* =======================
+  👤 PROFILE & SETTINGS
+======================= */
+import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/delete_account.dart';
+import 'package:testemu/features/setting/presentation/screen/privacy_policy_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/setting_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/subscription_screen.dart';
+import 'package:testemu/features/setting/presentation/screen/user_agreement_screen.dart';
+/* =======================
+  🎬 CONTENT / MEDIA
+======================= */
+import 'package:testemu/features/shorts/presenter/episode_shorts_screen.dart';
+import 'package:testemu/features/shorts/presenter/shorts_screen.dart';
+import 'package:testemu/features/shorts/presenter/video_detail_screen.dart';
+import 'package:testemu/features/shorts/presenter/video_player_screen.dart';
+import 'package:testemu/features/splash/splash_screen.dart';
 
 class AppRoutes {
   /* =======================
@@ -100,12 +94,15 @@ class AppRoutes {
   static const shorts = "/shorts";
   static const videoDetail = "/video_detail";
   static const videoPlayer = "/video_player";
+  static const episodeShorts = "/episode_shorts";
   static const myList = "/my_list";
 
   // Download
   static const downloadMenu = "/download_menu";
   static const downloadSeason = "/download_season";
   static const downloadEpisode = "/download_episode";
+  static const downloadedShorts = "/downloaded_shorts";
+  static const downloadedShortsPlayer = "/downloaded_shorts_player";
 
   /* =======================
     🚦 GETX ROUTES
@@ -152,18 +149,6 @@ class AppRoutes {
       page: () => const NotificationScreen(),
     ),
 
-    /// 💬 MESSAGES
-    GetPage(
-      name: chat,
-      binding: AppBinding(),
-      page: () => const ChatListScreen(),
-    ),
-    GetPage(
-      name: message,
-      binding: AppBinding(),
-      page: () => const MessageScreen(),
-    ),
-
     /// 👤 PROFILE & SETTINGS
     GetPage(
       name: profile,
@@ -176,16 +161,17 @@ class AppRoutes {
       page: () => EditProfile(),
     ),
     GetPage(name: setting, page: () => const SettingScreen()),
-    GetPage(name: deleteAccount, page: () => const DeleteAccountScreen()),
+    GetPage(name: deleteAccount, binding: AppBinding(), page: () => const DeleteAccountScreen()),
     GetPage(name: privacyPolicy, page: () => const PrivacyPolicyScreen()),
     GetPage(name: userAgreement, page: () => const UserAgreementScreen()),
     GetPage(name: subscription, page: () => const SubscriptionScreen()),
     GetPage(name: faqs, page: () => const FaqsScreen()),
 
     /// 🎬 MEDIA
-    GetPage(name: shorts, page: () => const ShortsFeedScreen()),
-    GetPage(name: videoDetail, page: () => VideoDetailScreen()),
+    GetPage(name: shorts, page: () => ShortsFeedScreen()),
+    GetPage(name: videoDetail, page: () => const VideoDetailScreen()),
     GetPage(name: videoPlayer, page: () => const VideoPlayerScreen()),
+    GetPage(name: episodeShorts, page: () => const EpisodeShortsScreen()),
     GetPage(name: myList, page: () => const MyListScree()),
 
     /// ⬇️ DOWNLOAD
@@ -203,6 +189,15 @@ class AppRoutes {
       name: downloadEpisode,
       binding: AppBinding(),
       page: () => const DownloadEpisodListScreen(),
+    ),
+    GetPage(
+      name: downloadedShorts,
+      binding: AppBinding(),
+      page: () => const DownloadedShortsScreen(),
+    ),
+    GetPage(
+      name: downloadedShortsPlayer,
+      page: () => const DownloadedShortsPlayerScreen(),
     ),
 
     /// 🌐 NO INTERNET

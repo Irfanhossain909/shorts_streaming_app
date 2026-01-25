@@ -12,7 +12,8 @@ class MovieCard extends StatelessWidget {
   final double? height;
   final String? date;
   final bool isRemindMe;
-
+  final bool isBookmarked;
+  final VoidCallback? onBookmarkTap;
   const MovieCard({
     super.key,
     required this.title,
@@ -23,12 +24,25 @@ class MovieCard extends StatelessWidget {
     this.height,
     this.date,
     this.isRemindMe = false,
+    this.isBookmarked = false,
+    this.onBookmarkTap,
   });
+
+  // Cache static gradient to avoid recreation
+  static const _remindMeGradient = LinearGradient(
+    colors: [
+      AppColors.red,
+      Color(0xCCCC0000), // red.withValues(alpha: 0.8)
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
         child: SizedBox(
@@ -53,13 +67,13 @@ class MovieCard extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Movie poster image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.r),
+                    // Movie poster image with RepaintBoundary
+                    RepaintBoundary(
                       child: CommonImage(
                         imageSrc: imageUrl,
                         width: double.infinity,
                         height: double.infinity,
+                        borderRadius: 12.r,
                         fill: BoxFit.cover,
                       ),
                     ),
@@ -87,6 +101,34 @@ class MovieCard extends StatelessWidget {
                               color: AppColors.white,
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (isBookmarked)
+                      Positioned(
+                        bottom: 10,
+                        left: 10,
+                        child: GestureDetector(
+                          onTap: onBookmarkTap,
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            width: 32.w,
+                            height: 32.w,
+                            decoration: BoxDecoration(
+                              color: AppColors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: AppColors.white.withValues(alpha: 0.3),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Icon(
+                              isBookmarked
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: AppColors.white,
+                              size: 20.sp,
                             ),
                           ),
                         ),
@@ -133,14 +175,7 @@ class MovieCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.red,
                           borderRadius: BorderRadius.circular(30.r),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.red,
-                              AppColors.red.withValues(alpha: 0.8),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          gradient: _remindMeGradient,
                         ),
                         child: Row(
                           children: [

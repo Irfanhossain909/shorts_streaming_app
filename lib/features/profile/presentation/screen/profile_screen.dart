@@ -8,6 +8,7 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
+import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
@@ -251,7 +252,7 @@ class ProfileScreen extends StatelessWidget {
                           Get.toNamed(AppRoutes.downloadSeason);
                         },
                         title: "Offline Download",
-                        leadPath: AppImages.icOfflineDownload,
+                        leadPath: AppIcons.icOfflineDownload,
                       ),
                       // ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
                       ProfileRow(
@@ -259,7 +260,7 @@ class ProfileScreen extends StatelessWidget {
                           Get.toNamed(AppRoutes.faqs);
                         },
                         title: "FAQs",
-                        leadPath: AppImages.icFaq,
+                        leadPath: AppIcons.icFaq,
                       ),
                       CommonText(
                         text: "More Setting",
@@ -269,14 +270,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       ProfileRow(
                         title: "Feedback",
-                        leadPath: AppImages.icFeedback,
+                        leadPath: AppIcons.icFeedback,
                       ),
                       ProfileRow(
                         onTap: () {
                           Get.toNamed(AppRoutes.setting);
                         },
                         title: "Settings",
-                        leadPath: AppImages.icSetting,
+                        leadPath: AppIcons.icSettings,
                       ),
                       ProfileRow(
                         onTap: () {
@@ -284,7 +285,7 @@ class ProfileScreen extends StatelessWidget {
                         },
                         leadColor: AppColors.red,
                         title: "Log out",
-                        leadPath: AppImages.icLogout,
+                        leadPath: AppIcons.icLogout,
                       ),
                       48.height,
                     ],
@@ -321,8 +322,8 @@ class ProfileRow extends StatelessWidget {
         children: [
           CommonImage(
             imageSrc: leadPath ?? AppImages.add,
-            width: 20.w,
-            height: 20.h,
+            width: 24.w,
+            height: 24.h,
             imageColor: leadColor ?? AppColors.background,
           ),
 

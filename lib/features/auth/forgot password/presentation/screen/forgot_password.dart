@@ -37,77 +37,87 @@ class ForgotPasswordScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
           child: Form(
             key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Log In Instruction here
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 18.h,
+            child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              enableFeedback: false, // removes tap sound/vibration
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Log In Instruction here
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 18.h,
+                    ),
+
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: AppColors.background),
+                    //   borderRadius: BorderRadius.circular(30.w),
+                    //   color: AppColors.white.withValues(alpha: 0.3),
+                    // ),
+                    child: Column(
+                      spacing: 8.h,
+                      children: [
+                        CommonImage(
+                          width: 120.w,
+                          height: 120.h,
+                          imageSrc: AppImages.logo,
+                        ),
+                        CommonText(
+                          text: "Forgot Your Password?",
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.background,
+                        ),
+                        CommonText(
+                          maxLines: 3,
+                          textAlign: TextAlign.center,
+
+                          text:
+                              "No worries! Enter the email address associated with your account, and we’ll send you instructions to reset your password.",
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.background,
+                        ),
+                      ],
+                    ),
                   ),
+                  50.height,
 
-                  // decoration: BoxDecoration(
-                  //   border: Border.all(color: AppColors.background),
-                  //   borderRadius: BorderRadius.circular(30.w),
-                  //   color: AppColors.white.withValues(alpha: 0.3),
-                  // ),
-                  child: Column(
-                    spacing: 8.h,
-                    children: [
-                      CommonImage(
-                        width: 120.w,
-                        height: 120.h,
-                        imageSrc: AppImages.logo,
-                      ),
-                      CommonText(
-                        text: "Forgot Your Password?",
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.background,
-                      ),
-                      CommonText(
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
-
-                        text:
-                            "No worries! Enter the email address associated with your account, and we’ll send you instructions to reset your password.",
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.background,
-                      ),
-                    ],
+                  CommonTextField(
+                    controller: controller.emailController,
+                    borderColor: AppColors.background,
+                    textColor: AppColors.background,
+                    hintTextColor: AppColors.background,
+                    borderRadius: 30.w,
+                    fillColor: AppColors.background.withValues(alpha: 0.3),
+                    hintText: AppString.email,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                ),
-                50.height,
+                  24.height,
 
-                CommonTextField(
-                  controller: controller.emailController,
-                  borderColor: AppColors.background,
-                  textColor: AppColors.background,
-                  hintTextColor: AppColors.background,
-                  borderRadius: 30.w,
-                  fillColor: AppColors.background.withValues(alpha: 0.3),
-                  hintText: AppString.email,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                24.height,
-
-                ///  Submit Button here
-                Obx(() {
-                  return controller.isLoadingEmail.value
-                      ? const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        )
-                      : CommonButtonPro(
-                          onTap: () {
-                            controller.forgotPasswordRepo();
-                          },
-                          text: "Get Verification Code",
-                        );
-                }),
-              ],
+                  ///  Submit Button here
+                  Obx(() {
+                    return controller.isLoadingEmail.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : CommonButtonPro(
+                            onTap: () {
+                              controller.forgotPasswordRepo();
+                            },
+                            text: "Get Verification Code",
+                          );
+                  }),
+                ],
+              ),
             ),
           ),
         ),

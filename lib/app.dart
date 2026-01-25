@@ -15,18 +15,25 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       designSize: const Size(428, 926),
+      // Rebuild only once after initialization
+      rebuildFactor: (old, data) => false,
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         useInheritedMediaQuery: true,
         navigatorKey: Get.key,
+        //showPerformanceOverlay:true, // ✅ Performance testing এর জন্য enable করা হয়েছে
         //locale: DevicePreview.locale(context),
         //builder: DevicePreview.appBuilder,
         defaultTransition: Transition.fadeIn,
         theme: themeData,
-        transitionDuration: const Duration(milliseconds: 300),
+        transitionDuration: const Duration(
+          milliseconds: 200,
+        ), // Reduced from 300ms
         initialRoute: AppRoutes.splash,
-        // initialRoute: AppRoutes.editProfile,
+        // initialRoute: AppRoutes.verifyEmail,
         getPages: AppRoutes.routes,
+        // Performance optimizations
+        smartManagement: SmartManagement.keepFactory,
       ),
     );
   }
