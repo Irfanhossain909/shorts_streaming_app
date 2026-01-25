@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:testemu/core/component/app_toast/app_toast.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/services/video_progress/video_progress_service.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
@@ -707,11 +708,12 @@ class ShortsScontroller extends GetxController {
     final videoId = videoItem.id;
 
     if (url.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Download URL not available",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      AppToast.failed("Download URL not available");
+      // Get.snackbar(
+      //   "Error",
+      //   "Download URL not available",
+      //   snackPosition: SnackPosition.BOTTOM,
+      // );
       return;
     }
 

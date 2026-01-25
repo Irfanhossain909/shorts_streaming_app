@@ -18,6 +18,8 @@ class NotificationsController extends GetxController {
   RxBool isNotificationMoreLode = true.obs;
   RxBool isNotificationLoding = false.obs;
 
+  RxInt unreadCount = 0.obs;
+
   // ------------------ Main function ------------------
 
   @override
@@ -51,6 +53,7 @@ class NotificationsController extends GetxController {
 
         // Refresh the list to update UI (if using GetX RxList)
         notificationList.refresh();
+        unreadCount.value = 0;
       }
     } catch (e) {
       appLog("Error reading all notifications: $e");
@@ -74,6 +77,9 @@ class NotificationsController extends GetxController {
 
           // Refresh the list to update UI (if using GetX RxList)
           notificationList.refresh();
+          if (unreadCount.value > 0) {
+            unreadCount.value--;
+          }
         }
       }
     } catch (e) {
@@ -97,6 +103,7 @@ class NotificationsController extends GetxController {
       if (response.data != null) {
         final notifications = response.data?.result ?? [];
         notificationList.addAll(notifications);
+        unreadCount.value = response.data?.unreadCount ?? 0;
 
         if (response.meta != null) {
           if (page >= (response.meta?.totalPage ?? 1)) {

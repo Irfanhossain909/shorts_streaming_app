@@ -36,8 +36,7 @@ class DeleteController extends GetxController {
               ),
               const SizedBox(height: 16),
               const CommonText(
-                text:
-                    "Are you sure you want to delete your account? All data will be permanently removed. Please type 'DELETE' to confirm.",
+                text: "Enter your password to delete your account.",
                 fontSize: 14,
                 color: AppColors.white,
                 maxLines: 5,
@@ -46,7 +45,7 @@ class DeleteController extends GetxController {
               const SizedBox(height: 20),
               CommonTextField(
                 controller: deleteConfirmController,
-                hintText: "Type 'DELETE'",
+                hintText: "Enter Password",
                 fillColor: AppColors.white.withOpacity(0.1),
                 textColor: AppColors.white,
                 hintTextColor: AppColors.white.withOpacity(0.5),
@@ -76,6 +75,7 @@ class DeleteController extends GetxController {
                       borderColor: AppColors.buttonColor2,
                       isGradient: false,
                       onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         deleteAccount();
                       },
                     ),
@@ -97,7 +97,7 @@ class DeleteController extends GetxController {
       final response = await settingRepository.deleteAccount(
         password: deleteConfirmController.text,
       );
-      if (response != null) {
+      if (response == true) {
         LocalStorage.removeAllPrefData();
       }
     } catch (e) {
