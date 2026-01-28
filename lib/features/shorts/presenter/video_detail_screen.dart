@@ -390,6 +390,7 @@ class VideoDetailScreen extends StatelessWidget {
                           .h, // Increased height to accommodate full MovieCard content
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         itemCount: recentVideos.length,
                         itemBuilder: (context, index) {
                           final recentItem = recentVideos[index];
@@ -403,10 +404,12 @@ class VideoDetailScreen extends StatelessWidget {
                                 .toLocal()
                                 .toString()
                                 .split(' ')[0],
-                            onTap: () => Get.toNamed(
-                              AppRoutes.videoDetail,
-                              arguments: {'videoId': video.movieId},
-                            ),
+                            onTap: () {
+                              Get.toNamed(
+                                AppRoutes.videoDetail,
+                                arguments: {'videoId': video.movieId},
+                              );
+                            },
                           );
                         },
                       ),

@@ -29,10 +29,7 @@ class ComingSoonSection extends StatelessWidget {
             children: [
               SectionHeader(title: 'Coming Soon'),
               20.height,
-              const HorizontalListShimmer(
-                itemCount: 3,
-                itemHeight: 320,
-              ),
+              const HorizontalListShimmer(itemCount: 3, itemHeight: 320),
               30.height,
               SectionHeader(title: 'New Release'),
               20.height,
@@ -42,8 +39,7 @@ class ComingSoonSection extends StatelessWidget {
         );
       }
 
-      final List<Movie> movies =
-          controller.filteredMoviesBySelectedCategory;
+      final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
 
       /// 🔹 MAIN SCROLL VIEW
       return SingleChildScrollView(
@@ -88,7 +84,8 @@ class ComingSoonSection extends StatelessWidget {
             imageUrl:
                 ApiEndPoint.instance.imageUrl + (reminder.thumbnail ?? ''),
             releaseDate: reminder.reminderTime.date,
-            onTap: () => controller.onMovieTap(reminder.name),
+            // onTap: () => controller.onMovieTap(reminder.name),
+            onTap: () {},
             onRemindMeTap: () => controller.onRemindMeTap(reminder.id),
           );
         },
@@ -126,5 +123,3 @@ class ComingSoonSection extends StatelessWidget {
     );
   }
 }
-
-
