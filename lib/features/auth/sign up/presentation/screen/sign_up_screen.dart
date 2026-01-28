@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -76,11 +77,11 @@ class SignUpScreen extends StatelessWidget {
                     /// Full name
                     CommonTextField(
                       controller: controller.nameController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.fullName,
                       keyboardType: TextInputType.name,
                     ),
@@ -90,11 +91,11 @@ class SignUpScreen extends StatelessWidget {
                     /// Email
                     CommonTextField(
                       controller: controller.emailController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.email,
                       validator: OtherHelper.emailValidator,
                       keyboardType: TextInputType.emailAddress,
@@ -105,12 +106,12 @@ class SignUpScreen extends StatelessWidget {
                     /// Password
                     CommonTextField(
                       controller: controller.passwordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       isPassword: true,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.password,
                       validator: OtherHelper.passwordValidator,
                       keyboardType: TextInputType.visiblePassword,
@@ -121,11 +122,11 @@ class SignUpScreen extends StatelessWidget {
                     /// Confirm password
                     CommonTextField(
                       controller: controller.confirmPasswordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       isPassword: true,
                       hintText: AppString.newPassword,
                       validator: (value) =>
@@ -147,8 +148,8 @@ class SignUpScreen extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             )
-                          : CommonButtonPro(
-                              text: "Sign Up",
+                          : CommonButton(
+                              titleText: "Sign Up",
                               onTap: () {
                                 FocusScope.of(
                                   context,
