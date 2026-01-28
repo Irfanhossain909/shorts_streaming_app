@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -76,11 +77,11 @@ class SignInScreen extends StatelessWidget {
                     /// Email
                     CommonTextField(
                       controller: controller.emailController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.email,
                       validator: OtherHelper.emailValidator,
                     ),
@@ -90,11 +91,11 @@ class SignInScreen extends StatelessWidget {
                     /// Password
                     CommonTextField(
                       controller: controller.passwordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       isPassword: true,
                       hintText: AppString.password,
                       // validator: OtherHelper.passwordValidator,
@@ -125,14 +126,14 @@ class SignInScreen extends StatelessWidget {
                                 color: AppColors.white,
                               ),
                             )
-                          : CommonButtonPro(
+                          : CommonButton(
+                              titleText: "Sign In",
                               onTap: () {
                                 FocusScope.of(
                                   context,
                                 ).unfocus(); // ✅ keyboard close safe
                                 controller.signInUser(formKey: _formKey);
                               },
-                              text: "Sign In",
                             );
                     }),
 
