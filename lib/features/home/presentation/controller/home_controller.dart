@@ -27,6 +27,8 @@ class HomeController extends GetxController {
 
   ProfileController profileController = Get.find<ProfileController>();
 
+  final RxBool isProfileLoading = false.obs;
+
   // Observable variables
   var selectedCategory = 'popular'.obs;
   var selectedMyListCategory = 'Recently Watched'.obs;
@@ -90,13 +92,26 @@ class HomeController extends GetxController {
     getMovies();
     getReminders();
     _connectSocket();
-    // Reactive listening
+    // Reactive listening for profile data
     ever(profileController.profileModel, (profile) {
       final userId = profile?.id;
       if (userId != null) {
         appLog("UserId available: $userId -> Calling notification listener");
         _listenNotification(userId);
       }
+    });
+
+    // Reactive listening for loading state
+    ever(profileController.isLoading, (loading) {
+      isProfileLoading.value = loading;
+    });
+
+    // Initial sync
+    isProfileLoading.value = profileController.isLoading.value;
+
+    // Synchronize unread count with notification controller
+    ever(notificationController.unreadCount, (count) {
+      unreadNotificationCount.value = count;
     });
   }
 
@@ -130,6 +145,11 @@ class HomeController extends GetxController {
     SocketService.instance.onEvent('notification::$uid', (data) {
       appLog("Notification received: $data");
 
+      // Increment both local and notificationController count
+      unreadNotificationCount.value++;
+      notificationController.unreadCount.value++;
+
+      appLog("Unread notification count: ${unreadNotificationCount.value}");
       // Convert raw data to Result model
       Result newNotification = Result.fromJson(data);
 

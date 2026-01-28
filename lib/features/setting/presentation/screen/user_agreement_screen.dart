@@ -33,22 +33,22 @@ class UserAgreementScreen extends StatelessWidget {
             child: Column(
               spacing: 36.h,
               children: [
-                70.height,
-                CommonText(
-                  text: "User Agreement",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.activeTrackColor,
-                  ),
-                ),
+                // 70.height,
+                // CommonText(
+                //   text: "User Agreement",
+                //   style: GoogleFonts.poppins(
+                //     fontSize: 16.sp,
+                //     fontWeight: FontWeight.w700,
+                //     color: AppColors.activeTrackColor,
+                //   ),
+                // ),
                 Html(
                   data: controller.data.content,
                   style: {
                     "body": Style(
                       margin: Margins.zero,
                       padding: HtmlPaddings.zero,
-                      fontSize: FontSize(10.sp),
+                      fontSize: FontSize(12.sp),
                       fontWeight: FontWeight.w400,
                       color: AppColors.activeTrackColor.withValues(alpha: 0.8),
                       fontFamily: GoogleFonts.poppins().fontFamily,

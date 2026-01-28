@@ -33,15 +33,15 @@ class PrivacyPolicyScreen extends StatelessWidget {
             child: Column(
               spacing: 36.h,
               children: [
-                70.height,
-                CommonText(
-                  text: "Privacy Policy",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.activeTrackColor,
-                  ),
-                ),
+                // 70.height,
+                // CommonText(
+                //   text: "Privacy Policy",
+                //   style: GoogleFonts.poppins(
+                //     fontSize: 16.sp,
+                //     fontWeight: FontWeight.w700,
+                //     color: AppColors.activeTrackColor,
+                //   ),
+                // ),
                 Html(
                   data: controller.data.content,
                   style: {

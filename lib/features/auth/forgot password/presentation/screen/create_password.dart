@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -79,11 +80,11 @@ class CreatePassword extends StatelessWidget {
 
                     CommonTextField(
                       controller: controller.newPasswordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.password,
                       isPassword: true,
                       validator: OtherHelper.passwordValidator,
@@ -91,11 +92,11 @@ class CreatePassword extends StatelessWidget {
                     16.height,
                     CommonTextField(
                       controller: controller.confirmPasswordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.newPassword,
                       isPassword: true,
                       validator: OtherHelper.passwordValidator,
@@ -110,11 +111,11 @@ class CreatePassword extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             )
-                          : CommonButtonPro(
+                          : CommonButton(
                               onTap: () {
                                 controller.createPassword();
                               },
-                              text: "Save New Password",
+                              titleText: "Save New Password",
                             );
                     }),
                   ],

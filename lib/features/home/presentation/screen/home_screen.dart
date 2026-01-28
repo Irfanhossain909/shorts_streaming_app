@@ -17,6 +17,7 @@ import 'package:testemu/features/home/presentation/widgets/movies_grid_section.d
 import 'package:testemu/features/home/presentation/widgets/popular_movie_section.dart';
 import 'package:testemu/features/home/presentation/widgets/ranking_section.dart';
 import 'package:testemu/features/home/presentation/widgets/search_bar_widget.dart';
+import 'package:testemu/features/home/presentation/widgets/shimmer/home_header_shimmer.dart';
 import 'package:testemu/features/home/presentation/widgets/vip_movies_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -54,7 +55,12 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header Section
-                      HomeHeader(controller: controller),
+                      Obx(() {
+                        if (controller.isProfileLoading.value) {
+                          return HomeHeaderShimmer();
+                        }
+                        return HomeHeader(controller: controller);
+                      }),
                     ],
                   ),
                 ),
@@ -90,7 +96,6 @@ class HomeScreen extends StatelessWidget {
                       }),
                     ),
                   ),
-
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                 ],
               ),

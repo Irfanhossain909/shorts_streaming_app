@@ -9,7 +9,7 @@ class ProfileController extends GetxController {
   ProfileRepository profileRepository = ProfileRepository.instance;
 
   /// edit button loading here
-  bool isLoading = false;
+  final RxBool isLoading = false.obs;
 
   Rxn<ProfileModelData> profileModel = Rxn<ProfileModelData>();
 
@@ -25,11 +25,13 @@ class ProfileController extends GetxController {
   }
 
   void getProfile() async {
+    isLoading.value = true;
     final response = await profileRepository.getProfile();
 
     if (response != null) {
       profileModel.value = response;
       update();
     }
+    isLoading.value = false;
   }
 }

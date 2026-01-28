@@ -7,9 +7,14 @@ import 'package:testemu/features/home/presentation/controller/home_controller.da
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class HomeHeader extends StatelessWidget {
+  final bool isNotification;
   final HomeController controller;
 
-  const HomeHeader({super.key, required this.controller});
+  const HomeHeader({
+    super.key,
+    required this.controller,
+    this.isNotification = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +50,47 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () => Get.to(() => NotificationScreen()),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(30.r),
-              ),
-              child: Icon(
-                Icons.notifications_outlined,
-                color: AppColors.white,
-                size: 24.sp,
+          Obx(
+            () => GestureDetector(
+              onTap: () {
+                Get.to(() => NotificationScreen());
+                controller.notificationController.unreadCount.value = 0;
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    child: Icon(
+                      Icons.notifications_outlined,
+                      color: AppColors.white,
+                      size: 24.sp,
+                    ),
+                  ),
+                  if (controller.unreadNotificationCount.value > 0)
+                    Positioned(
+                      right: 6,
+                      top: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          controller.unreadNotificationCount.value.toString(),
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
