@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/services/google_auth_service/google_auth_service.dart';
+import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
@@ -26,6 +28,38 @@ class SignInController extends GetxController {
   );
 
   Rxn<LoginsliderModel> loginSliderData = Rxn<LoginsliderModel>();
+
+  // ---------------- GOOGLE SIGN IN ----------------
+  GoogleAuthService googleAuthService = GoogleAuthService();
+  Future<void> initializeGoogle() async {
+    try {
+      await googleAuthService.initialize();
+    } catch (e) {
+      Utils.errorSnackBar(Get.context!, "Google service initialization failed", "Google Sign In");
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    try {
+      final success = await googleAuthService.signIn();
+
+      if (!success) {
+        Utils.errorSnackBar(Get.context!, "Google Sign In Failed", "Google Sign In");
+        return;
+      }
+
+      final idToken = googleAuthService.userData?.idToken;
+
+      if (idToken == null || idToken.isEmpty) {
+        Utils.errorSnackBar(Get.context!, "Invalid Google token", "Google Sign In");
+        return;
+      }
+
+      // await googleAuth(idToken: idToken);
+    } catch (e) {
+      Utils.errorSnackBar(Get.context!, "Login failed. Please try again", "Google Sign In");
+    }
+  }
 
   /// Sign in Api call here
 
@@ -62,6 +96,7 @@ class SignInController extends GetxController {
   void onInit() {
     super.onInit();
     loginSlider();
+    initializeGoogle();
   }
 
   @override

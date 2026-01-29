@@ -5,7 +5,6 @@ import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
-import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
@@ -14,7 +13,6 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_account.dart';
-import 'package:testemu/core/component/shimmer/login_slider_shimmer.dart';
 import '../controller/sign_in_controller.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -196,16 +194,21 @@ class SignInScreen extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 18.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.w),
-                              color: AppColors.background,
-                            ),
-                            child: Center(
-                              child: CommonImage(
-                                imageSrc: AppImages.google,
-                                width: 24.w,
+                          child: GestureDetector(
+                            onTap: () {
+                              controller.loginWithGoogle();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 18.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.w),
+                                color: AppColors.background,
+                              ),
+                              child: Center(
+                                child: CommonImage(
+                                  imageSrc: AppImages.google,
+                                  width: 24.w,
+                                ),
                               ),
                             ),
                           ),
