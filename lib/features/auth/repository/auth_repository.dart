@@ -7,6 +7,7 @@ import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
 
 class AuthRepository {
   AuthRepository._();
@@ -14,6 +15,23 @@ class AuthRepository {
 
   static final AuthRepository _instance = AuthRepository._();
   static AuthRepository get instance => _instance;
+
+  Future<LoginsliderModel?> loginSlider() async {
+    try {
+      final response = await apiService.get(ApiEndPoint.instance.loginSlider);
+
+      appLog(response.data, source: "Login Slider Response");
+
+      if (response.statusCode == 200 && response.data != null) {
+        return LoginsliderModel.fromJson(
+          Map<String, dynamic>.from(response.data),
+        );
+      }
+    } catch (e, s) {
+      errorLog(e, source: "Login Slider");
+    }
+    return null;
+  }
 
   Future<bool> login({required String email, required String password}) async {
     try {

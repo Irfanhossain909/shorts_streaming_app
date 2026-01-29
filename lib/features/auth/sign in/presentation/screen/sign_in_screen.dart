@@ -5,6 +5,7 @@ import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
@@ -13,6 +14,7 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_account.dart';
+import 'package:testemu/core/component/shimmer/login_slider_shimmer.dart';
 import '../controller/sign_in_controller.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -50,91 +52,69 @@ class SignInScreen extends StatelessWidget {
                 key: _formKey,
                 child: Column(
                   children: [
-                    /// Logo + Title
-                    // Container(
-                    //   width: double.infinity,
-                    //   padding: EdgeInsets.symmetric(vertical: 18.h),
-                    //   child: Column(
-                    //     children: [
-                    //       CommonImage(
-                    //         width: 120.w,
-                    //         height: 120.h,
-                    //         imageSrc: AppImages.appLogoSvg,
-                    //       ),
-                    //       CommonText(
-                    //         text: "Let's Get Started!",
-                    //         fontSize: 18.sp,
-                    //         fontWeight: FontWeight.w600,
-                    //         color: AppColors.background,
-                    //       ),
-                    //       CommonText(
-                    //         text: "Let's dive in into your account",
-                    //         fontSize: 14.sp,
-                    //         fontWeight: FontWeight.w600,
-                    //         color: AppColors.background,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     SizedBox(
                       height: 250.h,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: images.length,
-                        itemBuilder: (context, index) {
-                          final image = images[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(30.r),
-                                  child: Image.network(
-                                    image,
-                                    height: 200.h,
-                                    width: 120.w,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return SizedBox(
-                                            height: 200.h,
-                                            width: 120.w,
-                                            child: const Center(
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        height: 200.h,
-                                        width: 120.w,
-                                        color: Colors.grey.shade300,
-                                        child: const Icon(Icons.broken_image),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 60.h,
-                                  child: CommonText(
-                                    textAlign: TextAlign.center,
-                                    text: "ETHERION",
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.background,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      child: Obx(() {
+                        if (controller.isLoadingSlider.value) {
+                          return Column(
+                            children: [
+                              CommonText(
+                                text: "Let's Get Started!",
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                              CommonText(
+                                text: "Let's dive in into your account",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                            ],
                           );
-                        },
-                      ),
+                        }
+                        if (controller
+                                .loginSliderData
+                                .value
+                                ?.data
+                                ?.images
+                                ?.isEmpty ??
+                            true) {
+                          return const Center(child: Text("No Data"));
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller
+                              .loginSliderData
+                              .value
+                              ?.data
+                              ?.images
+                              ?.length,
+                          itemBuilder: (context, index) {
+                            final image = controller
+                                .loginSliderData
+                                .value
+                                ?.data
+                                ?.images?[index];
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30.r),
+                                child: CommonImage(
+                                  height: 200.h,
+                                  width: 120.w,
+
+                                  imageSrc: OtherHelper.getImageUrl(
+                                    image,
+                                    defaultAsset: AppImages.m4,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
                     ),
 
                     24.height,
@@ -259,15 +239,3 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
-
-List<String> images = [
-  "https://i.pinimg.com/736x/74/fa/68/74fa6885bb5f81d12f3355f91b548774.jpg",
-  "https://i.pinimg.com/736x/b5/d2/0e/b5d20e4019e096d3f88761e3372bb4b6.jpg",
-  "https://i.pinimg.com/736x/28/98/6a/28986a3eae1b08152608708e0b8cf640.jpg",
-  "https://i.pinimg.com/1200x/48/26/3c/48263cce012ec8fe615348f6534b11f2.jpg",
-  "https://i.pinimg.com/736x/83/2a/79/832a792dd5cc2a53ae89b7222b98c278.jpg",
-  "https://i.pinimg.com/1200x/81/b4/0e/81b40e82fc8a04ec3839c2227c4c26f4.jpg",
-  "https://i.pinimg.com/1200x/f6/a9/3c/f6a93c595c761afa20a1c1faa14f3a53.jpg",
-  "https://i.pinimg.com/1200x/7b/8c/68/7b8c6882f86aa3276a60b5c7aa308830.jpg",
-  "https://i.pinimg.com/736x/b1/2b/b4/b12bb45e9628edc3c5971140820f4612.jpg",
-];

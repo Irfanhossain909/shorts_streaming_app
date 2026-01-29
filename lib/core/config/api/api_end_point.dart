@@ -43,13 +43,16 @@ class ApiEndPoint {
   // // App endpoints
   final String user = "users";
   final String notifications = "/notification";
-  String readNotification({required String notificationId}) => "/notification/$notificationId/read";
+  String readNotification({required String notificationId}) =>
+      "/notification/$notificationId/read";
   final String privacyPolicies = "privacy-policies";
   final String termsOfServices = "terms-and-conditions";
   final String chats = "chats";
   final String messages = "messages";
   final String userAgreement = "user-agreement";
   final String deleteAccount = "/users/delete-account";
+
+  final String loginSlider = "/dynamic-content/key/login";
 }
 
 // Helper function to get domain based on environment
