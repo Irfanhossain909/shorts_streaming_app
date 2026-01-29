@@ -13,6 +13,7 @@ import 'package:testemu/features/home/model/category_model.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/model/remainder_model.dart';
 import 'package:testemu/features/home/repository/category_repository.dart';
+import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
 import 'package:testemu/features/notifications/data/model/notification_model.dart';
 import 'package:testemu/features/notifications/presentation/controller/notifications_controller.dart';
 import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
@@ -26,6 +27,7 @@ class HomeController extends GetxController {
   );
 
   ProfileController profileController = Get.find<ProfileController>();
+  final MyListController myListController = Get.find<MyListController>();
 
   final RxBool isProfileLoading = false.obs;
 
@@ -340,8 +342,9 @@ class HomeController extends GetxController {
           colorText: AppColors.background,
         );
       },
-      (r) {
-        // Success - toggle completed
+      (r) async {
+        // ✅ Success - toggle completed
+        // First update local home bookmark state
         if (wasBookmarked) {
           bookmarkedMovies.remove(id);
           Get.snackbar(
@@ -356,6 +359,14 @@ class HomeController extends GetxController {
             'Added $title to bookmarks',
             colorText: AppColors.background,
           );
+        }
+
+        // ✅ Also refresh global My List bookmarks so "My Collection"
+        // updates instantly without manual reload
+        try {
+          await myListController.getBookmarks();
+        } catch (_) {
+          // If MyListController isn't ready for some reason, just ignore
         }
       },
     );

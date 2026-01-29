@@ -405,9 +405,9 @@ class VideoDetailScreen extends StatelessWidget {
                                 .toString()
                                 .split(' ')[0],
                             onTap: () {
-                              Get.toNamed(
-                                AppRoutes.videoDetail,
-                                arguments: {'videoId': video.movieId},
+                              debugPrint("video.movieId: ${video.movieId}");
+                              videoDetailsController.getVideoDetails(
+                                video.movieId,
                               );
                             },
                           );

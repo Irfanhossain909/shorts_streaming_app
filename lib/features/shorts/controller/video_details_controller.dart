@@ -30,11 +30,11 @@ class VideoDetailsController extends GetxController {
     videoId = Get.arguments['videoId'];
     appLog(videoId, source: 'VideoId');
     super.onInit();
-    getVideoDetails();
+    getVideoDetails(videoId);
     getRecentVideos();
   }
 
-  Future<void> getVideoDetails() async {
+  Future<void> getVideoDetails(String videoId) async {
     try {
       isLoading.value = true;
       final response = await shortsRepository.getVideoDetails(videoId);
