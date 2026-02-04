@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/component/map/show_google_map.dart';
+import 'package:testemu/core/services/notification/fcm_controller.dart';
 import 'package:testemu/features/auth/change_password/presentation/controller/change_password_controller.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/controller/forget_password_controller.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/controller/sign_in_controller.dart';
@@ -26,6 +27,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => NavigationScreenController(), fenix: true);
     Get.lazyPut(() => HomeController(), fenix: true);
     Get.lazyPut(() => NotificationsController(), fenix: true);
+    Get.lazyPut(() => FCMController(), fenix: true);
 
     // Common Feature Controllers
     Get.lazyPut(() => ShowGoogleMapController(), fenix: true);

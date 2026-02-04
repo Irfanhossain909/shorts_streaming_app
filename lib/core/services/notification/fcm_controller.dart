@@ -1,51 +1,46 @@
-// import 'package:get/get.dart';
-// import 'package:loyalty_customer/service/push_notification/fcm_service.dart';
+import 'package:get/get.dart';
 
-// class FCMController extends GetxController {
-//   // Reactive FCM token
-//   final fcmToken = Rxn<String>();
+import 'fcm_service.dart';
 
-//   @override
-//   void onInit() {
-//     super.onInit();
-//     _initializeFCM();
-//   }
+/// GetX controller for FCM token and topic subscription (UI-friendly).
+class FCMController extends GetxController {
+  final Rxn<String> fcmToken = Rxn<String>();
 
-//   /// Initialize FCM and get token
-//   Future<void> _initializeFCM() async {
-//     final token = await FCMService.getToken();
-//     if (token != null) {
-//       fcmToken.value = token;
-//     }
-//   }
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeFCM();
+  }
 
-//   /// Refresh FCM token
-//   Future<void> refreshToken() async {
-//     final token = await FCMService.getToken();
-//     if (token != null) {
-//       fcmToken.value = token;
-//     }
-//   }
+  Future<void> _initializeFCM() async {
+    if (!FCMService.isSupportedDevice) return;
+    final String? token = await FCMService.getToken();
+    if (token != null) {
+      fcmToken.value = token;
+    }
+  }
 
-//   /// Delete FCM token (call on logout)
-//   Future<void> deleteToken() async {
-//     await FCMService.deleteToken();
-//     fcmToken.value = null;
-//   }
+  Future<void> refreshToken() async {
+    final String? token = await FCMService.getToken();
+    if (token != null) {
+      fcmToken.value = token;
+    }
+  }
 
-//   /// Subscribe to topic
-//   Future<void> subscribeToTopic(String topic) async {
-//     await FCMService.subscribeToTopic(topic);
-//   }
+  Future<void> deleteToken() async {
+    await FCMService.deleteToken();
+    fcmToken.value = null;
+  }
 
-//   /// Unsubscribe from topic
-//   Future<void> unsubscribeFromTopic(String topic) async {
-//     await FCMService.unsubscribeFromTopic(topic);
-//   }
+  Future<void> subscribeToTopic(String topic) async {
+    await FCMService.subscribeToTopic(topic);
+  }
 
-//   /// Get current token (non-reactive)
-//   String? get currentToken => fcmToken.value;
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await FCMService.unsubscribeFromTopic(topic);
+  }
 
-//   /// Check if token is available
-//   bool get hasToken => fcmToken.value != null;
-// }
+  String? get currentToken => fcmToken.value;
+
+  bool get hasToken => fcmToken.value != null;
+}

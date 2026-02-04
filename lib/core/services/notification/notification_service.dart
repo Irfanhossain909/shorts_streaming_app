@@ -1,50 +1,193 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+class NotificationService {
+  static final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
+
+  /// 🔹 Call this from main()
+  static Future<void> init() async {
+    await _initLocalNotification();
+    await _initFirebaseNotification();
+  }
+
+  /// ---------------- LOCAL NOTIFICATION ----------------
+  static Future<void> _initLocalNotification() async {
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
+    await _notifications.initialize(
+      settings: settings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+    );
+
+    await _createAndroidChannel();
+
+    debugPrint('✅ Local notification initialized');
+  }
+
+  static Future<void> _createAndroidChannel() async {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      description: 'Used for important notifications',
+      importance: Importance.high,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    await _notifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
+
+  /// ---------------- FIREBASE NOTIFICATION ----------------
+  static Future<void> _initFirebaseNotification() async {
+    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    /// 🔹 iOS permission (MANDATORY)
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    /// 🔹 Foreground notification allow
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    /// 🔹 Foreground message listener
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('📩 FCM Foreground Message Received');
+
+      if (Platform.isIOS || Platform.isAndroid) {
+        showNotification(
+          title: message.notification?.title,
+          body: message.notification?.body,
+          data: message.data,
+        );
+      }
+    });
+
+    debugPrint('✅ Firebase notification initialized');
+  }
+
+  /// ---------------- SHOW LOCAL NOTIFICATION ----------------
+  static Future<void> showNotification({
+    String? title,
+    String? body,
+    Map<String, dynamic>? data,
+  }) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'high_importance_channel',
+      'High Importance Notifications',
+      channelDescription: 'Used for important notifications',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const DarwinNotificationDetails iosDetails =
+        DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBadge: true,
+    );
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _notifications.show(
+  id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+  title: title ?? 'New Notification',
+  body: body ?? '',
+  notificationDetails: details,
+  payload: data?.toString(),
+);
+
+
+    debugPrint('📬 Local notification shown');
+  }
+
+  /// ---------------- TAP HANDLER ----------------
+  static void _onNotificationTapped(NotificationResponse response) {
+    debugPrint('🔔 Notification tapped: ${response.payload}');
+  }
+}
+
+
+
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+// /// Local notification display for foreground FCM messages.
+// /// Handles Android notification channel and iOS permission.
 // class NotificationService {
 //   static final FlutterLocalNotificationsPlugin _notifications =
 //       FlutterLocalNotificationsPlugin();
 
-//   /// Initialize local notifications
+//   /// Initialize local notifications (call after WidgetsBinding, e.g. in main).
 //   static Future<void> initLocalNotification() async {
 //     try {
-//       // Android initialization settings
 //       const AndroidInitializationSettings androidSettings =
 //           AndroidInitializationSettings('@mipmap/ic_launcher');
 
-//       // iOS initialization settings
 //       const DarwinInitializationSettings iosSettings =
 //           DarwinInitializationSettings(
-//             requestAlertPermission: true,
-//             requestBadgePermission: true,
-//             requestSoundPermission: true,
-//           );
+//         requestAlertPermission: true,
+//         requestBadgePermission: true,
+//         requestSoundPermission: true,
+//       );
 
-//       // Combined initialization settings
 //       const InitializationSettings initSettings = InitializationSettings(
 //         android: androidSettings,
 //         iOS: iosSettings,
 //       );
 
-//       // Initialize the plugin
 //       await _notifications.initialize(
-//         initSettings,
+//         settings: initSettings,
 //         onDidReceiveNotificationResponse: _onNotificationTapped,
 //       );
 
-//       // Create Android notification channel
 //       await _createAndroidNotificationChannel();
 
-//       debugPrint('✅ Notification Service initialized');
+//       if (kDebugMode) {
+//         debugPrint('✅ Notification Service initialized');
+//       }
 //     } catch (e) {
-//       debugPrint('❌ Notification Service Error: $e');
+//       if (kDebugMode) {
+//         debugPrint('❌ Notification Service Error: $e');
+//       }
 //     }
 //   }
 
-//   /// Create Android notification channel
 //   static Future<void> _createAndroidNotificationChannel() async {
 //     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-//       'high_importance_channel', // Must match AndroidManifest.xml
+//       'high_importance_channel',
 //       'High Importance Notifications',
 //       description: 'This channel is used for important notifications.',
 //       importance: Importance.high,
@@ -54,26 +197,25 @@
 
 //     await _notifications
 //         .resolvePlatformSpecificImplementation<
-//           AndroidFlutterLocalNotificationsPlugin
-//         >()
+//             AndroidFlutterLocalNotificationsPlugin>()
 //         ?.createNotificationChannel(channel);
 //   }
 
-//   /// Show local notification
+//   /// Show local notification (e.g. when FCM message received in foreground).
 //   static Future<void> showNotification(Map<String, dynamic> payload) async {
 //     try {
 //       const AndroidNotificationDetails androidDetails =
 //           AndroidNotificationDetails(
-//             'high_importance_channel',
-//             'High Importance Notifications',
-//             channelDescription:
-//                 'This channel is used for important notifications.',
-//             importance: Importance.high,
-//             priority: Priority.high,
-//             enableVibration: true,
-//             playSound: true,
-//             icon: '@mipmap/ic_launcher',
-//           );
+//         'high_importance_channel',
+//         'High Importance Notifications',
+//         channelDescription:
+//             'This channel is used for important notifications.',
+//         importance: Importance.high,
+//         priority: Priority.high,
+//         enableVibration: true,
+//         playSound: true,
+//         icon: '@mipmap/ic_launcher',
+//       );
 
 //       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
 //         presentAlert: true,
@@ -86,23 +228,35 @@
 //         iOS: iosDetails,
 //       );
 
+//       final int id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+//       final String title = payload['message']?.toString() ?? 'New Notification';
+//       final String body = payload['type']?.toString() ?? '';
+//       final String? payloadStr = payload['data'] != null
+//           ? payload['data'].toString()
+//           : null;
+
 //       await _notifications.show(
-//         DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique notification ID
-//         payload['message'] ?? 'New Notification',
-//         payload['type'] ?? '',
-//         notificationDetails,
-//         payload: payload['data'].toString(),
+//         id: id,
+//         title: title,
+//         body: body,
+//         notificationDetails: notificationDetails,
+//         payload: payloadStr,
 //       );
 
-//       debugPrint('📬 Local notification shown');
+//       if (kDebugMode) {
+//         debugPrint('📬 Local notification shown');
+//       }
 //     } catch (e) {
-//       debugPrint('❌ Show notification error: $e');
+//       if (kDebugMode) {
+//         debugPrint('❌ Show notification error: $e');
+//       }
 //     }
 //   }
 
-//   /// Handle notification tap
 //   static void _onNotificationTapped(NotificationResponse response) {
-//     debugPrint('🔔 Notification tapped: ${response.payload}');
-//     // TODO: Add navigation logic based on payload
+//     if (kDebugMode) {
+//       debugPrint('🔔 Notification tapped: ${response.payload}');
+//     }
+//     // TODO: Navigate based on payload if needed
 //   }
 // }

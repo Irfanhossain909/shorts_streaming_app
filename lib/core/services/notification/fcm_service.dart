@@ -1,183 +1,199 @@
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:loyalty_customer/service/api_service/get_storage_services.dart';
-// import 'package:loyalty_customer/service/push_notification/notification_service.dart';
-// import 'package:loyalty_customer/widget/app_log/app_print.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
-// class FCMService {
-//   static final FirebaseMessaging _firebaseMessaging =
-//       FirebaseMessaging.instance;
+import '../storage/storage_services.dart';
+import '../storage/storage_keys.dart';
+import '../../utils/log/app_log.dart';
+import 'notification_service.dart';
 
-//   /// Initialize FCM service
-//   static Future<void> initialize() async {
-//     try {
-//       // Request permission for notifications
-//       await _requestPermission();
+/// Firebase Cloud Messaging service: token, permissions, foreground/background/terminated handling.
+class FCMService {
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
 
-//       // Get and display FCM token
-//       await getToken();
+  /// True when running on Android or iOS (not web). Use before initializing FCM.
+  static bool get isSupportedDevice {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
+  }
 
-//       // Setup message handlers
-//       _setupMessageHandlers();
+  /// Initialize FCM: request permission, get token, setup handlers, check initial message.
+  /// Call only after [Firebase.initializeApp]. No-op on web.
+  static Future<void> initialize() async {
+    if (!isSupportedDevice) {
+      if (kDebugMode) {
+        debugPrint('⏭️ FCM skipped: not Android/iOS (e.g. web)');
+      }
+      return;
+    }
+    try {
+      await _requestPermission();
+      await getToken();
+      _setupMessageHandlers();
+      await _checkInitialMessage();
+      if (kDebugMode) {
+        debugPrint('✅ FCM Service initialized');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ FCM Service initialization error: $e');
+      }
+    }
+  }
 
-//       // Check if app was opened from a notification (terminated state)
-//       await _checkInitialMessage();
+  /// Request notification permissions (iOS/Android, including Android 13+).
+  static Future<void> _requestPermission() async {
+    try {
+      final NotificationSettings settings = await _firebaseMessaging
+          .requestPermission(
+            alert: true,
+            badge: true,
+            sound: true,
+            provisional: false,
+            announcement: false,
+            carPlay: false,
+            criticalAlert: false,
+          );
 
-//       debugPrint('✅ FCM Service initialized');
-//     } catch (e) {
-//       debugPrint('❌ FCM Service initialization error: $e');
-//     }
-//   }
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        if (kDebugMode) debugPrint('✅ Notification permission granted');
+      } else if (settings.authorizationStatus ==
+          AuthorizationStatus.provisional) {
+        if (kDebugMode) debugPrint('⚠️ Notification permission provisional');
+      } else {
+        if (kDebugMode) debugPrint('❌ Notification permission denied');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Permission request error: $e');
+    }
+  }
 
-//   /// Request notification permissions (iOS/Android)
-//   static Future<void> _requestPermission() async {
-//     try {
-//       NotificationSettings settings = await _firebaseMessaging
-//           .requestPermission(
-//             alert: true,
-//             badge: true,
-//             sound: true,
-//             provisional: false,
-//             announcement: false,
-//             carPlay: false,
-//             criticalAlert: false,
-//           );
+  /// Get FCM token and save to local storage. Returns null on failure.
+  static Future<String?> getToken() async {
+    if (!isSupportedDevice) return null;
+    try {
+      String? token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        if (kDebugMode) debugPrint('📱 FCM Token: $token');
+        await LocalStorage.setString(LocalStorageKeys.fcmToken, token);
+        LocalStorage.fcmToken = token;
+        appLog('FCM Token: ${LocalStorage.fcmToken}', source: 'FCM');
+        _firebaseMessaging.onTokenRefresh.listen((String newToken) {
+          if (kDebugMode) debugPrint('🔄 FCM Token refreshed: $newToken');
+          LocalStorage.setString(LocalStorageKeys.fcmToken, newToken);
+          LocalStorage.fcmToken = newToken;
+        });
+        return token;
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Get token error: $e');
+    }
+    return null;
+  }
 
-//       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//         debugPrint('✅ Notification permission granted');
-//       } else if (settings.authorizationStatus ==
-//           AuthorizationStatus.provisional) {
-//         debugPrint('⚠️ Notification permission provisional');
-//       } else {
-//         debugPrint('❌ Notification permission denied');
-//       }
-//     } catch (e) {
-//       debugPrint('❌ Permission request error: $e');
-//     }
-//   }
+  /// Delete FCM token (e.g. on logout).
+  static Future<void> deleteToken() async {
+    if (!isSupportedDevice) return;
+    try {
+      await _firebaseMessaging.deleteToken();
+      await LocalStorage.setString(LocalStorageKeys.fcmToken, '');
+      LocalStorage.fcmToken = '';
+      if (kDebugMode) debugPrint('✅ FCM Token deleted');
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Delete token error: $e');
+    }
+  }
 
-//   /// Get FCM token
-//   static Future<String?> getToken() async {
-//     try {
-//       String? token = await _firebaseMessaging.getToken();
-//       if (token != null) {
-//         debugPrint('📱 FCM Token: $token');
-//         await GetStorageServices.instance.setFCMtoken(token);
-//         AppPrint.appPrint(
-//           "Get FCM Token: ${GetStorageServices.instance.getFCMtoken()}",
-//         );
-//         // Listen for token refresh
-//         _firebaseMessaging.onTokenRefresh.listen((newToken) {
-//           debugPrint('🔄 FCM Token refreshed: $newToken');
-//           // TODO: Send updated token to your backend
-//         });
+  static void _setupMessageHandlers() {
+    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
+  }
+  static void _handleForegroundMessage(RemoteMessage message) {
+  if (kDebugMode) {
+    debugPrint('📬 Foreground Message Received');
+    debugPrint('Title: ${message.notification?.title}');
+    debugPrint('Body: ${message.notification?.body}');
+    debugPrint('Data: ${message.data}');
+  }
 
-//         return token;
-//       }
-//     } catch (e) {
-//       debugPrint('❌ Get token error: $e');
-//     }
-//     return null;
-//   }
+  NotificationService.showNotification(
+    title: message.notification?.title ?? 'New Message',
+    body: message.notification?.body ?? '',
+    data: message.data,
+  );
+}
 
-//   /// Delete FCM token (call on user logout)
-//   static Future<void> deleteToken() async {
-//     try {
-//       await _firebaseMessaging.deleteToken();
-//       debugPrint('✅ FCM Token deleted');
-//     } catch (e) {
-//       debugPrint('❌ Delete token error: $e');
-//     }
-//   }
+  
 
-//   /// Setup message handlers for different app states
-//   static void _setupMessageHandlers() {
-//     // Foreground messages (app is open and visible)
-//     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+  // static void _handleForegroundMessage(RemoteMessage message) {
+  //   if (kDebugMode) {
+  //     debugPrint('📬 Foreground Message Received');
+  //     debugPrint('Title: ${message.notification?.title}');
+  //     debugPrint('Body: ${message.notification?.body}');
+  //     debugPrint('Data: ${message.data}');
+  //   }
+  //   NotificationService.showNotification({
+  //     'message': message.notification?.title ?? 'New Message',
+  //     'type': message.notification?.body ?? '',
+  //     'data': message.data,
+  //   });
+  // }
 
-//     // Background messages (app is minimized, user taps notification)
-//     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
-//   }
+  static void _handleMessageOpenedApp(RemoteMessage message) {
+    if (kDebugMode) {
+      debugPrint('🔔 Notification Opened');
+      debugPrint('Title: ${message.notification?.title}');
+      debugPrint('Body: ${message.notification?.body}');
+      debugPrint('Data: ${message.data}');
+    }
+    // TODO: Navigate based on message.data (e.g. type, orderId, chatId)
+  }
 
-//   /// Handle foreground messages (app is open)
-//   static void _handleForegroundMessage(RemoteMessage message) {
-//     debugPrint('📬 Foreground Message Received');
-//     debugPrint('Title: ${message.notification?.title}');
-//     debugPrint('Body: ${message.notification?.body}');
-//     debugPrint('Data: ${message.data}');
+  static Future<void> _checkInitialMessage() async {
+    try {
+      final RemoteMessage? initialMessage =
+          await _firebaseMessaging.getInitialMessage();
+      if (initialMessage != null) {
+        if (kDebugMode) {
+          debugPrint('🚀 App opened from terminated state');
+          debugPrint('Title: ${initialMessage.notification?.title}');
+          debugPrint('Body: ${initialMessage.notification?.body}');
+          debugPrint('Data: ${initialMessage.data}');
+        }
+        _handleMessageOpenedApp(initialMessage);
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Check initial message error: $e');
+    }
+  }
 
-//     // Show local notification when app is in foreground
-//     NotificationService.showNotification({
-//       'message': message.notification?.title ?? 'New Message',
-//       'type': message.notification?.body ?? '',
-//       'data': message.data,
-//     });
-//   }
+  static Future<void> subscribeToTopic(String topic) async {
+    if (!isSupportedDevice) return;
+    try {
+      await _firebaseMessaging.subscribeToTopic(topic);
+      if (kDebugMode) debugPrint('✅ Subscribed to topic: $topic');
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Subscribe to topic error: $e');
+    }
+  }
 
-//   /// Handle notification opened (app was in background)
-//   static void _handleMessageOpenedApp(RemoteMessage message) {
-//     debugPrint('🔔 Notification Opened');
-//     debugPrint('Title: ${message.notification?.title}');
-//     debugPrint('Body: ${message.notification?.body}');
-//     debugPrint('Data: ${message.data}');
+  static Future<void> unsubscribeFromTopic(String topic) async {
+    if (!isSupportedDevice) return;
+    try {
+      await _firebaseMessaging.unsubscribeFromTopic(topic);
+      if (kDebugMode) debugPrint('✅ Unsubscribed from topic: $topic');
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Unsubscribe from topic error: $e');
+    }
+  }
 
-//     // TODO: Navigate to specific screen based on notification data
-//     // Example:
-//     // final data = message.data;
-//     // if (data['type'] == 'order') {
-//     //   Get.toNamed('/order-details', arguments: {'orderId': data['orderId']});
-//     // } else if (data['type'] == 'chat') {
-//     //   Get.toNamed('/chat', arguments: {'chatId': data['chatId']});
-//     // }
-//   }
+  static Future<NotificationSettings> getNotificationSettings() async {
+    return _firebaseMessaging.getNotificationSettings();
+  }
 
-//   /// Check for initial message (app opened from terminated state)
-//   static Future<void> _checkInitialMessage() async {
-//     try {
-//       RemoteMessage? initialMessage = await _firebaseMessaging
-//           .getInitialMessage();
-
-//       if (initialMessage != null) {
-//         debugPrint('🚀 App opened from terminated state');
-//         debugPrint('Title: ${initialMessage.notification?.title}');
-//         debugPrint('Body: ${initialMessage.notification?.body}');
-//         debugPrint('Data: ${initialMessage.data}');
-
-//         // Handle the notification
-//         _handleMessageOpenedApp(initialMessage);
-//       }
-//     } catch (e) {
-//       debugPrint('❌ Check initial message error: $e');
-//     }
-//   }
-
-//   /// Subscribe to a topic
-//   static Future<void> subscribeToTopic(String topic) async {
-//     try {
-//       await _firebaseMessaging.subscribeToTopic(topic);
-//       debugPrint('✅ Subscribed to topic: $topic');
-//     } catch (e) {
-//       debugPrint('❌ Subscribe to topic error: $e');
-//     }
-//   }
-
-//   /// Unsubscribe from a topic
-//   static Future<void> unsubscribeFromTopic(String topic) async {
-//     try {
-//       await _firebaseMessaging.unsubscribeFromTopic(topic);
-//       debugPrint('✅ Unsubscribed from topic: $topic');
-//     } catch (e) {
-//       debugPrint('❌ Unsubscribe from topic error: $e');
-//     }
-//   }
-
-//   /// Get notification settings
-//   static Future<NotificationSettings> getNotificationSettings() async {
-//     return await _firebaseMessaging.getNotificationSettings();
-//   }
-
-//   /// iOS only: Get APNS token
-//   static Future<String?> getAPNSToken() async {
-//     return await _firebaseMessaging.getAPNSToken();
-//   }
-// }
+  static Future<String?> getAPNSToken() async {
+    if (!isSupportedDevice) return null;
+    return _firebaseMessaging.getAPNSToken();
+  }
+}

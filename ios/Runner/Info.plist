@@ -105,5 +105,12 @@
 	<!-- Go to: Target → Signing & Capabilities → Add Capability → Associated Domains -->
 	<!-- Add: applinks:api.creepy-shorts.com -->
 
+	<!-- Push notifications (FCM): background modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
 </dict>
 </plist>
