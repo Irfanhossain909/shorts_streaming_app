@@ -19,6 +19,7 @@ class ApiEndPoint {
   final String forgotPassword = "/auth/forget-password";
   // final String verifyOtp = "users/verify-otp";
   final String resetPassword = "/auth/reset-password";
+  final String googleLogin = "/auth/google-login";
   // final String changePassword = "users/change-password";
 
   //-------------Profile endpoints

@@ -191,46 +191,56 @@ class SignInScreen extends StatelessWidget {
                     24.height,
 
                     /// Social buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              controller.loginWithGoogle();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 18.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.w),
-                                color: AppColors.background,
+                    Obx(() {
+                      return controller.isGoogleLoading.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: CircularProgressIndicator(
+                                color: AppColors.white,
                               ),
-                              child: Center(
-                                child: CommonImage(
-                                  imageSrc: AppImages.google,
-                                  width: 24.w,
+                            )
+                          : Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  controller.loginWithGoogle();
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 18.h),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.w),
+                                    color: AppColors.background,
+                                  ),
+                                  child: Center(
+                                    child: CommonImage(
+                                      imageSrc: AppImages.google,
+                                      width: 24.w,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        12.width,
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 18.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.w),
-                              color: AppColors.blue,
-                            ),
-                            child: Center(
-                              child: CommonImage(
-                                imageSrc: AppImages.facebook,
-                                width: 24.w,
-                                imageColor: AppColors.background,
+                            12.width,
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 18.h),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.w),
+                                  color: AppColors.blue,
+                                ),
+                                child: Center(
+                                  child: CommonImage(
+                                    imageSrc: AppImages.facebook,
+                                    width: 24.w,
+                                    imageColor: AppColors.background,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                          ],
+                        );
+                      }
                     ),
                   ],
                 ),

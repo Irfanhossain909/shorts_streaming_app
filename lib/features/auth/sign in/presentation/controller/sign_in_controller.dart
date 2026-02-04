@@ -12,6 +12,7 @@ import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart'
 class SignInController extends GetxController {
   /// Auth Repository instance
   AuthRepository authRepository = AuthRepository.instance;
+  RxBool isGoogleLoading = false.obs;
 
   /// Sign in Button Loading variable
   RxBool isLoading = false.obs;
@@ -40,6 +41,7 @@ class SignInController extends GetxController {
   }
 
   Future<void> loginWithGoogle() async {
+    isGoogleLoading.value = true;
     try {
       final success = await googleAuthService.signIn();
 
@@ -48,16 +50,27 @@ class SignInController extends GetxController {
         return;
       }
 
-      // final idToken = googleAuthService.userData?.idToken;
+      final idToken = googleAuthService.userData?.firebaseIdToken;
 
-      // if (idToken == null || idToken.isEmpty) {
-      //   Utils.errorSnackBar(Get.context!, "Invalid Google token", "Google Sign In");
-      //   return;
-      // }
+      if (idToken == null || idToken.isEmpty) {
+        Utils.errorSnackBar(Get.context!, "Invalid Google token", "Google Sign In");
+        return;
+      }
 
-      // await googleAuth(idToken: idToken);
+      await googleLogin(idToken);
     } catch (e) {
       Utils.errorSnackBar(Get.context!, "Login failed. Please try again", "Google Sign In");
+    } finally {
+      isGoogleLoading.value = false;
+    }
+  }
+  Future<void> googleLogin(String idToken) async {
+    final response = await authRepository.googleLogin(idToken: idToken);
+    if (response) {
+      Utils.successSnackBar(Get.context!, "Google Login successful", "Google Login");
+      Get.offAllNamed(AppRoutes.navigation);
+    } else {
+      Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
     }
   }
 
