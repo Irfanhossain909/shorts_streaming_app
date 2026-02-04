@@ -223,17 +223,23 @@ class SignInScreen extends StatelessWidget {
                             ),
                             12.width,
                             Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 18.h),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.w),
-                                  color: AppColors.blue,
-                                ),
-                                child: Center(
-                                  child: CommonImage(
-                                    imageSrc: AppImages.facebook,
-                                    width: 24.w,
-                                    imageColor: AppColors.background,
+                              child: GestureDetector(
+                                onTap: () {
+                                  controller.loginWithApple();
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 18.h),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: AppColors.background),
+                                    borderRadius: BorderRadius.circular(12.w),
+                                    color: AppColors.black,
+                                  ),
+                                  child: Center(
+                                    child: CommonImage(
+                                      imageSrc: AppImages.apple,
+                                      width: 24.w,
+                                      imageColor: AppColors.background,
+                                    ),
                                   ),
                                 ),
                               ),

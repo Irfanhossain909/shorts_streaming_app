@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/services/google_auth_service/apple_auth_service.dart';
 import 'package:testemu/core/services/google_auth_service/google_auth_service.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
@@ -29,6 +30,41 @@ class SignInController extends GetxController {
   );
 
   Rxn<LoginsliderModel> loginSliderData = Rxn<LoginsliderModel>();
+
+  /// ---------------- APPLE SIGN IN ----------------
+  AppleAuthService appleAuthService = AppleAuthService();
+  Future<void> initializeApple() async {
+    try {
+      await appleAuthService.initialize();
+    } catch (e) {
+      Utils.errorSnackBar(Get.context!, "Apple service initialization failed", "Apple Sign In");
+    }
+  }
+
+  Future<void> loginWithApple() async {
+    isGoogleLoading.value = true;
+    try {
+      final success = await appleAuthService.signIn();
+
+      if (success == null) {
+        Utils.errorSnackBar(Get.context!, "Apple Sign In Failed", "Apple Sign In");
+        return;
+      }
+
+      final idToken = appleAuthService.userData?.firebaseIdToken;
+
+      if (idToken == null || idToken.isEmpty) {
+        Utils.errorSnackBar(Get.context!, "Invalid Apple token", "Apple Sign In");
+        return;
+      }
+
+      await googleLogin(idToken);
+    } catch (e) {
+      Utils.errorSnackBar(Get.context!, "Login failed. Please try again", "Apple Sign In");
+    } finally {
+      isGoogleLoading.value = false;
+    }
+  }
 
   // ---------------- GOOGLE SIGN IN ----------------
   GoogleAuthService googleAuthService = GoogleAuthService();
@@ -110,6 +146,7 @@ class SignInController extends GetxController {
     super.onInit();
     loginSlider();
     initializeGoogle();
+    initializeApple();
   }
 
   @override
