@@ -106,7 +106,7 @@ class FCMService {
   }
 
   static void _setupMessageHandlers() {
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    // FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
   }
   static void _handleForegroundMessage(RemoteMessage message) {

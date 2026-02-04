@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -67,7 +66,7 @@ class NotificationService {
       sound: true,
     );
 
-    /// 🔹 Foreground notification allow
+    /// 🔹 Foreground notification allow (iOS)
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
@@ -75,19 +74,7 @@ class NotificationService {
       sound: true,
     );
 
-    /// 🔹 Foreground message listener
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('📩 FCM Foreground Message Received');
-
-      if (Platform.isIOS || Platform.isAndroid) {
-        showNotification(
-          title: message.notification?.title,
-          body: message.notification?.body,
-          data: message.data,
-        );
-      }
-    });
-
+    /// Foreground message handled by FCMService - avoid duplicate notification
     debugPrint('✅ Firebase notification initialized');
   }
 
