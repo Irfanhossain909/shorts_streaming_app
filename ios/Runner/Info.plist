@@ -3,20 +3,39 @@
 <plist version="1.0">
 <dict>
 
+	<!-- ================= GOOGLE SIGN-IN (iOS) ================= -->
+
+	<key>GIDClientID</key>
+	<string>651738200724-olnoilujpcoindod17ut3e82hbma48pb.apps.googleusercontent.com</string>
 
 	<key>CFBundleURLTypes</key>
 	<array>
+
+		<!-- Google Sign-In URL Scheme -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.651738200724-c4ugcdsr08lit3lhsnp177l04md7o4gi</string>
+				<string>com.googleusercontent.apps.651738200724-olnoilujpcoindod17ut3e82hbma48pb</string>
 			</array>
 		</dict>
+
+		<!-- App Custom Deep Link Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.rubengalindo.creepyshorts</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>creepyshorts</string>
+			</array>
+		</dict>
+
 	</array>
 
-
+	<!-- ================= BASIC APP INFO ================= -->
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -34,7 +53,7 @@
 	<string>6.0</string>
 
 	<key>CFBundleName</key>
-	<string>testemu</string>
+	<string>CreepyShorts</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
@@ -42,11 +61,10 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 
-	<key>CFBundleSignature</key>
-	<string>????</string>
-
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
+	<!-- ================= UI / ORIENTATION ================= -->
 
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -78,34 +96,16 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
-	<!-- ✅ REQUIRED LOCATION PERMISSIONS (Apple Warning Fix) -->
+	<!-- ================= PERMISSIONS (Apple Review Safe) ================= -->
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location may be used to improve app performance and deliver better content experience.</string>
 
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location may be used to improve app performance and deliver better content experience.</string>
 
-	<!-- 🔗 Deep Link Configuration - Custom URL Scheme -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.victorsaulmendozamena.creepyshorts</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>creepyshorts</string>
-			</array>
-		</dict>
-	</array>
+	<!-- ================= PUSH NOTIFICATIONS (FCM) ================= -->
 
-	<!-- 🔗 Universal Links (HTTPS) Support -->
-	<!-- Note: You must also add Associated Domains in Xcode -->
-	<!-- Go to: Target → Signing & Capabilities → Add Capability → Associated Domains -->
-	<!-- Add: applinks:api.creepy-shorts.com -->
-
-	<!-- Push notifications (FCM): background modes -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

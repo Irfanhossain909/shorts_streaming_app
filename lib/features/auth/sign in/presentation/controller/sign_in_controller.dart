@@ -43,17 +43,17 @@ class SignInController extends GetxController {
     try {
       final success = await googleAuthService.signIn();
 
-      if (!success) {
+      if (success == null) {
         Utils.errorSnackBar(Get.context!, "Google Sign In Failed", "Google Sign In");
         return;
       }
 
-      final idToken = googleAuthService.userData?.idToken;
+      // final idToken = googleAuthService.userData?.idToken;
 
-      if (idToken == null || idToken.isEmpty) {
-        Utils.errorSnackBar(Get.context!, "Invalid Google token", "Google Sign In");
-        return;
-      }
+      // if (idToken == null || idToken.isEmpty) {
+      //   Utils.errorSnackBar(Get.context!, "Invalid Google token", "Google Sign In");
+      //   return;
+      // }
 
       // await googleAuth(idToken: idToken);
     } catch (e) {
