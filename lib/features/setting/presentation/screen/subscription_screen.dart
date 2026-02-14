@@ -20,6 +20,7 @@ class SubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SubscriptionController>(
+      init: SubscriptionController(),
       builder: (controller) {
         if (controller.status == Status.loading) {
           return const CommonLoader();

@@ -200,54 +200,65 @@ class SignInScreen extends StatelessWidget {
                               ),
                             )
                           : Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  controller.loginWithGoogle();
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 18.h),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.w),
-                                    color: AppColors.background,
-                                  ),
-                                  child: Center(
-                                    child: CommonImage(
-                                      imageSrc: AppImages.google,
-                                      width: 24.w,
+                              spacing: 12.w,
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.loginWithGoogle();
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 18.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          12.w,
+                                        ),
+                                        color: AppColors.background,
+                                      ),
+                                      child: Center(
+                                        child: CommonImage(
+                                          imageSrc: AppImages.google,
+                                          width: 24.w,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            12.width,
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  controller.loginWithApple();
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 18.h),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.background),
-                                    borderRadius: BorderRadius.circular(12.w),
-                                    color: AppColors.black,
-                                  ),
-                                  child: Center(
-                                    child: CommonImage(
-                                      imageSrc: AppImages.apple,
-                                      width: 24.w,
-                                      imageColor: AppColors.background,
+                                // 12.width,
+                                if (controller.platformType.value != "android")
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.loginWithApple();
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 18.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: AppColors.background,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12.w,
+                                          ),
+                                          color: AppColors.black,
+                                        ),
+                                        child: Center(
+                                          child: CommonImage(
+                                            imageSrc: AppImages.apple,
+                                            width: 24.w,
+                                            imageColor: AppColors.background,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    ),
+                              ],
+                            );
+                    }),
                   ],
                 ),
               );

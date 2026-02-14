@@ -1,0 +1,192 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+
+class SubscriptionService {
+  SubscriptionService._();
+  static final SubscriptionService _instance = SubscriptionService._();
+  static SubscriptionService get instance => _instance;
+
+  /// InAppPurchase instance
+  final InAppPurchase _iap = InAppPurchase.instance;
+
+  StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
+
+  bool _isAvailable = false;
+  bool _isSubscribed = false;
+
+  bool get isSubscribed => _isSubscribed;
+
+  /// ===============================
+  /// INIT (Call Once on App Start)
+  /// ===============================
+  Future<void> init({
+    required List<String> productIds,
+  }) async {
+    try {
+      if (!(Platform.isAndroid || Platform.isIOS)) {
+        debugPrint("❌ Platform not supported");
+        return;
+      }
+
+      /// 1️⃣ Check IAP availability
+      _isAvailable = await _iap.isAvailable();
+
+      if (!_isAvailable) {
+        debugPrint("❌ IAP not available");
+        return;
+      }
+
+      debugPrint("✅ IAP Available");
+
+      /// 2️⃣ Listen Purchase Stream
+      _purchaseSubscription =
+          _iap.purchaseStream.listen(_handlePurchaseUpdates,
+              onDone: () => _purchaseSubscription?.cancel(),
+              onError: (error) {
+                debugPrint("🔥 Stream Error: $error");
+              });
+
+      /// 3️⃣ Fetch Products
+      await loadProducts(productIds: productIds);
+
+      /// 4️⃣ Restore Previous Purchases
+      await restorePurchases();
+    } catch (e) {
+      debugPrint("🔥 Init Exception: $e");
+    }
+  }
+
+  /// ===============================
+  /// LOAD PRODUCTS
+  /// ===============================
+  Future<List<ProductDetails>> loadProducts({
+    required List<String> productIds,
+  }) async {
+    try {
+      final Set<String> ids = productIds.toSet();
+
+      final ProductDetailsResponse response =
+          await _iap.queryProductDetails(ids);
+
+      if (response.error != null) {
+        debugPrint("❌ Product Fetch Error: ${response.error}");
+        return [];
+      }
+
+      if (response.productDetails.isEmpty) {
+        debugPrint("⚠️ No products found");
+        return [];
+      }
+
+      for (var product in response.productDetails) {
+        debugPrint("-------- PRODUCT --------");
+        debugPrint("ID: ${product.id}");
+        debugPrint("Title: ${product.title}");
+        debugPrint("Price: ${product.price}");
+        debugPrint("--------------------------");
+      }
+
+      return response.productDetails;
+    } catch (e) {
+      debugPrint("🔥 Load Exception: $e");
+      return [];
+    }
+  }
+
+  /// ===============================
+  /// BUY SUBSCRIPTION
+  /// ===============================
+  Future<void> buy(ProductDetails product) async {
+    try {
+      final PurchaseParam purchaseParam =
+          PurchaseParam(productDetails: product);
+
+      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    } catch (e) {
+      debugPrint("🔥 Buy Exception: $e");
+    }
+  }
+
+  /// ===============================
+  /// RESTORE PURCHASES
+  /// ===============================
+  Future<void> restorePurchases() async {
+    try {
+      debugPrint("🔄 Restoring purchases...");
+      await _iap.restorePurchases();
+    } catch (e) {
+      debugPrint("🔥 Restore Exception: $e");
+    }
+  }
+
+  /// ===============================
+  /// HANDLE PURCHASE UPDATES
+  /// ===============================
+  void _handlePurchaseUpdates(
+      List<PurchaseDetails> purchaseDetailsList) async {
+    for (final purchase in purchaseDetailsList) {
+      switch (purchase.status) {
+        case PurchaseStatus.pending:
+          debugPrint("⏳ Purchase Pending...");
+          break;
+
+        case PurchaseStatus.purchased:
+        case PurchaseStatus.restored:
+          bool valid = await _verifyPurchase(purchase);
+
+          if (valid) {
+            _deliverProduct(purchase);
+          } else {
+            debugPrint("❌ Invalid purchase");
+          }
+          break;
+
+        case PurchaseStatus.error:
+          debugPrint("❌ Purchase Error: ${purchase.error}");
+          break;
+
+        case PurchaseStatus.canceled:
+          debugPrint("⚠️ Purchase Cancelled");
+          break;
+      }
+
+      /// IMPORTANT: Complete purchase
+      if (purchase.pendingCompletePurchase) {
+        await _iap.completePurchase(purchase);
+      }
+    }
+  }
+
+  /// ===============================
+  /// VERIFY PURCHASE (Server Ready)
+  /// ===============================
+  Future<bool> _verifyPurchase(PurchaseDetails purchase) async {
+    debugPrint("🔍 Verifying purchase...");
+
+    // 🔥 Production:
+    // Send purchase.verificationData.serverVerificationData
+    // to backend and verify with Apple/Google
+
+    return true; // Temporary true
+  }
+
+  /// ===============================
+  /// DELIVER PRODUCT
+  /// ===============================
+  void _deliverProduct(PurchaseDetails purchase) {
+    debugPrint("🎉 Subscription Activated: ${purchase.productID}");
+
+    _isSubscribed = true;
+
+    // এখানে তোমার premium unlock logic দাও
+  }
+
+  /// ===============================
+  /// DISPOSE
+  /// ===============================
+  void dispose() {
+    _purchaseSubscription?.cancel();
+  }
+}

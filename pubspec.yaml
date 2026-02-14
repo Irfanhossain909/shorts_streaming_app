@@ -79,6 +79,7 @@ dependencies:
   app_links: ^6.3.2
   fluttertoast: ^9.0.0
   google_sign_in: ^7.2.0
+  in_app_purchase: ^3.2.3
 
 
 dev_dependencies:
