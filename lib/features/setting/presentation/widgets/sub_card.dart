@@ -7,7 +7,8 @@ import 'package:testemu/features/setting/data/model/subscription_model.dart';
 
 class SubCard extends StatelessWidget {
   final SubscriptionData subscription;
-  const SubCard({super.key, required this.subscription});
+  final VoidCallback? onTap;
+  const SubCard({super.key, required this.subscription, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +49,7 @@ class SubCard extends StatelessWidget {
             color: AppColors.background,
           ),
           CommonButton(
+            onTap: onTap,
             isGradient: false,
             borderColor: AppColors.buton,
             buttonColor: AppColors.buton,

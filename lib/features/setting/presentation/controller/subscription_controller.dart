@@ -18,15 +18,15 @@ class SubscriptionController extends GetxController {
   @override
   void onInit() {
     getSubscriptionRepo();
-    loadSubscriptions();
+
     super.onInit();
   }
 
   /// Initialize subscription service
   final SubscriptionService subscriptionService = SubscriptionService.instance;
 
-  void loadSubscriptions() async {
-    await subscriptionService.init(productIds: ['basic_1_month']);
+  void loadSubscriptions({required List<String> productId}) async {
+    await subscriptionService.init(productIds: productId);
 
     final products = subscriptionService.products;
 
@@ -37,8 +37,14 @@ class SubscriptionController extends GetxController {
         print("🟢 Product ID: ${product.id}");
         print("Title: ${product.title}");
         print("Price: ${product.price}");
+        print("Price: ${product.currencyCode}");
+        print("Price: ${product.currencySymbol}");
       }
     }
+  }
+
+  void buySubscription(String productId) async {
+    await subscriptionService.buySubscription(productId);
   }
 
   /// Get subscription repository
@@ -48,6 +54,11 @@ class SubscriptionController extends GetxController {
     final response = await settingRepository.getSubscription();
     if (response.success == true) {
       subscriptions = response.data ?? [];
+      loadSubscriptions(
+        productId: ["basic_1_month"],
+        // productId: subscriptions.map((e) => e.id ?? '').toList(),
+      );
+      
       appLog(subscriptions.length.toString(), source: "Get Subscription");
       appLog(subscriptions.toString(), source: "Get Subscription");
       status = Status.completed;
