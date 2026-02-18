@@ -21,51 +21,64 @@ class ComingSoonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Show shimmer while loading
+      /// 🔹 LOADING STATE
       if (controller.isLoading.value) {
-        return Column(
-          children: [
-            SectionHeader(title: 'Coming Soon'),
-            20.height,
-            const HorizontalListShimmer(itemCount: 3, itemHeight: 320),
-            30.height,
-            SectionHeader(title: 'New Release'),
-            20.height,
-            const MoviesGridShimmer(itemCount: 6),
-          ],
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionHeader(title: 'Coming Soon'),
+              20.height,
+              const HorizontalListShimmer(
+                itemCount: 3,
+                itemHeight: 320,
+              ),
+              30.height,
+              SectionHeader(title: 'New Release'),
+              20.height,
+              const MoviesGridShimmer(itemCount: 6),
+            ],
+          ),
         );
       }
 
-      final List<Movie> movies = controller.filteredMoviesBySelectedCategory;
-      return Column(
-        children: [
-          // Coming Soon Section
-          SectionHeader(title: 'Coming Soon'),
+      final List<Movie> movies =
+          controller.filteredMoviesBySelectedCategory;
 
-          20.height,
+      /// 🔹 MAIN SCROLL VIEW
+      return SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Coming Soon
+            SectionHeader(title: 'Coming Soon'),
+            20.height,
+            _buildComingSoonMovies(),
 
-          _buildComingSoonMovies(),
+            30.height,
 
-          30.height,
+            /// New Release
+            SectionHeader(title: 'New Release'),
+            20.height,
+            _buildNewReleaseMovies(movies),
 
-          // New Release Section
-          SectionHeader(title: 'New Release'),
-
-          20.height,
-
-          _buildNewReleaseMovies(movies),
-        ],
+            40.height,
+          ],
+        ),
       );
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // Coming Soon (Horizontal scroll OK)
+  // ---------------------------------------------------------------------------
   Widget _buildComingSoonMovies() {
     return SizedBox(
       height: 320.h,
       child: ListView.builder(
-        addRepaintBoundaries: true,
-        addAutomaticKeepAlives: false,
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(), // horizontal scroll allowed
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: controller.reminders.length,
         itemBuilder: (context, index) {
@@ -83,35 +96,35 @@ class ComingSoonSection extends StatelessWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // New Release (❌ Grid scroll disabled, parent scroll handles everything)
+  // ---------------------------------------------------------------------------
   Widget _buildNewReleaseMovies(List<Movie> movies) {
-    return SizedBox(
-      height: 700.h,
-      child: GridView.builder(
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 4.w,
-          mainAxisSpacing: 4.h,
-          childAspectRatio: 0.6,
-        ),
-        itemCount: movies.length,
-        itemBuilder: (context, index) {
-          final movie = movies[index];
-          return Container(
-            margin: EdgeInsets.only(right: 12.w),
-            child: TopChartCard(
-              title: movie.title,
-              imageUrl: OtherHelper.getImageUrl(
-                movie.thumbnail,
-                defaultAsset: AppImages.m1,
-              ),
-              view: movie.totalViews.toString(),
-              onTap: () => controller.onMovieTap(movie.id),
-            ),
-          );
-        },
+    return GridView.builder(
+      shrinkWrap: true, // 🔥 important
+      physics: const NeverScrollableScrollPhysics(), // 🔥 disable grid scroll
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 4.w,
+        mainAxisSpacing: 4.h,
+        childAspectRatio: 0.6,
       ),
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        final movie = movies[index];
+        return TopChartCard(
+          title: movie.title,
+          imageUrl: OtherHelper.getImageUrl(
+            movie.thumbnail,
+            defaultAsset: AppImages.m1,
+          ),
+          view: movie.totalViews.toString(),
+          onTap: () => controller.onMovieTap(movie.id),
+        );
+      },
     );
   }
 }
+
+

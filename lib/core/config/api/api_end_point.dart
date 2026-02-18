@@ -19,6 +19,7 @@ class ApiEndPoint {
   final String forgotPassword = "/auth/forget-password";
   // final String verifyOtp = "users/verify-otp";
   final String resetPassword = "/auth/reset-password";
+  final String googleLogin = "/auth/google-login";
   // final String changePassword = "users/change-password";
 
   //-------------Profile endpoints
@@ -27,6 +28,7 @@ class ApiEndPoint {
   //------------Core App endpoints
   final String settings = "/settings";
   final String subscription = "/package/users-package";
+  final String verifyPurchase = "/subscription/create-iap-subscription";
   final String getCategories = "/category";
   final String getTrailers = "/trailer/all-trailers";
   final String getAllMovies = "/movies/get-movies-for-user";
@@ -43,18 +45,22 @@ class ApiEndPoint {
   // // App endpoints
   final String user = "users";
   final String notifications = "/notification";
-  String readNotification({required String notificationId}) => "/notification/$notificationId/read";
+  String readNotification({required String notificationId}) =>
+      "/notification/$notificationId/read";
   final String privacyPolicies = "privacy-policies";
   final String termsOfServices = "terms-and-conditions";
   final String chats = "chats";
   final String messages = "messages";
   final String userAgreement = "user-agreement";
   final String deleteAccount = "/users/delete-account";
+
+  final String loginSlider = "/dynamic-content/key/login";
 }
 
 // Helper function to get domain based on environment
 String _getDomain() {
   String liveServer = "http://72.62.164.122:5000";
+  // String localServer = "https://rakibur5002.binarybards.online";
   String localServer = "http://72.62.164.122:5000";
 
   try {

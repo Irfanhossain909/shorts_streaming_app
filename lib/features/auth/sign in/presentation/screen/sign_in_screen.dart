@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:testemu/core/component/appbar/common_app_bar.dart';
-import 'package:testemu/core/component/button/common_button_pro.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
@@ -12,6 +11,7 @@ import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_account.dart';
 import '../controller/sign_in_controller.dart';
 
@@ -25,8 +25,16 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
 
-      appBar: const CommonAppBar(isShowBackButton: false, title: ""),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: CustomGrediantForAllScreen(),
+        title: CommonImage(width: 135.w, imageSrc: AppImages.appLogoSvg),
+        toolbarHeight: 100.h,
+      ),
 
+      // appBar: const CommonAppBar(isShowBackButton: false, title: ""),
       bottomNavigationBar: const SafeArea(child: DoNotHaveAccount()),
 
       body: ScrollConfiguration(
@@ -35,40 +43,76 @@ class SignInScreen extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: GetBuilder<SignInController>(
             builder: (controller) {
               return Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    24.height,
+                    SizedBox(
+                      height: 250.h,
+                      child: Obx(() {
+                        if (controller.isLoadingSlider.value) {
+                          return Column(
+                            children: [
+                              CommonText(
+                                text: "Let's Get Started!",
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                              CommonText(
+                                text: "Let's dive in into your account",
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                            ],
+                          );
+                        }
+                        if (controller
+                                .loginSliderData
+                                .value
+                                ?.data
+                                ?.images
+                                ?.isEmpty ??
+                            true) {
+                          return const Center(child: Text("No Data"));
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller
+                              .loginSliderData
+                              .value
+                              ?.data
+                              ?.images
+                              ?.length,
+                          itemBuilder: (context, index) {
+                            final image = controller
+                                .loginSliderData
+                                .value
+                                ?.data
+                                ?.images?[index];
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30.r),
+                                child: CommonImage(
+                                  height: 200.h,
+                                  width: 120.w,
 
-                    /// Logo + Title
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 18.h),
-                      child: Column(
-                        children: [
-                          CommonImage(
-                            width: 120.w,
-                            height: 120.h,
-                            imageSrc: AppImages.appLogoSvg,
-                          ),
-                          CommonText(
-                            text: "Let's Get Started!",
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background,
-                          ),
-                          CommonText(
-                            text: "Let's dive in into your account",
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background,
-                          ),
-                        ],
-                      ),
+                                  imageSrc: OtherHelper.getImageUrl(
+                                    image,
+                                    defaultAsset: AppImages.m4,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
                     ),
 
                     24.height,
@@ -76,11 +120,11 @@ class SignInScreen extends StatelessWidget {
                     /// Email
                     CommonTextField(
                       controller: controller.emailController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       borderRadius: 30.w,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       hintText: AppString.email,
                       validator: OtherHelper.emailValidator,
                     ),
@@ -90,11 +134,11 @@ class SignInScreen extends StatelessWidget {
                     /// Password
                     CommonTextField(
                       controller: controller.passwordController,
-                      borderColor: AppColors.background,
+                      borderColor: AppColors.buton,
                       textColor: AppColors.background,
                       hintTextColor: AppColors.background,
                       borderRadius: 30.w,
-                      fillColor: AppColors.background.withValues(alpha: 0.3),
+                      fillColor: AppColors.buton,
                       isPassword: true,
                       hintText: AppString.password,
                       // validator: OtherHelper.passwordValidator,
@@ -125,14 +169,14 @@ class SignInScreen extends StatelessWidget {
                                 color: AppColors.white,
                               ),
                             )
-                          : CommonButtonPro(
+                          : CommonButton(
+                              titleText: "Sign In",
                               onTap: () {
                                 FocusScope.of(
                                   context,
                                 ).unfocus(); // ✅ keyboard close safe
                                 controller.signInUser(formKey: _formKey);
                               },
-                              text: "Sign In",
                             );
                     }),
 
@@ -147,42 +191,74 @@ class SignInScreen extends StatelessWidget {
                     24.height,
 
                     /// Social buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 18.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.w),
-                              color: AppColors.background,
-                            ),
-                            child: Center(
-                              child: CommonImage(
-                                imageSrc: AppImages.google,
-                                width: 24.w,
+                    Obx(() {
+                      return controller.isGoogleLoading.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: CircularProgressIndicator(
+                                color: AppColors.white,
                               ),
-                            ),
-                          ),
-                        ),
-                        12.width,
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 18.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.w),
-                              color: AppColors.blue,
-                            ),
-                            child: Center(
-                              child: CommonImage(
-                                imageSrc: AppImages.facebook,
-                                width: 24.w,
-                                imageColor: AppColors.background,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                            )
+                          : Row(
+                              spacing: 12.w,
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.loginWithGoogle();
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 18.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          12.w,
+                                        ),
+                                        color: AppColors.background,
+                                      ),
+                                      child: Center(
+                                        child: CommonImage(
+                                          imageSrc: AppImages.google,
+                                          width: 24.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // 12.width,
+                                if (controller.platformType.value != "android")
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.loginWithApple();
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 18.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: AppColors.background,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12.w,
+                                          ),
+                                          color: AppColors.black,
+                                        ),
+                                        child: Center(
+                                          child: CommonImage(
+                                            imageSrc: AppImages.apple,
+                                            width: 24.w,
+                                            imageColor: AppColors.background,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                    }),
                   ],
                 ),
               );

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -114,19 +115,13 @@ class VerifyScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           fieldHeight: 60.h,
                           fieldWidth: 50.w,
-                          activeFillColor: AppColors.white.withValues(
-                            alpha: .4,
-                          ),
-                          selectedFillColor: AppColors.white.withValues(
-                            alpha: .4,
-                          ),
-                          inactiveFillColor: AppColors.white.withValues(
-                            alpha: .4,
-                          ),
+                          activeFillColor: AppColors.buton,
+                          selectedFillColor: AppColors.buton,
+                          inactiveFillColor: AppColors.buton,
                           borderWidth: 0.5,
-                          selectedColor: AppColors.white,
-                          activeColor: AppColors.white,
-                          inactiveColor: AppColors.white,
+                          selectedColor: AppColors.white.withValues(alpha: .4),
+                          activeColor: AppColors.buttonColor2,
+                          inactiveColor: AppColors.buton,
                         ),
                       ),
                     ),
@@ -140,6 +135,7 @@ class VerifyScreen extends StatelessWidget {
                           : null,
                       child: CommonText(
                         color: AppColors.background,
+                        
                         fontSize: controller.time == '00:00' ? 14.sp : 16.sp,
                         text: controller.time == '00:00'
                             ? "If you didn't receive a ${AppString.resendCode}"
@@ -153,8 +149,8 @@ class VerifyScreen extends StatelessWidget {
                     Obx(() {
                       return controller.isLoadingVerify.value
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : CommonButtonPro(
-                              text: "Get Verification Code",
+                          : CommonButton(
+                              titleText: "Get Verification Code",
                               onTap: () {
                                 if (_formKey.currentState!.validate()) {
                                   controller.verifyOtpRepo();

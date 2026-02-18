@@ -20,6 +20,7 @@ class SubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SubscriptionController>(
+      init: SubscriptionController(),
       builder: (controller) {
         if (controller.status == Status.loading) {
           return const CommonLoader();
@@ -79,7 +80,16 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                     items: controller.subscriptions
                         .map(
-                          (subscription) => SubCard(subscription: subscription),
+                          (subscription) {
+                            // Get the correct product ID based on platform
+                            final productId = controller.getProductDetails(subscription)?.id ??
+                                (subscription.googleProductId ?? subscription.appleProductId ?? '');
+                            
+                            return SubCard(
+                              onTap: () => controller.buySubscription(productId),
+                              subscription: subscription,
+                            );
+                          },
                         )
                         .toList(),
                   ),
