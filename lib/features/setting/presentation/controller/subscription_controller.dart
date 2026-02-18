@@ -87,15 +87,32 @@ class SubscriptionController extends GetxController {
   /// Verify purchase with backend API
   Future<void> _verifyPurchaseWithAPI(PurchaseDetails purchase) async {
     try {
-      // Get product details to get price
-      final productDetails = productDetailsMap[purchase.productID];
-      final price = productDetails?.price ?? "";
-      
+      // Currently we only send verification to backend for Android.
+      // iOS flow will be wired later after backend confirmation.
+      if (!Platform.isAndroid) {
+        appLog(
+          "ℹ️ Purchase verification is currently implemented only for Android. "
+          "iOS payload preview => provider: apple, productId: ${purchase.productID}",
+          source: "Verify Purchase",
+        );
+        return;
+      }
+
+      // Find matching subscription to get numeric price from API data
+      double? price;
+      for (final sub in subscriptions) {
+        final googleId = sub.googleProductId;
+        if (googleId != null && googleId.isNotEmpty && googleId == purchase.productID) {
+          price = sub.price;
+          break;
+        }
+      }
+
       final response = await subscriptionRepository.verifyPurchase(
-        provider: purchase.verificationData.source,
+        provider: "google",
         productId: purchase.productID,
         purchaseToken: purchase.verificationData.serverVerificationData,
-        packageName: Platform.isAndroid ? "com.rubengalindo.creepyshorts" : null,
+        packageName: "com.rubengalindo.creepyshorts",
         price: price,
       );
       

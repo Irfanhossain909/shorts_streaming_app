@@ -60,6 +60,7 @@ class ApiEndPoint {
 // Helper function to get domain based on environment
 String _getDomain() {
   String liveServer = "http://72.62.164.122:5000";
+  // String localServer = "https://rakibur5002.binarybards.online";
   String localServer = "http://72.62.164.122:5000";
 
   try {

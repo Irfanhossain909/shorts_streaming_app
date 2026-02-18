@@ -14,7 +14,7 @@ class SubscriptionRepository {
     String? productId,
     String? purchaseToken,
     String? packageName,
-    String? price,
+    double? price,
   }) async {
     try {
       final response = await apiService.post(
