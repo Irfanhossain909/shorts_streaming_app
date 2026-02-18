@@ -80,13 +80,16 @@ class SubscriptionScreen extends StatelessWidget {
                     ),
                     items: controller.subscriptions
                         .map(
-                          (subscription) => SubCard(
-                            onTap: () => controller.buySubscription(
-                              "basic_1_month",
-                              // subscription.id ?? '',
-                            ),
-                            subscription: subscription,
-                          ),
+                          (subscription) {
+                            // Get the correct product ID based on platform
+                            final productId = controller.getProductDetails(subscription)?.id ??
+                                (subscription.googleProductId ?? subscription.appleProductId ?? '');
+                            
+                            return SubCard(
+                              onTap: () => controller.buySubscription(productId),
+                              subscription: subscription,
+                            );
+                          },
                         )
                         .toList(),
                   ),

@@ -28,6 +28,7 @@ class ApiEndPoint {
   //------------Core App endpoints
   final String settings = "/settings";
   final String subscription = "/package/users-package";
+  final String verifyPurchase = "/subscription/create-iap-subscription";
   final String getCategories = "/category";
   final String getTrailers = "/trailer/all-trailers";
   final String getAllMovies = "/movies/get-movies-for-user";

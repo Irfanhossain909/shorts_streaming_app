@@ -19,6 +19,12 @@ class SubscriptionService {
 
   List<ProductDetails> _products = [];
 
+  /// Callback to notify when purchase succeeds
+  Function(PurchaseDetails)? onPurchaseSuccess;
+  
+  /// Callback to notify when purchases are restored
+  Function(List<PurchaseDetails>)? onPurchasesRestored;
+
   bool get isSubscribed => _isSubscribed;
   List<ProductDetails> get products => _products;
 
@@ -95,46 +101,46 @@ class SubscriptionService {
   /// ===============================
   /// BUY SUBSCRIPTION
   /// ===============================
-  Future<void> buySubscription(String productId) async {
-    try {
-      if (_products.isEmpty) {
-        debugPrint("❌ Products not loaded");
-        return;
-      }
-
-      final product = _products.firstWhere(
-        (p) => p.id == productId,
-        orElse: () => throw Exception("Product not found"),
-      );
-
-      final PurchaseParam purchaseParam = PurchaseParam(
-        productDetails: product,
-      );
-
-      bool success = await _iap.buyNonConsumable(purchaseParam: purchaseParam);
-
-      debugPrint("🚀 Purchase flow started: $success");
-    } catch (e) {
-      debugPrint("🔥 Buy Exception: $e");
-    }
-  }
-
   // Future<void> buySubscription(String productId) async {
   //   try {
-  //     final product = _products.firstWhere((p) => p.id == productId);
+  //     if (_products.isEmpty) {
+  //       debugPrint("❌ Products not loaded");
+  //       return;
+  //     }
+
+  //     final product = _products.firstWhere(
+  //       (p) => p.id == productId,
+  //       orElse: () => throw Exception("Product not found"),
+  //     );
 
   //     final PurchaseParam purchaseParam = PurchaseParam(
   //       productDetails: product,
   //     );
 
-  //     /// For subscription (Android + iOS)
-  //     await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+  //     bool success = await _iap.buyNonConsumable(purchaseParam: purchaseParam);
 
-  //     debugPrint("🚀 Purchase flow started");
+  //     debugPrint("🚀 Purchase flow started: $success");
   //   } catch (e) {
   //     debugPrint("🔥 Buy Exception: $e");
   //   }
   // }
+
+  Future<void> buySubscription(String productId) async {
+    try {
+      final product = _products.firstWhere((p) => p.id == productId);
+
+      final PurchaseParam purchaseParam = PurchaseParam(
+        productDetails: product,
+      );
+
+      /// For subscription (Android + iOS)
+      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+
+      debugPrint("🚀 Purchase flow started");
+    } catch (e) {
+      debugPrint("🔥 Buy Exception: $e");
+    }
+  }
 
   /// ===============================
   /// RESTORE PURCHASES
@@ -152,6 +158,8 @@ class SubscriptionService {
   /// HANDLE PURCHASE UPDATES
   /// ===============================
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> restoredPurchases = [];
+    
     for (final purchase in purchaseDetailsList) {
       switch (purchase.status) {
         case PurchaseStatus.pending:
@@ -164,6 +172,11 @@ class SubscriptionService {
 
           if (valid) {
             _deliverProduct(purchase);
+            
+            // Track restored purchases separately
+            if (purchase.status == PurchaseStatus.restored) {
+              restoredPurchases.add(purchase);
+            }
           } else {
             debugPrint("❌ Invalid purchase");
           }
@@ -181,6 +194,11 @@ class SubscriptionService {
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
       }
+    }
+    
+    // Notify about restored purchases
+    if (restoredPurchases.isNotEmpty) {
+      onPurchasesRestored?.call(restoredPurchases);
     }
   }
 
@@ -204,6 +222,9 @@ class SubscriptionService {
     debugPrint("🎉 Subscription Activated: ${purchase.productID}");
 
     _isSubscribed = true;
+
+    /// Notify controller about successful purchase
+    onPurchaseSuccess?.call(purchase);
 
     /// TODO:
     /// Save subscription status to local storage
