@@ -1,9 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
-import '../storage/storage_services.dart';
-import '../storage/storage_keys.dart';
 import '../../utils/log/app_log.dart';
+import '../storage/storage_keys.dart';
+import '../storage/storage_services.dart';
 import 'notification_service.dart';
 
 /// Firebase Cloud Messaging service: token, permissions, foreground/background/terminated handling.
@@ -109,22 +109,22 @@ class FCMService {
     // FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageOpenedApp);
   }
+
+  // ignore: unused_element
   static void _handleForegroundMessage(RemoteMessage message) {
-  if (kDebugMode) {
-    debugPrint('📬 Foreground Message Received');
-    debugPrint('Title: ${message.notification?.title}');
-    debugPrint('Body: ${message.notification?.body}');
-    debugPrint('Data: ${message.data}');
+    if (kDebugMode) {
+      debugPrint('📬 Foreground Message Received');
+      debugPrint('Title: ${message.notification?.title}');
+      debugPrint('Body: ${message.notification?.body}');
+      debugPrint('Data: ${message.data}');
+    }
+
+    NotificationService.showNotification(
+      title: message.notification?.title ?? 'New Message',
+      body: message.notification?.body ?? '',
+      data: message.data,
+    );
   }
-
-  NotificationService.showNotification(
-    title: message.notification?.title ?? 'New Message',
-    body: message.notification?.body ?? '',
-    data: message.data,
-  );
-}
-
-  
 
   // static void _handleForegroundMessage(RemoteMessage message) {
   //   if (kDebugMode) {
@@ -152,8 +152,8 @@ class FCMService {
 
   static Future<void> _checkInitialMessage() async {
     try {
-      final RemoteMessage? initialMessage =
-          await _firebaseMessaging.getInitialMessage();
+      final RemoteMessage? initialMessage = await _firebaseMessaging
+          .getInitialMessage();
       if (initialMessage != null) {
         if (kDebugMode) {
           debugPrint('🚀 App opened from terminated state');

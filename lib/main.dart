@@ -15,7 +15,7 @@ import 'core/services/notification/notification_service.dart';
 import 'core/services/storage/storage_services.dart';
 import 'firebase_options.dart';
 
-/// 🔥 Top-level background message handler
+/// 🔥 Top-level background message handlerd
 /// This MUST be a top-level function (not inside a class)
 /// Called when app receives notification in terminated/background state
 @pragma('vm:entry-point')
