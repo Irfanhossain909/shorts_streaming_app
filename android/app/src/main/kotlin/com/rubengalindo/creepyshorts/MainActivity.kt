@@ -1,4 +1,4 @@
-package com.victorsaulmendozamena.creepyshorts
+package com.rubengalindo.creepyshorts
 
 import android.os.Bundle
 import android.view.WindowManager

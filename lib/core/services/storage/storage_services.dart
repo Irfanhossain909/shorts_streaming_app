@@ -9,6 +9,7 @@ import 'storage_keys.dart';
 class LocalStorage {
   static String token = "";
   static String refreshToken = "";
+  static String fcmToken = "";
   static bool isLogIn = false;
   static String userId = "";
   static String myImage = "";
@@ -31,6 +32,7 @@ class LocalStorage {
 
     token = localStorage.getString(LocalStorageKeys.token) ?? "";
     refreshToken = localStorage.getString(LocalStorageKeys.refreshToken) ?? "";
+    fcmToken = localStorage.getString(LocalStorageKeys.fcmToken) ?? "";
     isLogIn = localStorage.getBool(LocalStorageKeys.isLogIn) ?? false;
     userId = localStorage.getString(LocalStorageKeys.userId) ?? "";
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
@@ -61,6 +63,7 @@ class LocalStorage {
     if (preferences != null) {
       preferences!.setString(LocalStorageKeys.token, "");
       preferences!.setString(LocalStorageKeys.refreshToken, "");
+      preferences!.setString(LocalStorageKeys.fcmToken, "");
       preferences!.setString(LocalStorageKeys.userId, "");
       preferences!.setString(LocalStorageKeys.myImage, "");
       preferences!.setString(LocalStorageKeys.myName, "");
@@ -80,6 +83,8 @@ class LocalStorage {
       token = value;
     } else if (key == LocalStorageKeys.refreshToken) {
       refreshToken = value;
+    } else if (key == LocalStorageKeys.fcmToken) {
+      fcmToken = value;
     } else if (key == LocalStorageKeys.userId) {
       userId = value;
     } else if (key == LocalStorageKeys.myImage) {

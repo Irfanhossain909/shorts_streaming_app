@@ -1,0 +1,275 @@
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    FIREBASE CLOUD MESSAGING (FCM) FLOW                        ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           1. APP INITIALIZATION                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    main.dart (app starts)
+         │
+         ├─→ Firebase.initializeApp(options: DefaultFirebaseOptions)
+         │
+         ├─→ FirebaseMessaging.onBackgroundMessage(handler)
+         │
+         └─→ FCMService.initialize()
+                └─→ Request permissions (iOS/Android)
+                └─→ Get FCM token
+                └─→ Setup message listeners
+                └─→ Check initial message (if app opened from notification)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       2. TOKEN GENERATION & MANAGEMENT                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    FCMService.getToken()
+         │
+         ├─→ iOS: Get APNS token first → Get FCM token
+         │
+         └─→ Android: Get FCM token directly
+                │
+                └─→ Token: "eXAmPle_F1R3bA5e_70K3n..."
+                       │
+                       ├─→ Display in app
+                       ├─→ Send to backend server
+                       └─→ Listen for token refresh
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         3. RECEIVING NOTIFICATIONS                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Firebase Cloud Messaging Server
+         │
+         ├─────────────────┬─────────────────┬─────────────────┐
+         │                 │                 │                 │
+         ▼                 ▼                 ▼                 ▼
+    To Device         To Topic         To Segment        To All Users
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       4. NOTIFICATION HANDLING STATES                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │  FOREGROUND (App is open and visible)                                 │
+    ├───────────────────────────────────────────────────────────────────────┤
+    │                                                                        │
+    │  Notification arrives                                                  │
+    │      ↓                                                                 │
+    │  FirebaseMessaging.onMessage.listen()                                 │
+    │      ↓                                                                 │
+    │  FCMService._handleForegroundMessage()                                │
+    │      ↓                                                                 │
+    │  NotificationService.showNotification()                               │
+    │      ↓                                                                 │
+    │  📱 Local notification appears on device                              │
+    │                                                                        │
+    │  Console: 📬 Foreground Message Received                              │
+    └───────────────────────────────────────────────────────────────────────┘
+
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │  BACKGROUND (App is minimized but running)                            │
+    ├───────────────────────────────────────────────────────────────────────┤
+    │                                                                        │
+    │  Notification arrives                                                  │
+    │      ↓                                                                 │
+    │  System shows notification automatically                              │
+    │      ↓                                                                 │
+    │  User taps notification                                               │
+    │      ↓                                                                 │
+    │  FirebaseMessaging.onMessageOpenedApp.listen()                        │
+    │      ↓                                                                 │
+    │  FCMService._handleMessageOpenedApp()                                 │
+    │      ↓                                                                 │
+    │  Navigate to specific screen (based on data)                          │
+    │                                                                        │
+    │  Console: 🔔 Notification Opened                                      │
+    └───────────────────────────────────────────────────────────────────────┘
+
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │  TERMINATED (App is completely closed)                                │
+    ├───────────────────────────────────────────────────────────────────────┤
+    │                                                                        │
+    │  Notification arrives                                                  │
+    │      ↓                                                                 │
+    │  firebaseMessagingBackgroundHandler() [Top-level function]            │
+    │      ↓                                                                 │
+    │  System shows notification                                            │
+    │      ↓                                                                 │
+    │  User taps notification                                               │
+    │      ↓                                                                 │
+    │  App starts                                                           │
+    │      ↓                                                                 │
+    │  FirebaseMessaging.getInitialMessage()                                │
+    │      ↓                                                                 │
+    │  FCMService._handleMessageOpenedApp()                                 │
+    │      ↓                                                                 │
+    │  Navigate to specific screen                                          │
+    │                                                                        │
+    │  Console: 🚀 App opened from terminated state                         │
+    └───────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           5. TOPIC SUBSCRIPTIONS                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User Preferences
+         │
+         ├─→ Subscribe to "order_updates"
+         │       └─→ FCMService.subscribeToTopic("order_updates")
+         │
+         ├─→ Subscribe to "chat_messages"
+         │       └─→ FCMService.subscribeToTopic("chat_messages")
+         │
+         └─→ Subscribe to "promotions"
+                 └─→ FCMService.subscribeToTopic("promotions")
+
+    Backend sends to topic:
+         │
+         └─→ All users subscribed to "order_updates" receive notification
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         6. NOTIFICATION PAYLOAD                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    {
+      "notification": {
+        "title": "Order Delivered",            ← Shown in notification
+        "body": "Your order #12345 delivered",  ← Shown in notification
+        "sound": "default"                      ← Notification sound
+      },
+      "data": {
+        "type": "order",                        ← Custom data
+        "orderId": "12345",                     ← Used for navigation
+        "status": "delivered",                  ← Additional info
+        "timestamp": "2025-11-26T17:47:26"      ← Metadata
+      }
+    }
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       7. BACKEND INTEGRATION FLOW                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+    │              │         │              │         │              │
+    │  Flutter App │────────▶│ Your Backend │────────▶│   Firebase   │
+    │              │  Token  │              │  Send   │     FCM      │
+    │              │         │              │         │              │
+    └──────────────┘         └──────────────┘         └──────────────┘
+           │                        │                         │
+           │                        │                         │
+           │ 1. Get FCM token       │                         │
+           │    FCMService.getToken()                         │
+           │                        │                         │
+           │ 2. Send to backend     │                         │
+           │───────────────────────▶│                         │
+           │    POST /api/fcm-token │                         │
+           │                        │                         │
+           │                        │ 3. Store token           │
+           │                        │    in database          │
+           │                        │                         │
+           │                        │ 4. Send notification    │
+           │                        │────────────────────────▶│
+           │                        │    Using Firebase       │
+           │                        │    Admin SDK            │
+           │                        │                         │
+           │                        │                   5. FCM delivers
+           │                        │                      notification
+           │◀───────────────────────────────────────────────────┘
+           │                        │
+           │ 6. Handle & display    │
+           │                        │
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                             8. USER LOGOUT                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User logs out
+         │
+         ├─→ FCMService.deleteToken()
+         │      └─→ Deletes token from Firebase
+         │
+         ├─→ Unsubscribe from user-specific topics
+         │      └─→ FCMService.unsubscribeFromTopic("premium_users")
+         │
+         └─→ Remove token from backend
+                └─→ DELETE /api/fcm-token
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          9. NOTIFICATION TESTING                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Option 1: Firebase Console
+         │
+         └─→ console.firebase.google.com
+               └─→ Messaging
+                     └─→ Send test message
+                           └─→ Enter FCM token
+                                 └─→ Test ✓
+
+    Option 2: cURL / Postman
+         │
+         └─→ POST https://fcm.googleapis.com/fcm/send
+               Headers: Authorization: key=SERVER_KEY
+               Body: { "to": "FCM_TOKEN", "notification": {...} }
+                     └─→ Test ✓
+
+    Option 3: Backend API
+         │
+         └─→ Your backend sends notification
+               └─→ Using Firebase Admin SDK
+                     └─→ Test ✓
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         10. FILES & RESPONSIBILITIES                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────────────────────────────────────────────────────┐
+    │  fcm_service.dart                                              │
+    ├────────────────────────────────────────────────────────────────┤
+    │  • Initialize FCM                                              │
+    │  • Get/Delete tokens                                           │
+    │  • Handle all notification states                              │
+    │  • Subscribe/Unsubscribe to topics                             │
+    │  • Request permissions                                         │
+    └────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────────────────────────────────────────────────────┐
+    │  fcm_controller.dart                                           │
+    ├────────────────────────────────────────────────────────────────┤
+    │  • GetX state management                                       │
+    │  • Reactive FCM token                                          │
+    │  • UI-friendly methods                                         │
+    └────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────────────────────────────────────────────────────┐
+    │  notification_service.dart                                     │
+    ├────────────────────────────────────────────────────────────────┤
+    │  • Local notification display                                  │
+    │  • Notification channel configuration                          │
+    │  • iOS/Android platform-specific settings                      │
+    └────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────────────────────────────────────────────────────┐
+    │  main.dart                                                     │
+    ├────────────────────────────────────────────────────────────────┤
+    │  • Firebase initialization                                     │
+    │  • Background handler registration                             │
+    │  • FCM service initialization                                  │
+    └────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                            🎉 SETUP COMPLETE 🎉
+
+        Your Firebase Cloud Messaging is ready to use!
+        
+        Next Steps:
+        1. Test with Firebase Console
+        2. Integrate with your backend
+        3. Customize navigation logic
+        4. Add topic subscriptions
+
+═══════════════════════════════════════════════════════════════════════════════
+```

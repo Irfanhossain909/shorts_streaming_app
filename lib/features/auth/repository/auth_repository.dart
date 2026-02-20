@@ -7,6 +7,7 @@ import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
 
 class AuthRepository {
   AuthRepository._();
@@ -14,6 +15,23 @@ class AuthRepository {
 
   static final AuthRepository _instance = AuthRepository._();
   static AuthRepository get instance => _instance;
+
+  Future<LoginsliderModel?> loginSlider() async {
+    try {
+      final response = await apiService.get(ApiEndPoint.instance.loginSlider);
+
+      appLog(response.data, source: "Login Slider Response");
+
+      if (response.statusCode == 200 && response.data != null) {
+        return LoginsliderModel.fromJson(
+          Map<String, dynamic>.from(response.data),
+        );
+      }
+    } catch (e, s) {
+      errorLog(e, source: "Login Slider");
+    }
+    return null;
+  }
 
   Future<bool> login({required String email, required String password}) async {
     try {
@@ -23,6 +41,48 @@ class AuthRepository {
         body: body,
       );
       appLog(response.data, source: "Login Response");
+      if (response.statusCode == 200) {
+        String accessToken = response.data["data"]["accessToken"];
+        await LocalStorage.setString(LocalStorageKeys.token, accessToken);
+
+        await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
+        appLog("Access Token stored successfully");
+
+        return true;
+      } else if (response.statusCode == 400) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${response.data["message"] ?? "Something was wrong"}",
+          "Login",
+        );
+      } else {
+        // Handle the error if the response or data is null
+        appLog("Error: Access Token not found!", source: "Login Response");
+      }
+
+      return false;
+    } on DioException catch (error) {
+      if (error.response?.data["message"].runtimeType != null) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "${error.response?.data["message"] ?? "Something went wrong"}",
+          "Login",
+        );
+      }
+      return false;
+    } catch (e) {
+      errorLog(e, source: "Login");
+      return false;
+    }
+  }
+  Future<bool> googleLogin({required String idToken}) async {
+    try {
+      Map<String, String> body = {"token": idToken};
+      var response = await apiService.post(
+        ApiEndPoint.instance.googleLogin,
+        body: body,
+      );
+      appLog(response.data, source: "Google Login Response");
       if (response.statusCode == 200) {
         String accessToken = response.data["data"]["accessToken"];
         await LocalStorage.setString(LocalStorageKeys.token, accessToken);

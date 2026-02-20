@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "651738200724",
+    "project_id": "creepy-shorts",
+    "storage_bucket": "creepy-shorts.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651738200724:android:8d82f66733a5eb23e29281",
+        "android_client_info": {
+          "package_name": "com.rubengalindo.creepyshorts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651738200724-c4ugcdsr08lit3lhsnp177l04md7o4gi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDayV6WS6PFvBz4RbZ_UpjshsW_Fd2nwWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651738200724-c4ugcdsr08lit3lhsnp177l04md7o4gi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
