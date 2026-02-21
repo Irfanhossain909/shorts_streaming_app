@@ -27,6 +27,9 @@ class ComingSoonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: onTap != null
+          ? HitTestBehavior.opaque
+          : HitTestBehavior.translucent,
       child: Container(
         width: width ?? 140.w,
         margin: EdgeInsets.only(right: 12.w),

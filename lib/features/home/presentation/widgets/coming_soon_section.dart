@@ -84,8 +84,6 @@ class ComingSoonSection extends StatelessWidget {
             imageUrl:
                 ApiEndPoint.instance.imageUrl + (reminder.thumbnail ?? ''),
             releaseDate: reminder.reminderTime.date,
-            // onTap: () => controller.onMovieTap(reminder.name),
-            onTap: () {},
             onRemindMeTap: () => controller.onRemindMeTap(reminder.id),
           );
         },

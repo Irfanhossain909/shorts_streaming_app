@@ -6,7 +6,9 @@ import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/shorts/controller/shorts_controller.dart';
+import 'package:testemu/features/shorts/widgets/ad_overlay_widget.dart';
 import 'package:testemu/features/shorts/widgets/reel_button.dart';
 import 'package:video_player/video_player.dart';
 
@@ -20,60 +22,76 @@ class ShortsFeedScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          body: Obx(() {
-            // Show shimmer loading while fetching videos
-            if (controller.isLoadingVideos.value) {
-              return const VideoPlayerShimmer();
-            }
+          body: Stack(
+            children: [
+              Obx(() {
+                if (controller.isLoadingVideos.value) {
+                  return const VideoPlayerShimmer();
+                }
 
-            // Show error message if there's an error
-            if (controller.hasError.value) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red,
+                if (controller.hasError.value) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          controller.errorMessage.value,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => controller.refreshVideos(),
+                          child: const Text("Retry"),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      controller.errorMessage.value,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => controller.refreshVideos(),
-                      child: const Text("Retry"),
-                    ),
-                  ],
-                ),
-              );
-            }
+                  );
+                }
 
-            // Show empty state if no videos
-            if (controller.videos.isEmpty) {
-              return const Center(
-                child: Text(
-                  "No videos available",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              );
-            }
+                if (controller.videos.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No videos available",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  );
+                }
 
-            // Show videos
-            return PageView.builder(
-              controller: controller.pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: controller.videos.length,
-              onPageChanged: controller.onPageChanged,
-              itemBuilder: (context, index) {
-                return ShortVideoPlayer(index: index);
-              },
-            );
-          }),
+                return PageView.builder(
+                  controller: controller.pageController,
+                  scrollDirection: Axis.vertical,
+                  itemCount: controller.videos.length,
+                  onPageChanged: controller.onPageChanged,
+                  physics: controller.showAdOverlay.value
+                      ? const NeverScrollableScrollPhysics()
+                      : null,
+                  itemBuilder: (context, index) {
+                    return ShortVideoPlayer(index: index);
+                  },
+                );
+              }),
+
+              // Ad interstitial overlay
+              Obx(
+                () => controller.showAdOverlay.value
+                    ? AdOverlayWidget(
+                        canClose: controller.canCloseAd,
+                        onClose: controller.dismissAd,
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -294,70 +312,64 @@ class ShortVideoPlayer extends StatelessWidget {
                           onTap: () => controller.showShareBottomSheet(),
                         ),
                       ),
-                      // Download button with circular progress
-                      Obx(() {
-                        final isDownloading = controller.isDownloading.value;
-                        final progress = controller.downloadProgress.value;
+                      if (LocalStorage.isSubscribed)
+                        Obx(() {
+                          final isDownloading = controller.isDownloading.value;
+                          final progress = controller.downloadProgress.value;
 
-                        return InkWell(
-                          onTap: isDownloading
-                              ? null
-                              : () => controller.downloadCurrentVideo(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            spacing: 4.h,
-                            children: [
-                              // Icon with circular progress
-                              SizedBox(
-                                width: 40.w,
-                                height: 40.w,
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Circular progress indicator
-                                    if (isDownloading)
-                                      SizedBox(
-                                        width: 40.w,
-                                        height: 40.w,
-                                        child: CircularProgressIndicator(
-                                          value: progress,
-                                          strokeWidth: 2.5,
-                                          backgroundColor: AppColors.white
-                                              .withOpacity(0.3),
-                                          valueColor:
-                                              const AlwaysStoppedAnimation<
-                                                Color
-                                              >(AppColors.red2),
+                          return InkWell(
+                            onTap: isDownloading
+                                ? null
+                                : () => controller.downloadCurrentVideo(),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 4.h,
+                              children: [
+                                SizedBox(
+                                  width: 40.w,
+                                  height: 40.w,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      if (isDownloading)
+                                        SizedBox(
+                                          width: 40.w,
+                                          height: 40.w,
+                                          child: CircularProgressIndicator(
+                                            value: progress,
+                                            strokeWidth: 2.5,
+                                            backgroundColor: AppColors.white
+                                                .withOpacity(0.3),
+                                            valueColor:
+                                                const AlwaysStoppedAnimation<
+                                                  Color
+                                                >(AppColors.red2),
+                                          ),
                                         ),
+                                      CommonImage(
+                                        imageColor: isDownloading
+                                            ? AppColors.red2
+                                            : AppColors.background,
+                                        imageSrc: AppIcons.icDownload,
+                                        width: 24.w,
                                       ),
-
-                                    // Download icon
-                                    CommonImage(
-                                      imageColor: isDownloading
-                                          ? AppColors.red2
-                                          : AppColors.background,
-                                      imageSrc: AppIcons.icDownload,
-                                      width: 24.w,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-
-                              // Text showing progress or "Download"
-                              CommonText(
-                                text: isDownloading
-                                    ? "${(progress * 100).toInt()}%"
-                                    : "Download",
-                                fontSize: 14.h,
-                                fontWeight: FontWeight.w600,
-                                color: isDownloading
-                                    ? AppColors.red2
-                                    : AppColors.background,
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
+                                CommonText(
+                                  text: isDownloading
+                                      ? "${(progress * 100).toInt()}%"
+                                      : "Download",
+                                  fontSize: 14.h,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDownloading
+                                      ? AppColors.red2
+                                      : AppColors.background,
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                     ],
                   ),
                 ),
