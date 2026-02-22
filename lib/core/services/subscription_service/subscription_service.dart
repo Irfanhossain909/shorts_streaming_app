@@ -167,18 +167,24 @@ class SubscriptionService {
           break;
 
         case PurchaseStatus.purchased:
-        case PurchaseStatus.restored:
           bool valid = await _verifyPurchase(purchase);
 
           if (valid) {
             _deliverProduct(purchase);
-            
-            // Track restored purchases separately
-            if (purchase.status == PurchaseStatus.restored) {
-              restoredPurchases.add(purchase);
-            }
           } else {
             debugPrint("❌ Invalid purchase");
+          }
+          break;
+
+        case PurchaseStatus.restored:
+          bool restoredValid = await _verifyPurchase(purchase);
+
+          if (restoredValid) {
+            _isSubscribed = true;
+            restoredPurchases.add(purchase);
+            debugPrint("🔄 Restored subscription: ${purchase.productID}");
+          } else {
+            debugPrint("❌ Invalid restored purchase");
           }
           break;
 

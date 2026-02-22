@@ -68,8 +68,16 @@ class SubscriptionController extends GetxController {
     // Add to subscribed products
     subscribedProductIds.add(purchase.productID);
 
-    // Call API to verify purchase
-    await _verifyPurchaseWithAPI(purchase);
+    // Do not verify restored purchases on screen load.
+    // Requirement: if already purchased in store, only update UI state.
+    if (purchase.status == PurchaseStatus.purchased) {
+      await _verifyPurchaseWithAPI(purchase);
+    } else {
+      appLog(
+        "ℹ️ Skipping verify API for restored purchase: ${purchase.productID}",
+        source: "Verify Purchase",
+      );
+    }
 
     // Update UI
     update();
