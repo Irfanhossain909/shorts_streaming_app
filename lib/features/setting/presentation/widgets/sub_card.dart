@@ -68,31 +68,30 @@ class SubCard extends StatelessWidget {
             color: AppColors.background,
           ),
           // Show "Subscribed" text if already subscribed, otherwise show button
-          // isSubscribed
-          //     ? Container(
-          //         height: 48.h,
-          //         width: double.infinity,
-          //         decoration: BoxDecoration(
-          //           color: AppColors.buton.withValues(alpha: 0.5),
-          //           borderRadius: BorderRadius.circular(30.w),
-          //           border: Border.all(color: AppColors.buton, width: 1),
-          //         ),
-          //         alignment: Alignment.center,
-          //         child: CommonText(
-          //           text: "Subscribed",
-          //           fontSize: 16.sp,
-          //           fontWeight: FontWeight.w700,
-          //           color: AppColors.background,
-          //         ),
-          //       )
-          // :
-          CommonButton(
-            onTap: onTap,
-            isGradient: false,
-            borderColor: AppColors.buton,
-            buttonColor: AppColors.buton,
-            titleText: "Subscribe now",
-          ),
+          isSubscribed
+              ? Container(
+                  height: 48.h,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.buton.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(30.w),
+                    border: Border.all(color: AppColors.buton, width: 1),
+                  ),
+                  alignment: Alignment.center,
+                  child: CommonText(
+                    text: "Subscribed",
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.background,
+                  ),
+                )
+              : CommonButton(
+                  onTap: onTap,
+                  isGradient: false,
+                  borderColor: AppColors.buton,
+                  buttonColor: AppColors.buton,
+                  titleText: "Subscribe now",
+                ),
           Align(
             alignment: Alignment.center,
             child: CommonText(
