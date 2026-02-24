@@ -273,7 +273,12 @@ Dio _getMyDio() {
       onResponse: (response, handler) {
         handler.next(response);
       },
-      onError: (error, handler) {
+      onError: (error, handler) async {
+        final message = error.response?.data?['message']?.toString() ?? '';
+        if (message.contains('This user is not found')) {
+          await LocalStorage.removeAllPrefData();
+          return;
+        }
         handler.next(error);
       },
     ),
