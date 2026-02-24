@@ -2,6 +2,7 @@ import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_response_model.dart';
 import 'package:testemu/core/services/api/api_service.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/features/shorts/model/ad_model.dart';
 import 'package:testemu/features/shorts/model/recent_videos_model.dart';
 import 'package:testemu/features/shorts/model/season_video_details_model.dart';
 import 'package:testemu/features/shorts/model/shorts_video_model.dart';
@@ -153,6 +154,22 @@ class ShortsRepository {
         statusCode: 500,
         data: [],
       );
+    }
+  }
+
+  Future<AdData?> getRandomAd() async {
+    try {
+      final response = await apiService.get(apiEndPoint.getRandomAd);
+      if (response.statusCode == 200) {
+        final adResponse = AdResponse.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+        return adResponse.data;
+      }
+      return null;
+    } catch (e) {
+      errorLog(e, source: 'Get Random Ad');
+      return null;
     }
   }
 

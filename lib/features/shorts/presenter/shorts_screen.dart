@@ -86,6 +86,9 @@ class ShortsFeedScreen extends StatelessWidget {
                 () => controller.showAdOverlay.value
                     ? AdOverlayWidget(
                         canClose: controller.canCloseAd,
+                        isLoading: controller.isAdLoading,
+                        videoUrl: controller.adVideoUrl,
+                        onVideoFinished: controller.onAdVideoFinished,
                         onClose: controller.dismissAd,
                       )
                     : const SizedBox.shrink(),
