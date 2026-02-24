@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/constants/app_string.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
@@ -27,15 +28,21 @@ class EditProfile extends StatelessWidget {
           body: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
             child: Column(
+              spacing: 10.h,
               children: [
                 /// User Profile image here
                 Stack(
                   children: [
                     Center(
-                      child: CircleAvatar(
-                        radius: 85.sp,
-                        backgroundColor: Colors.transparent,
-                        child: ClipOval(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.red, width: 2),
+                        ),
+                        child: CircleAvatar(
+                          radius: 85.sp,
+                          backgroundColor: Colors.transparent,
+                          child: ClipOval(
                           child: controller.image != null
                               ? Image.file(
                                   File(controller.image!),
@@ -51,12 +58,13 @@ class EditProfile extends StatelessWidget {
                                   width: 170,
                                 )
                               : const CommonImage(
-                                  imageSrc: AppImages.profile,
+                                  imageSrc: AppImages.defaultProfile,
                                   height: 170,
                                   width: 170,
                                 ),
                         ),
                       ),
+                    ),
                     ),
 
                     /// image change icon here
@@ -66,7 +74,7 @@ class EditProfile extends StatelessWidget {
                       child: IconButton(
                         style: ButtonStyle(
                           backgroundColor: WidgetStateColor.resolveWith(
-                            (states) => Colors.black,
+                            (states) => AppColors.red,
                           ),
                         ),
                         onPressed: controller.getProfileImage,
@@ -75,6 +83,7 @@ class EditProfile extends StatelessWidget {
                     ),
                   ],
                 ),
+                20.height,
 
                 /// user all information filed here
                 EditProfileAllFiled(controller: controller),
