@@ -1,0 +1,15 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.victorsaulmendozamena.creepyshorts",
+            "sha256_cert_fingerprints": [
+                "F7:8F:CD:89:6A:07:7D:B1:71:50:CA:4C:1F:91:1B:F6:AF:43:43:C4:3A:96:3A:5A:74:A4:95:8F:6D:67:FA:FA",
+                "YOUR_RELEASE_SHA256_FINGERPRINT_HERE"
+            ]
+        }
+    }
+]

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testemu/core/component/app_toast/app_toast.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/services/video_progress/video_progress_service.dart';
 import 'package:testemu/features/download/model/downloaded_video_model.dart';
 import 'package:testemu/features/download/service/download_service.dart';
@@ -75,6 +76,16 @@ class ShortsScontroller extends GetxController {
 
   // Map to store like states for each video (tracked locally for optimistic updates)
   final Map<String, bool> _likeStates = {};
+
+  // Ad interstitial state
+  static const int _adTriggerInterval = 3;
+  static const int _adTimerDurationSeconds = 5;
+  RxInt adScrollCounter = 0.obs;
+  RxBool showAdOverlay = false.obs;
+  RxBool canCloseAd = false.obs;
+  Timer? _adTimer;
+
+  bool get isUserSubscribed => LocalStorage.isSubscribed;
 
   // Getters for current video
   VideoPlayerController? getCurrentVideoController() {
@@ -175,6 +186,9 @@ class ShortsScontroller extends GetxController {
         printInfo(
           info: '✅ Successfully fetched ${response.data.length} videos',
         );
+        printInfo(
+          info: '🔑 isSubscribed from API: ${response.data.first.isSubscribed}',
+        );
 
         // Initialize like states based on likedBy field
         for (var video in response.data) {
@@ -215,6 +229,20 @@ class ShortsScontroller extends GetxController {
     // Update current index
     currentIndex.value = index;
 
+    // Ad interstitial trigger for non-subscribed users
+    printInfo(
+      info:
+          '🎯 Ad check — counter: ${adScrollCounter.value}, isSubscribed: $isUserSubscribed',
+    );
+    if (!isUserSubscribed) {
+      adScrollCounter.value++;
+      if (adScrollCounter.value >= _adTriggerInterval) {
+        printInfo(info: '📺 Showing ad overlay');
+        _showAd();
+        return;
+      }
+    }
+
     // Strict Mode: Manage resources - keep only THE CURRENT controller
     // Await this to ensure resources are freed before we try to allocate new ones
     await _manageControllerResources(index);
@@ -223,6 +251,41 @@ class ShortsScontroller extends GetxController {
     await Future.delayed(const Duration(milliseconds: 100));
 
     // Initialize and play new video if not already initialized
+    if (!_videoControllers.containsKey(index)) {
+      _initializeVideoForIndex(index);
+    } else {
+      _playVideo(index);
+    }
+  }
+
+  void _showAd() {
+    showAdOverlay.value = true;
+    canCloseAd.value = false;
+    _pauseVideo(currentIndex.value);
+
+    _adTimer?.cancel();
+    _adTimer = Timer(
+      const Duration(seconds: _adTimerDurationSeconds),
+      () => canCloseAd.value = true,
+    );
+  }
+
+  void dismissAd() {
+    _adTimer?.cancel();
+    _adTimer = null;
+    showAdOverlay.value = false;
+    canCloseAd.value = false;
+    adScrollCounter.value = 0;
+
+    _resumeAfterAd();
+  }
+
+  Future<void> _resumeAfterAd() async {
+    final index = currentIndex.value;
+
+    await _manageControllerResources(index);
+    await Future.delayed(const Duration(milliseconds: 100));
+
     if (!_videoControllers.containsKey(index)) {
       _initializeVideoForIndex(index);
     } else {
@@ -924,6 +987,10 @@ class ShortsScontroller extends GetxController {
     // Save progress before closing
     _saveVideoProgress(currentIndex.value);
     _stopProgressSaveTimer();
+
+    // Cancel ad timer
+    _adTimer?.cancel();
+    _adTimer = null;
 
     // Dispose all video controllers
     for (var controller in _videoControllers.values) {

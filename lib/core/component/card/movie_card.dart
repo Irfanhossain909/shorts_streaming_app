@@ -69,12 +69,14 @@ class MovieCard extends StatelessWidget {
                   children: [
                     // Movie poster image with RepaintBoundary
                     RepaintBoundary(
-                      child: CommonImage(
-                        imageSrc: imageUrl,
-                        width: double.infinity,
-                        height: double.infinity,
-                        borderRadius: 12.r,
-                        fill: BoxFit.cover,
+                      child: IgnorePointer(
+                        child: CommonImage(
+                          imageSrc: imageUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          borderRadius: 12.r,
+                          fill: BoxFit.cover,
+                        ),
                       ),
                     ),
 

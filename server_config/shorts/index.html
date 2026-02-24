@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creepy Shorts - Opening...</title>
+
+    <!-- App Store Smart Banner (iOS) -->
+    <meta name="apple-itunes-app" content="app-id=YOUR_APP_STORE_ID, app-argument=creepyshorts://shorts/">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="Watch on Creepy Shorts">
+    <meta property="og:description" content="Watch this amazing short video on Creepy Shorts app!">
+    <meta property="og:image" content="https://api.creepy-shorts.com/images/og-image.png">
+    <meta property="og:url" content="https://api.creepy-shorts.com/shorts/">
+    <meta property="og:type" content="video.other">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Watch on Creepy Shorts">
+    <meta name="twitter:description" content="Watch this amazing short video on Creepy Shorts app!">
+    <meta name="twitter:image" content="https://api.creepy-shorts.com/images/og-image.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 400px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.3);
+        }
+
+        .logo svg {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .store-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .store-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .store-btn.android {
+            background: linear-gradient(135deg, #34a853 0%, #1e7e34 100%);
+            color: white;
+        }
+
+        .store-btn.ios {
+            background: linear-gradient(135deg, #333 0%, #000 100%);
+            color: white;
+        }
+
+        .store-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .store-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #fallback-content {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+        </div>
+
+        <h1>Creepy Shorts</h1>
+        <p class="subtitle">Opening the video in Creepy Shorts app...</p>
+
+        <!-- Loading indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span>Redirecting to app...</span>
+        </div>
+
+        <!-- Fallback content (shows if app redirect fails) -->
+        <div id="fallback-content">
+            <div class="or-divider">App not installed?</div>
+
+            <div class="store-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.victorsaulmendozamena.creepyshorts"
+                    class="store-btn android" id="playstore-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                    </svg>
+                    Download from Play Store
+                </a>
+
+                <a href="https://apps.apple.com/app/idYOUR_APP_STORE_ID" class="store-btn ios" id="appstore-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z" />
+                    </svg>
+                    Download from App Store
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // Get video ID from URL path
+            const pathParts = window.location.pathname.split('/');
+            const videoId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+
+            // Custom scheme URL for the app
+            const appSchemeUrl = 'creepyshorts://shorts/' + videoId;
+
+            // Universal/App Links URL (same as current URL)
+            const universalUrl = window.location.href;
+
+            // Store URLs
+            const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.victorsaulmendozamena.creepyshorts';
+            const appStoreUrl = 'https://apps.apple.com/app/idYOUR_APP_STORE_ID';
+
+            // Detect platform
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /android/i.test(userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+            // Try to open app with custom scheme
+            function tryOpenApp() {
+                const startTime = Date.now();
+
+                // Create hidden iframe to attempt app open (for older browsers)
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = appSchemeUrl;
+                document.body.appendChild(iframe);
+
+                // Also try direct location change (for newer browsers)
+                setTimeout(function () {
+                    window.location.href = appSchemeUrl;
+                }, 100);
+
+                // Check if app opened (if still on page after delay, app didn't open)
+                setTimeout(function () {
+                    const elapsed = Date.now() - startTime;
+
+                    // If we're still here after 2.5 seconds, the app probably didn't open
+                    if (elapsed < 3000) {
+                        // Show download buttons
+                        document.getElementById('loading').classList.add('hidden');
+                        document.getElementById('fallback-content').style.opacity = '1';
+                        document.getElementById('fallback-content').style.animationDelay = '0s';
+
+                        // Auto-redirect to store based on platform
+                        if (isAndroid) {
+                            // For Android, try intent URL first
+                            window.location.href = 'intent://shorts/' + videoId +
+                                '#Intent;scheme=creepyshorts;package=com.victorsaulmendozamena.creepyshorts;' +
+                                'S.browser_fallback_url=' + encodeURIComponent(playStoreUrl) + ';end';
+                        } else if (isIOS) {
+                            // iOS will handle via Smart App Banner or manual click
+                        }
+                    }
+                }, 2500);
+            }
+
+            // Start app open attempt
+            tryOpenApp();
+        })();
+    </script>
+</body>
+
+</html>

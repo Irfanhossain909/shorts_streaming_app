@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:testemu/core/services/storage/storage_keys.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/services/subscription_service/subscription_service.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
@@ -11,7 +13,9 @@ import 'package:testemu/features/setting/repository/subscription_repository.dart
 
 class SubscriptionController extends GetxController {
   SettingRepository settingRepository = SettingRepository.instance;
-  SubscriptionRepository subscriptionRepository = SubscriptionRepository.instance;
+  SubscriptionRepository subscriptionRepository =
+      SubscriptionRepository.instance;
+
   /// Api status check here
   Status status = Status.completed;
 
@@ -20,7 +24,7 @@ class SubscriptionController extends GetxController {
 
   /// Map of product ID to ProductDetails for easy lookup
   Map<String, ProductDetails> productDetailsMap = {};
-  
+
   /// Set of subscribed product IDs
   Set<String> subscribedProductIds = {};
 
@@ -60,30 +64,41 @@ class SubscriptionController extends GetxController {
     );
     AppPrint.apiResponse("Status: ${purchase.status}");
     AppPrint.apiResponse("============================");
-    
+
     // Add to subscribed products
     subscribedProductIds.add(purchase.productID);
-    
-    // Call API to verify purchase
-    await _verifyPurchaseWithAPI(purchase);
-    
+
+    // Do not verify restored purchases on screen load.
+    // Requirement: if already purchased in store, only update UI state.
+    if (purchase.status == PurchaseStatus.purchased) {
+      await _verifyPurchaseWithAPI(purchase);
+    } else {
+      appLog(
+        "ℹ️ Skipping verify API for restored purchase: ${purchase.productID}",
+        source: "Verify Purchase",
+      );
+    }
+
     // Update UI
     update();
   }
-  
+
   /// Handle restored purchases
   void _handlePurchasesRestored(List<PurchaseDetails> purchases) {
-    appLog("🔄 Restored ${purchases.length} purchases", source: "Purchase Restore");
-    
+    appLog(
+      "🔄 Restored ${purchases.length} purchases",
+      source: "Purchase Restore",
+    );
+
     for (final purchase in purchases) {
       subscribedProductIds.add(purchase.productID);
       appLog("✅ Restored: ${purchase.productID}", source: "Purchase Restore");
     }
-    
+
     // Update UI
     update();
   }
-  
+
   /// Verify purchase with backend API
   Future<void> _verifyPurchaseWithAPI(PurchaseDetails purchase) async {
     try {
@@ -102,7 +117,9 @@ class SubscriptionController extends GetxController {
       double? price;
       for (final sub in subscriptions) {
         final googleId = sub.googleProductId;
-        if (googleId != null && googleId.isNotEmpty && googleId == purchase.productID) {
+        if (googleId != null &&
+            googleId.isNotEmpty &&
+            googleId == purchase.productID) {
           price = sub.price;
           break;
         }
@@ -115,10 +132,14 @@ class SubscriptionController extends GetxController {
         packageName: "com.rubengalindo.creepyshorts",
         price: price,
       );
-      
+
       if (response) {
-        appLog("✅ Purchase verified successfully with backend", 
-            source: "Verify Purchase");
+        appLog(
+          "✅ Purchase verified successfully with backend",
+          source: "Verify Purchase",
+        );
+
+        await LocalStorage.setBool(LocalStorageKeys.isSubscribed, true);
       } else {
         appLog("❌ Purchase verification failed", source: "Verify Purchase");
       }
@@ -126,7 +147,7 @@ class SubscriptionController extends GetxController {
       appLog("❌ Error verifying purchase: $e", source: "Verify Purchase");
     }
   }
-  
+
   /// Check if a product is subscribed
   bool isProductSubscribed(String productId) {
     return subscribedProductIds.contains(productId);

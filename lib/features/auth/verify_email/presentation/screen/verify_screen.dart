@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/button/common_button.dart';
-import 'package:testemu/core/component/button/common_button_pro.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
@@ -135,7 +134,7 @@ class VerifyScreen extends StatelessWidget {
                           : null,
                       child: CommonText(
                         color: AppColors.background,
-                        
+
                         fontSize: controller.time == '00:00' ? 14.sp : 16.sp,
                         text: controller.time == '00:00'
                             ? "If you didn't receive a ${AppString.resendCode}"

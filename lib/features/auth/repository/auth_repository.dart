@@ -22,12 +22,12 @@ class AuthRepository {
 
       appLog(response.data, source: "Login Slider Response");
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         return LoginsliderModel.fromJson(
           Map<String, dynamic>.from(response.data),
         );
       }
-    } catch (e, s) {
+    } catch (e) {
       errorLog(e, source: "Login Slider");
     }
     return null;
@@ -75,6 +75,7 @@ class AuthRepository {
       return false;
     }
   }
+
   Future<bool> googleLogin({required String idToken}) async {
     try {
       Map<String, String> body = {"token": idToken};

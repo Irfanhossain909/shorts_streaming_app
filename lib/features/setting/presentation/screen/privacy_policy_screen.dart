@@ -6,10 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/screen/error_screen.dart';
-import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
-import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/setting/presentation/controller/privacy_policy_controller.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {

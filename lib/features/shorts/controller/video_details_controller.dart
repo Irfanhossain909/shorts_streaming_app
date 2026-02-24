@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
+import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
 import 'package:testemu/features/shorts/model/recent_videos_model.dart';
 import 'package:testemu/features/shorts/model/season_video_details_model.dart';
 import 'package:testemu/features/shorts/model/video_details_model.dart';
@@ -30,11 +31,11 @@ class VideoDetailsController extends GetxController {
     videoId = Get.arguments['videoId'];
     appLog(videoId, source: 'VideoId');
     super.onInit();
-    getVideoDetails();
+    getVideoDetails(videoId);
     getRecentVideos();
   }
 
-  Future<void> getVideoDetails() async {
+  Future<void> getVideoDetails(String videoId) async {
     try {
       isLoading.value = true;
       final response = await shortsRepository.getVideoDetails(videoId);
@@ -138,6 +139,18 @@ class VideoDetailsController extends GetxController {
     final response = await shortsRepository.addRecentVideo(videoId);
     if (response.statusCode == 200) {
       appLog('Recent video added successfully', source: 'Recent Video');
+
+      // 🔄 Also refresh My List's "Recently Watched" section if the controller exists
+      try {
+        final myListController = Get.find<MyListController>();
+        await myListController.getRecentVideos();
+      } catch (e) {
+        // MyListController may not be in memory yet (user never opened My List)
+        appLog(
+          'MyListController not found while updating recent videos: $e',
+          source: 'Recent Video',
+        );
+      }
     } else {
       appLog(
         'Failed to add recent video: ${response.message}',

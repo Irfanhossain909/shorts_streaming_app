@@ -9,6 +9,7 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/shorts/controller/video_details_controller.dart';
@@ -326,30 +327,36 @@ class VideoDetailScreen extends StatelessWidget {
                       );
                     }
 
+                    final bool subscribed = LocalStorage.isSubscribed;
+                    const int freeEpisodeLimit = 3;
+
                     return SizedBox(
-                      height: 40.h, // Fixed height for the horizontal scroll
+                      height: 40.h,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: episodes.length,
                         itemBuilder: (context, index) {
                           final episode = episodes[index];
+                          final bool isLocked =
+                              !subscribed && index >= freeEpisodeLimit;
+
                           return Container(
-                            width: 70.w, // Fixed width for each button
-                            margin: EdgeInsets.only(
-                              right: 8.w,
-                            ), // Spacing between buttons
+                            width: 70.w,
+                            margin: EdgeInsets.only(right: 8.w),
                             child: EpisodSelectBtn(
                               isRunning: index == 0,
-                              isAvilable: index > 0 && index <= 4,
-                              isLock: index > 4,
+                              isAvilable: !isLocked && index > 0,
+                              isLock: isLocked,
                               text: episode.episodeNumber.toString(),
-                              onPressed: () {
-                                videoDetailsController.onSeasonTap(
-                                  episode.downloadUrl,
-                                  episode.id,
-                                  index,
-                                );
-                              },
+                              onPressed: isLocked
+                                  ? null
+                                  : () {
+                                      videoDetailsController.onSeasonTap(
+                                        episode.downloadUrl,
+                                        episode.id,
+                                        index,
+                                      );
+                                    },
                             ),
                           );
                         },
@@ -390,6 +397,7 @@ class VideoDetailScreen extends StatelessWidget {
                           .h, // Increased height to accommodate full MovieCard content
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         itemCount: recentVideos.length,
                         itemBuilder: (context, index) {
                           final recentItem = recentVideos[index];
@@ -403,10 +411,12 @@ class VideoDetailScreen extends StatelessWidget {
                                 .toLocal()
                                 .toString()
                                 .split(' ')[0],
-                            onTap: () => Get.toNamed(
-                              AppRoutes.videoDetail,
-                              arguments: {'videoId': video.movieId},
-                            ),
+                            onTap: () {
+                              debugPrint("video.movieId: ${video.movieId}");
+                              videoDetailsController.getVideoDetails(
+                                video.movieId,
+                              );
+                            },
                           );
                         },
                       ),

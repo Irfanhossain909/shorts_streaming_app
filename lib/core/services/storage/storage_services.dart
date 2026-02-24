@@ -16,6 +16,7 @@ class LocalStorage {
   static String myName = "";
   static String myEmail = "";
   static UserRole userRole = UserRole.jobSeeker;
+  static bool isSubscribed = false;
 
   // Create Local Storage Instance
   static SharedPreferences? preferences;
@@ -38,6 +39,9 @@ class LocalStorage {
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
     myName = localStorage.getString(LocalStorageKeys.myName) ?? "";
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? "";
+
+    isSubscribed =
+        localStorage.getBool(LocalStorageKeys.isSubscribed) ?? false;
 
     // Handle user role with fallback to jobSeeker
     String roleString =
@@ -70,6 +74,7 @@ class LocalStorage {
       preferences!.setString(LocalStorageKeys.myEmail, "");
       preferences!.setString(LocalStorageKeys.userRole, "jobSeeker");
       preferences!.setBool(LocalStorageKeys.isLogIn, false);
+      preferences!.setBool(LocalStorageKeys.isSubscribed, false);
     }
   }
 
@@ -105,6 +110,8 @@ class LocalStorage {
     // Update static variables immediately after saving
     if (key == LocalStorageKeys.isLogIn) {
       isLogIn = value;
+    } else if (key == LocalStorageKeys.isSubscribed) {
+      isSubscribed = value;
     }
   }
 

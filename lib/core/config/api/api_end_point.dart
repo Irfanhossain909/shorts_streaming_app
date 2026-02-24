@@ -59,9 +59,9 @@ class ApiEndPoint {
 
 // Helper function to get domain based on environment
 String _getDomain() {
-  String liveServer = "http://72.62.164.122:5000";
+  String liveServer = "https://api.creepy-shorts.com";
   // String localServer = "https://rakibur5002.binarybards.online";
-  String localServer = "http://72.62.164.122:5000";
+  String localServer = "https://api.creepy-shorts.com";
 
   try {
     if (kDebugMode) {
@@ -76,8 +76,8 @@ String _getDomain() {
 
 // Helper function to get image URL
 String _getImageUrl() {
-  String liveImageUrl = "http://72.62.164.122:5000";
-  String localImageUrl = "http://72.62.164.122:5000";
+  String liveImageUrl = "https://api.creepy-shorts.com";
+  String localImageUrl = "https://api.creepy-shorts.com";
 
   try {
     if (kDebugMode) {
@@ -92,8 +92,8 @@ String _getImageUrl() {
 
 // Helper function to get socket URL
 String _getSocketUrl() {
-  String liveSocket = "http://72.62.164.122:5000";
-  String localSocket = "http://72.62.164.122:5000";
+  String liveSocket = "https://api.creepy-shorts.com";
+  String localSocket = "https://api.creepy-shorts.com";
 
   try {
     if (kDebugMode) {

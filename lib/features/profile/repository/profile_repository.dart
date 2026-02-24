@@ -113,6 +113,10 @@ class ProfileRepository {
           LocalStorageKeys.myName,
           result.name ?? '',
         );
+        await LocalStorage.setBool(
+          LocalStorageKeys.isSubscribed,
+          result.isSubscribed ?? false,
+        );
         return result;
       }
       throw Exception(response.message);
