@@ -79,11 +79,11 @@ class ShortsScontroller extends GetxController {
 
   // Ad interstitial state
   static const int _adTriggerInterval = 3;
-  static const int _adTimerDurationSeconds = 5;
   RxInt adScrollCounter = 0.obs;
   RxBool showAdOverlay = false.obs;
   RxBool canCloseAd = false.obs;
-  Timer? _adTimer;
+  RxBool isAdLoading = false.obs;
+  RxString adVideoUrl = ''.obs;
 
   bool get isUserSubscribed => LocalStorage.isSubscribed;
 
@@ -258,23 +258,38 @@ class ShortsScontroller extends GetxController {
     }
   }
 
-  void _showAd() {
+  void _showAd() async {
     showAdOverlay.value = true;
     canCloseAd.value = false;
+    isAdLoading.value = true;
+    adVideoUrl.value = '';
     _pauseVideo(currentIndex.value);
 
-    _adTimer?.cancel();
-    _adTimer = Timer(
-      const Duration(seconds: _adTimerDurationSeconds),
-      () => canCloseAd.value = true,
-    );
+    try {
+      final adData = await repository.getRandomAd();
+      if (adData != null && adData.downloadUrls.isNotEmpty) {
+        adVideoUrl.value = adData.downloadUrls;
+      } else {
+        // No ad available, dismiss immediately
+        dismissAd();
+      }
+    } catch (e) {
+      printInfo(info: '❌ Error fetching ad: $e');
+      dismissAd();
+    } finally {
+      isAdLoading.value = false;
+    }
+  }
+
+  void onAdVideoFinished() {
+    canCloseAd.value = true;
   }
 
   void dismissAd() {
-    _adTimer?.cancel();
-    _adTimer = null;
     showAdOverlay.value = false;
     canCloseAd.value = false;
+    isAdLoading.value = false;
+    adVideoUrl.value = '';
     adScrollCounter.value = 0;
 
     _resumeAfterAd();
@@ -987,10 +1002,6 @@ class ShortsScontroller extends GetxController {
     // Save progress before closing
     _saveVideoProgress(currentIndex.value);
     _stopProgressSaveTimer();
-
-    // Cancel ad timer
-    _adTimer?.cancel();
-    _adTimer = null;
 
     // Dispose all video controllers
     for (var controller in _videoControllers.values) {
