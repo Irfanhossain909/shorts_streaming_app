@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "651738200724-l86ba87m72j6mbvg7r4840ai1priq2nh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rubengalindo.creepyshorts",
+            "certificate_hash": "9c869fbf7bb72b3f5ca208f58bafed336d5b5e51"
+          }
+        },
+        {
           "client_id": "651738200724-n31t49u45cimpjv4dr2io937f7cd0rlq.apps.googleusercontent.com",
           "client_type": 3
         }
