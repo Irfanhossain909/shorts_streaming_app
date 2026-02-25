@@ -14,7 +14,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "651738200724-c4ugcdsr08lit3lhsnp177l04md7o4gi.apps.googleusercontent.com",
+          "client_id": "651738200724-b7ndko1206463krk4qiak4qjrgd1ek4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rubengalindo.creepyshorts",
+            "certificate_hash": "39c5394c83700f7931556a54ae0ed0f6805ffd6f"
+          }
+        },
+        {
+          "client_id": "651738200724-k7596gepj4rnkpaf1mui0n1oqveftbam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rubengalindo.creepyshorts",
+            "certificate_hash": "eb87db4ea4a02753b2c3489d9131cb4bd9286548"
+          }
+        },
+        {
+          "client_id": "651738200724-n31t49u45cimpjv4dr2io937f7cd0rlq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +45,13 @@
             {
               "client_id": "651738200724-c4ugcdsr08lit3lhsnp177l04md7o4gi.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "651738200724-olnoilujpcoindod17ut3e82hbma48pb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rubengalindo.creepyshorts"
+              }
             }
           ]
         }
