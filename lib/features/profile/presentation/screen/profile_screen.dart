@@ -172,55 +172,53 @@ class ProfileScreen extends StatelessWidget {
                               text:
                                   "Join membership now for unlimited adfree access",
                               fontSize: 12.sp,
+
                               fontWeight: FontWeight.w400,
                               color: AppColors.background.withValues(
                                 alpha: 0.8,
                               ),
-                              maxLines: 1,
+                              textAlign: TextAlign.left,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
                       12.width,
-                      Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.subscription);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.red.withValues(alpha: 0.8),
-                                    AppColors.red.withValues(alpha: 0.6),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: CommonText(
-                                text: "\$99.00/Week",
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.background,
-                              ),
+                      InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        onTap: () {
+                          Get.toNamed(AppRoutes.subscription);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.red.withValues(alpha: 0.8),
+                                AppColors.red.withValues(alpha: 0.6),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
+                            borderRadius: BorderRadius.circular(20.r),
                           ),
-                          4.height,
-                          CommonText(
-                            text: r"Renew at $ 199.00",
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.background.withValues(alpha: 0.8),
-                            maxLines: 1,
+                          child: CommonText(
+                            text:
+                                controller.profileModel.value?.isSubscribed ==
+                                    true
+                                ? "Subscribed"
+                                : "Subscription Now",
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.background,
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),

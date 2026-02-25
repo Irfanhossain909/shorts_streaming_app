@@ -227,35 +227,35 @@ class SignInScreen extends StatelessWidget {
                                   ),
                                 ),
                                 // 12.width,
-                                if (controller.platformType.value != "android")
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        controller.loginWithApple();
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 18.h,
+                                // if (controller.platformType.value != "android")
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.loginWithApple();
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 18.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColors.background,
                                         ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: AppColors.background,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12.w,
-                                          ),
-                                          color: AppColors.black,
+                                        borderRadius: BorderRadius.circular(
+                                          12.w,
                                         ),
-                                        child: Center(
-                                          child: CommonImage(
-                                            imageSrc: AppImages.apple,
-                                            width: 24.w,
-                                            imageColor: AppColors.background,
-                                          ),
+                                        color: AppColors.black,
+                                      ),
+                                      child: Center(
+                                        child: CommonImage(
+                                          imageSrc: AppImages.apple,
+                                          width: 24.w,
+                                          imageColor: AppColors.background,
                                         ),
                                       ),
                                     ),
                                   ),
+                                ),
                               ],
                             );
                     }),
