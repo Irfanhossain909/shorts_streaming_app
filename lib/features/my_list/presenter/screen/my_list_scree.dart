@@ -86,21 +86,21 @@ class MyListScree extends StatelessWidget {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () => Get.to(() => NotificationScreen()),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(30.r),
-              ),
-              child: Icon(
-                Icons.notifications_outlined,
-                color: AppColors.white,
-                size: 24.sp,
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () => Get.to(() => NotificationScreen()),
+          //   child: Container(
+          //     padding: EdgeInsets.all(8.w),
+          //     decoration: BoxDecoration(
+          //       color: AppColors.white.withValues(alpha: 0.1),
+          //       borderRadius: BorderRadius.circular(30.r),
+          //     ),
+          //     child: Icon(
+          //       Icons.notifications_outlined,
+          //       color: AppColors.white,
+          //       size: 24.sp,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -10,6 +10,7 @@ import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
@@ -212,8 +213,8 @@ class ProfileScreen extends StatelessWidget {
                             text:
                                 controller.profileModel.value?.isSubscribed ==
                                     true
-                                ? "Subscribed"
-                                : "Subscription Now",
+                                ? "\$${controller.profileModel.value?.subscription?.price.toString()}.99 /month"
+                                : "Subscribe Now",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.background,
@@ -247,7 +248,16 @@ class ProfileScreen extends StatelessWidget {
 
                       ProfileRow(
                         onTap: () {
-                          Get.toNamed(AppRoutes.downloadSeason);
+                          if (controller.profileModel.value?.isSubscribed ==
+                              false) {
+                            Utils.messageSnackBar(
+                              context,
+                              "Subscription Required",
+                              "Please subscribe to the app to download offline",
+                            );
+                          } else {
+                            Get.toNamed(AppRoutes.downloadSeason);
+                          }
                         },
                         title: "Offline Download",
                         leadPath: AppIcons.icOfflineDownload,

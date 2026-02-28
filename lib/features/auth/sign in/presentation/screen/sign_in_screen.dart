@@ -5,6 +5,7 @@ import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/component/text_field/common_text_field.dart';
+import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
@@ -31,7 +32,7 @@ class SignInScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: CustomGrediantForAllScreen(),
         title: CommonImage(width: 135.w, imageSrc: AppImages.appLogoSvg),
-        toolbarHeight: 100.h,
+        toolbarHeight: 128.h,
       ),
 
       // appBar: const CommonAppBar(isShowBackButton: false, title: ""),
@@ -95,17 +96,20 @@ class SignInScreen extends StatelessWidget {
                                 .value
                                 ?.data
                                 ?.images?[index];
+
                             return Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(30.r),
+
                                 child: CommonImage(
                                   height: 200.h,
                                   width: 120.w,
+                                  fill: BoxFit.cover,
 
                                   imageSrc: OtherHelper.getImageUrl(
                                     image,
-                                    defaultAsset: AppImages.m4,
+                                    // defaultAsset: AppImages.m4,
                                   ),
                                 ),
                               ),
@@ -115,9 +119,9 @@ class SignInScreen extends StatelessWidget {
                       }),
                     ),
 
-                    24.height,
+                    48.height,
 
-                    /// Email
+                    // /// Email
                     CommonTextField(
                       controller: controller.emailController,
                       borderColor: AppColors.buton,
