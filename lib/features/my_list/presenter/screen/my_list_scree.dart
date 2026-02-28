@@ -7,7 +7,6 @@ import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/my_list/presenter/controller/my_list_controller.dart';
-import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
 
 class MyListScree extends StatelessWidget {
   const MyListScree({super.key});

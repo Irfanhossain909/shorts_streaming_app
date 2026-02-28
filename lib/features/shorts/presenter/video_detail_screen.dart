@@ -328,7 +328,7 @@ class VideoDetailScreen extends StatelessWidget {
                     }
 
                     final bool subscribed = LocalStorage.isSubscribed;
-                    const int freeEpisodeLimit = 3;
+                    const int freeEpisodeLimit = 4;
 
                     return SizedBox(
                       height: 40.h,
