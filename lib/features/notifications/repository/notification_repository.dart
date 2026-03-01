@@ -1,5 +1,6 @@
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 
 import '../data/model/notification_model.dart';
@@ -21,7 +22,7 @@ class NotificationRepository {
         ApiEndPoint.instance.notifications,
         queryParameters: {"page": page, "limit": limit},
       );
-
+      appLog(response);
       return NotificationModel.fromJson(
         Map<String, dynamic>.from(response.data),
       );
