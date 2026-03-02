@@ -15,6 +15,10 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+val hasValidSigningConfig = keystorePropertiesFile.exists() &&
+    keystoreProperties["storeFile"]?.toString()?.isNotEmpty() == true &&
+    keystoreProperties["keyAlias"]?.toString()?.isNotEmpty() == true
+
 android {
     namespace = "com.rubengalindo.creepyshorts"
     compileSdk = flutter.compileSdkVersion
@@ -50,7 +54,11 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (hasValidSigningConfig) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
