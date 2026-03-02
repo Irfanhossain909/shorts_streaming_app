@@ -10,12 +10,16 @@ import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
 import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
+import 'package:testemu/features/notifications/repository/notification_repository.dart';
 
 class SignInController extends GetxController {
   /// Auth Repository instance
   AuthRepository authRepository = AuthRepository.instance;
   DeviceInfoService deviceInfoService = DeviceInfoService.instance;
   RxBool isGoogleLoading = false.obs;
+
+  NotificationRepository notificationRepository =
+      NotificationRepository.instance;
 
   /// Sign in Button Loading variable
   RxBool isLoading = false.obs;
@@ -50,6 +54,7 @@ class SignInController extends GetxController {
           "Google Sign In Failed",
           "Google Sign In",
         );
+
         return;
       }
       await googleLogin(success.firebaseIdToken);
@@ -96,7 +101,7 @@ class SignInController extends GetxController {
     // আর initialize এর দরকার নেই signInWithProvider এ
   }
   // ==============================
-  
+
   Future<void> googleLogin(String idToken) async {
     final response = await authRepository.googleLogin(idToken: idToken);
     if (response) {
@@ -105,9 +110,24 @@ class SignInController extends GetxController {
         "Google Login successful",
         "Google Login",
       );
+      await updateFCMToken();
       Get.offAllNamed(AppRoutes.navigation);
     } else {
       Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
+    }
+  }
+
+  Future<void> updateFCMToken() async {
+    try {
+      final response = await notificationRepository.updateFCMToken();
+      if (response) {
+        appLog("FCM Token updated", source: "FCM Token");
+      } else {
+        appLog("FCM Token update failed", source: "FCM Token");
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
     }
   }
 
@@ -136,6 +156,7 @@ class SignInController extends GetxController {
     );
     if (response) {
       Get.toNamed(AppRoutes.navigation);
+      await updateFCMToken();
     } else {
       errorLog(response, source: "Sign In");
     }

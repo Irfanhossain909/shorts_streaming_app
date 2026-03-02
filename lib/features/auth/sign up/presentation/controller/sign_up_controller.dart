@@ -8,10 +8,15 @@ import 'package:testemu/core/services/google_auth_service/apple_auth_service.dar
 import 'package:testemu/core/services/google_auth_service/google_auth_service.dart';
 import 'package:testemu/core/services/notification/device_info_service.dart';
 import 'package:testemu/core/utils/app_utils.dart';
+import 'package:testemu/core/utils/log/app_log.dart';
+import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
+import 'package:testemu/features/notifications/repository/notification_repository.dart';
 
 class SignUpController extends GetxController {
   AuthRepository authRepository = AuthRepository.instance;
+  NotificationRepository notificationRepository =
+      NotificationRepository.instance;
 
   /// Sign Up Form Key
 
@@ -110,7 +115,7 @@ class SignUpController extends GetxController {
     // আর initialize এর দরকার নেই signInWithProvider এ
   }
 
-   Future<void> googleLogin(String idToken) async {
+  Future<void> googleLogin(String idToken) async {
     final response = await authRepository.googleLogin(idToken: idToken);
     if (response) {
       Utils.successSnackBar(
@@ -119,12 +124,27 @@ class SignUpController extends GetxController {
         "Google Login",
       );
       Get.offAllNamed(AppRoutes.navigation);
+      await updateFCMToken();
     } else {
       Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
     }
   }
 
   // ==============================
+
+  Future<void> updateFCMToken() async {
+    try {
+      final response = await notificationRepository.updateFCMToken();
+      if (response) {
+        appLog("FCM Token updated", source: "FCM Token");
+      } else {
+        appLog("FCM Token update failed", source: "FCM Token");
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+  }
 
   signUpUser({GlobalKey<FormState>? formKey}) async {
     if (formKey?.currentState?.validate() == false) {

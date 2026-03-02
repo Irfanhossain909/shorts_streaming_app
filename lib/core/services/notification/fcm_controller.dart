@@ -43,4 +43,8 @@ class FCMController extends GetxController {
   String? get currentToken => fcmToken.value;
 
   bool get hasToken => fcmToken.value != null;
+
+
+
+
 }

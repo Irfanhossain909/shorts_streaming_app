@@ -1,5 +1,6 @@
 import 'package:testemu/core/config/api/api_end_point.dart';
 import 'package:testemu/core/services/api/api_service.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 
@@ -12,6 +13,29 @@ class NotificationRepository {
   static NotificationRepository get instance => _instance;
 
   ApiService apiService = ApiService.instance;
+
+  Future<bool> updateFCMToken() async {
+    try {
+      if (LocalStorage.fcmToken.isEmpty || LocalStorage.deviceId.isEmpty) {
+        return false;
+      }
+      final response = await apiService.post(
+        ApiEndPoint.instance.updateFCMToken,
+        body: {
+          "fcmToken": LocalStorage.fcmToken,
+          "deviceId": LocalStorage.deviceId,
+          "deviceType": LocalStorage.deviceType,
+        },
+      );
+      if (response.isSuccess) {
+        return true;
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
+    }
+    return false;
+  }
 
   Future<NotificationModel> getNotifications({
     required String page,

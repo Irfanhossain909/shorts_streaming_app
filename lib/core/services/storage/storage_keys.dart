@@ -7,6 +7,8 @@ class LocalStorageKeys {
   static const String myName = "myName";
   static const String myEmail = "myEmail";
   static const String userRole = "userRole";
+  static const String deviceId = "deviceId";
+  static const String deviceType = "deviceType";
   /// FCM push notification token
   static const String fcmToken = "fcmToken";
   static const String isSubscribed = "isSubscribed";
