@@ -106,7 +106,7 @@ class SignInScreen extends StatelessWidget {
                                   height: 200.h,
                                   width: 120.w,
                                   fill: BoxFit.cover,
-
+                                  highQuality: true,
                                   imageSrc: OtherHelper.getImageUrl(
                                     image,
                                     // defaultAsset: AppImages.m4,

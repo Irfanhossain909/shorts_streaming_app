@@ -19,6 +19,9 @@ class CommonImage extends StatelessWidget {
   /// Performance mode
   final bool lowQualityMode;
 
+  /// Full HD mode - no cache size limit, loads backend resolution (use for hero/slider images)
+  final bool highQuality;
+
   const CommonImage({
     required this.imageSrc,
     this.imageColor,
@@ -29,6 +32,7 @@ class CommonImage extends StatelessWidget {
     this.fill = BoxFit.cover,
     this.defaultImage = AppImages.defaultProfile,
     this.lowQualityMode = false,
+    this.highQuality = false,
     super.key,
   });
 
@@ -39,7 +43,7 @@ class CommonImage extends StatelessWidget {
     } else if (imageSrc.startsWith("assets/images")) {
       return _buildAssetImage();
     } else {
-      return _buildNetworkImage();
+      return _buildNetworkImage(context);
     }
   }
 
@@ -57,6 +61,15 @@ class CommonImage extends StatelessWidget {
     }
 
     return v;
+  }
+
+  /// Cache at displaySize * devicePixelRatio for retina - full HD sharp images
+  int? _cacheSizeForRetina(double? displaySize, double devicePixelRatio) {
+    if (displaySize == null || displaySize <= 0 || !displaySize.isFinite) {
+      return null;
+    }
+    final scaled = displaySize * devicePixelRatio;
+    return _optimizedSize(scaled);
   }
 
   /// 🔥 DARK GLOSS SHIMMER
@@ -90,9 +103,19 @@ class CommonImage extends StatelessWidget {
     );
   }
 
-  Widget _buildNetworkImage() {
+  Widget _buildNetworkImage(BuildContext context) {
     final actualWidth = size ?? width;
     final actualHeight = size ?? height;
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+
+    // highQuality: full resolution from backend (no downscale)
+    // else: cache at displaySize * devicePixelRatio for retina
+    final cacheW = highQuality
+        ? null
+        : _cacheSizeForRetina(actualWidth, dpr);
+    final cacheH = highQuality
+        ? null
+        : _cacheSizeForRetina(actualHeight, dpr);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
@@ -101,10 +124,10 @@ class CommonImage extends StatelessWidget {
         height: actualHeight,
         width: actualWidth,
         fit: fill,
-        memCacheWidth: _optimizedSize(actualWidth),
-        memCacheHeight: _optimizedSize(actualHeight),
-        maxWidthDiskCache: _optimizedSize(actualWidth),
-        maxHeightDiskCache: _optimizedSize(actualHeight),
+        memCacheWidth: cacheW,
+        memCacheHeight: cacheH,
+        maxWidthDiskCache: cacheW,
+        maxHeightDiskCache: cacheH,
         fadeInDuration: Duration.zero,
         fadeOutDuration: Duration.zero,
 
