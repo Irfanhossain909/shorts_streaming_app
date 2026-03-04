@@ -54,6 +54,7 @@ class ApiEndPoint {
   final String messages = "messages";
   final String userAgreement = "user-agreement";
   final String deleteAccount = "/users/delete-account";
+  final String updateFCMToken = "/fcmToken/save-device-token";
 
   final String loginSlider = "/dynamic-content/key/login";
 }

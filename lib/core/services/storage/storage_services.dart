@@ -17,7 +17,8 @@ class LocalStorage {
   static String myEmail = "";
   static UserRole userRole = UserRole.jobSeeker;
   static bool isSubscribed = false;
-
+  static String deviceId = "";
+  static String deviceType = "";
   // Create Local Storage Instance
   static SharedPreferences? preferences;
 
@@ -34,6 +35,8 @@ class LocalStorage {
     token = localStorage.getString(LocalStorageKeys.token) ?? "";
     refreshToken = localStorage.getString(LocalStorageKeys.refreshToken) ?? "";
     fcmToken = localStorage.getString(LocalStorageKeys.fcmToken) ?? "";
+    deviceId = localStorage.getString(LocalStorageKeys.deviceId) ?? "";
+    deviceType = localStorage.getString(LocalStorageKeys.deviceType) ?? "";
     isLogIn = localStorage.getBool(LocalStorageKeys.isLogIn) ?? false;
     userId = localStorage.getString(LocalStorageKeys.userId) ?? "";
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
@@ -68,6 +71,8 @@ class LocalStorage {
       preferences!.setString(LocalStorageKeys.token, "");
       preferences!.setString(LocalStorageKeys.refreshToken, "");
       preferences!.setString(LocalStorageKeys.fcmToken, "");
+      preferences!.setString(LocalStorageKeys.deviceId, "");
+      preferences!.setString(LocalStorageKeys.deviceType, "");
       preferences!.setString(LocalStorageKeys.userId, "");
       preferences!.setString(LocalStorageKeys.myImage, "");
       preferences!.setString(LocalStorageKeys.myName, "");
@@ -75,6 +80,7 @@ class LocalStorage {
       preferences!.setString(LocalStorageKeys.userRole, "jobSeeker");
       preferences!.setBool(LocalStorageKeys.isLogIn, false);
       preferences!.setBool(LocalStorageKeys.isSubscribed, false);
+      
     }
   }
 
@@ -90,6 +96,10 @@ class LocalStorage {
       refreshToken = value;
     } else if (key == LocalStorageKeys.fcmToken) {
       fcmToken = value;
+    } else if (key == LocalStorageKeys.deviceId) {
+      deviceId = value;
+    } else if (key == LocalStorageKeys.deviceType) {
+      deviceType = value;
     } else if (key == LocalStorageKeys.userId) {
       userId = value;
     } else if (key == LocalStorageKeys.myImage) {

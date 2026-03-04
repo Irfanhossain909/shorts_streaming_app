@@ -14,6 +14,11 @@ class AppImages {
   static const String apple = "assets/icons/apple.svg";
   static const String map = "$baseurl/map.png";
   static const String defaultProfile = "assets/images/defult_image.png";
+  static const String vipCardImg2 = "assets/images/vip_card_img.png";
+  static const String offLineDownload = "assets/images/ofline_download.png";
+  static const String addFree = "assets/images/add_free.png";
+  static const String short = "assets/images/shorts.png";
+  static const String free = "assets/images/free.png";
 
   // New images
   static const String add = "$baseurl/add.png";
@@ -92,10 +97,10 @@ class AppImages {
   static const String resume = "$baseurl/resume.png";
   static const String editFile = "$baseurl/edit_file.png";
   static const String vipCardImg = "$baseurl/vip_card_img.png";
-  static const String short = "$baseurl/short.webp";
-  static const String offLineDownload = "$baseurl/ofline_download.webp";
-  static const String free = "$baseurl/free.webp";
-  static const String addFree = "$baseurl/add_free.webp";
+  // static const String short = "$baseurl/short.webp";
+  // static const String offLineDownload = "$baseurl/ofline_download.webp";
+  // static const String free = "$baseurl/free.webp";
+  // static const String addFree = "$baseurl/add_free.webp";
   static const String star = "$baseurl/starIc.png";
   static const String shareIc = "$baseurl/shareIc.png";
   static const String listIc = "$baseurl/listIc.png";

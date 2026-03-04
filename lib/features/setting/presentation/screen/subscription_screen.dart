@@ -62,7 +62,7 @@ class SubscriptionScreen extends StatelessWidget {
                       SizedBox(width: 12.w),
                       Expanded(
                         flex: 3,
-                        child: CommonImage(imageSrc: AppImages.vipCardImg),
+                        child: CommonImage(imageSrc: AppImages.vipCardImg2),
                       ),
                     ],
                   ),
@@ -78,20 +78,19 @@ class SubscriptionScreen extends StatelessWidget {
                       aspectRatio: 16 / 9,
                       initialPage: 0,
                     ),
-                    items: controller.subscriptions
-                        .map(
-                          (subscription) {
-                            // Get the correct product ID based on platform
-                            final productId = controller.getProductDetails(subscription)?.id ??
-                                (subscription.googleProductId ?? subscription.appleProductId ?? '');
-                            
-                            return SubCard(
-                              onTap: () => controller.buySubscription(productId),
-                              subscription: subscription,
-                            );
-                          },
-                        )
-                        .toList(),
+                    items: controller.subscriptions.map((subscription) {
+                      // Get the correct product ID based on platform
+                      final productId =
+                          controller.getProductDetails(subscription)?.id ??
+                          (subscription.googleProductId ??
+                              subscription.appleProductId ??
+                              '');
+
+                      return SubCard(
+                        onTap: () => controller.buySubscription(productId),
+                        subscription: subscription,
+                      );
+                    }).toList(),
                   ),
                   SizedBox(height: 16.h),
                   CommonText(
@@ -127,7 +126,7 @@ class SubscriptionScreen extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: SubRowCard(
-                          imgWidth: 62.w,
+                          imgWidth: 58.w,
                           height: 12,
                           title: "Offline Downloads",
                           imgPath: AppImages.offLineDownload,
@@ -230,10 +229,11 @@ class SubRowCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CommonImage(
-          width: imgWidth ?? 76.w,
-          imageSrc: imgPath ?? AppImages.free,
-        ),
+        Image.asset(imgPath ?? AppImages.free, width: imgWidth ?? 70.w),
+        // CommonImage(
+        //   width: imgWidth ?? 70.w,
+        //   imageSrc: imgPath ?? AppImages.free,
+        // ),
         SizedBox(height: height ?? 4.h),
         CommonText(
           text: title ?? "no text",

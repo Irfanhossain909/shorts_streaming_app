@@ -13,6 +13,7 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
 import 'package:testemu/features/auth/forgot%20password/presentation/screen/create_password.dart';
 import 'package:testemu/features/auth/sign%20in/presentation/widgets/do_not_account.dart';
+
 import '../controller/sign_in_controller.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -31,7 +32,7 @@ class SignInScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: CustomGrediantForAllScreen(),
         title: CommonImage(width: 135.w, imageSrc: AppImages.appLogoSvg),
-        toolbarHeight: 100.h,
+        toolbarHeight: 128.h,
       ),
 
       // appBar: const CommonAppBar(isShowBackButton: false, title: ""),
@@ -95,17 +96,20 @@ class SignInScreen extends StatelessWidget {
                                 .value
                                 ?.data
                                 ?.images?[index];
+
                             return Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(30.r),
+
                                 child: CommonImage(
                                   height: 200.h,
                                   width: 120.w,
+                                  fill: BoxFit.cover,
 
                                   imageSrc: OtherHelper.getImageUrl(
                                     image,
-                                    defaultAsset: AppImages.m4,
+                                    // defaultAsset: AppImages.m4,
                                   ),
                                 ),
                               ),
@@ -115,9 +119,9 @@ class SignInScreen extends StatelessWidget {
                       }),
                     ),
 
-                    24.height,
+                    48.height,
 
-                    /// Email
+                    // /// Email
                     CommonTextField(
                       controller: controller.emailController,
                       borderColor: AppColors.buton,
@@ -227,35 +231,35 @@ class SignInScreen extends StatelessWidget {
                                   ),
                                 ),
                                 // 12.width,
-                                if (controller.platformType.value != "android")
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        controller.loginWithApple();
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 18.h,
+                                // if (controller.platformType.value != "android")
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      controller.loginWithApple();
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 18.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColors.background,
                                         ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: AppColors.background,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12.w,
-                                          ),
-                                          color: AppColors.black,
+                                        borderRadius: BorderRadius.circular(
+                                          12.w,
                                         ),
-                                        child: Center(
-                                          child: CommonImage(
-                                            imageSrc: AppImages.apple,
-                                            width: 24.w,
-                                            imageColor: AppColors.background,
-                                          ),
+                                        color: AppColors.black,
+                                      ),
+                                      child: Center(
+                                        child: CommonImage(
+                                          imageSrc: AppImages.apple,
+                                          width: 24.w,
+                                          imageColor: AppColors.background,
                                         ),
                                       ),
                                     ),
                                   ),
+                                ),
                               ],
                             );
                     }),

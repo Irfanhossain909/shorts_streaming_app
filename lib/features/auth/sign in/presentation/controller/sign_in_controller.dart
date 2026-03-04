@@ -10,12 +10,16 @@ import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
 import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
+import 'package:testemu/features/notifications/repository/notification_repository.dart';
 
 class SignInController extends GetxController {
   /// Auth Repository instance
   AuthRepository authRepository = AuthRepository.instance;
   DeviceInfoService deviceInfoService = DeviceInfoService.instance;
   RxBool isGoogleLoading = false.obs;
+
+  NotificationRepository notificationRepository =
+      NotificationRepository.instance;
 
   /// Sign in Button Loading variable
   RxBool isLoading = false.obs;
@@ -37,47 +41,40 @@ class SignInController extends GetxController {
 
   Rxn<LoginsliderModel> loginSliderData = Rxn<LoginsliderModel>();
 
-  // initialize device info
-  void initializeDeviceInfo() {
-    isDeviceInfoLoading.value = true;
+  // ========================================================
+  // Google
+  GoogleWebAuthService googleWebAuthService = GoogleWebAuthService();
+  Future<void> loginWithGoogle() async {
+    isGoogleLoading.value = true;
     try {
-      platformType.value = deviceInfoService.getPlatformType();
-      if (platformType.value == "android") {
-        initializeGoogle();
-      } else {
-        initializeGoogle();
-        initializeApple();
+      final success = await googleWebAuthService.signIn(); // new service
+      if (success == null) {
+        Utils.errorSnackBar(
+          Get.context!,
+          "Google Sign In Failed",
+          "Google Sign In",
+        );
+
+        return;
       }
+      await googleLogin(success.firebaseIdToken);
     } catch (e) {
       Utils.errorSnackBar(
         Get.context!,
-        "Device info initialization failed",
-        "Device Info",
+        "Login failed. Please try again",
+        "Google Sign In",
       );
     } finally {
-      isDeviceInfoLoading.value = false;
+      isGoogleLoading.value = false;
     }
   }
 
-  /// ---------------- APPLE SIGN IN ----------------
-  AppleAuthService appleAuthService = AppleAuthService();
-  Future<void> initializeApple() async {
-    try {
-      await appleAuthService.initialize();
-    } catch (e) {
-      Utils.errorSnackBar(
-        Get.context!,
-        "Apple service initialization failed",
-        "Apple Sign In",
-      );
-    }
-  }
-
+  // // Apple — এখন platform check দরকার নেই
+  AppleWebAuthService appleWebAuthService = AppleWebAuthService();
   Future<void> loginWithApple() async {
     isGoogleLoading.value = true;
     try {
-      final success = await appleAuthService.signIn();
-
+      final success = await appleWebAuthService.signIn(); // new service
       if (success == null) {
         Utils.errorSnackBar(
           Get.context!,
@@ -86,19 +83,7 @@ class SignInController extends GetxController {
         );
         return;
       }
-
-      final idToken = appleAuthService.userData?.firebaseIdToken;
-
-      if (idToken == null || idToken.isEmpty) {
-        Utils.errorSnackBar(
-          Get.context!,
-          "Invalid Apple token",
-          "Apple Sign In",
-        );
-        return;
-      }
-
-      await googleLogin(idToken);
+      await googleLogin(success.firebaseIdToken);
     } catch (e) {
       Utils.errorSnackBar(
         Get.context!,
@@ -110,56 +95,12 @@ class SignInController extends GetxController {
     }
   }
 
-  // ---------------- GOOGLE SIGN IN ----------------
-  GoogleAuthService googleAuthService = GoogleAuthService();
-  Future<void> initializeGoogle() async {
-    try {
-      await googleAuthService.initialize();
-    } catch (e) {
-      Utils.errorSnackBar(
-        Get.context!,
-        "Google service initialization failed",
-        "Google Sign In",
-      );
-    }
+  // initializeDeviceInfo — সব platform এ Apple দেখাও
+  void initializeDeviceInfo() {
+    platformType.value = deviceInfoService.getPlatformType();
+    // আর initialize এর দরকার নেই signInWithProvider এ
   }
-
-  Future<void> loginWithGoogle() async {
-    isGoogleLoading.value = true;
-    try {
-      final success = await googleAuthService.signIn();
-
-      if (success == null) {
-        Utils.errorSnackBar(
-          Get.context!,
-          "Google Sign In Failed",
-          "Google Sign In",
-        );
-        return;
-      }
-
-      final idToken = googleAuthService.userData?.firebaseIdToken;
-
-      if (idToken == null || idToken.isEmpty) {
-        Utils.errorSnackBar(
-          Get.context!,
-          "Invalid Google token",
-          "Google Sign In",
-        );
-        return;
-      }
-
-      await googleLogin(idToken);
-    } catch (e) {
-      Utils.errorSnackBar(
-        Get.context!,
-        "Login failed. Please try again",
-        "Google Sign In",
-      );
-    } finally {
-      isGoogleLoading.value = false;
-    }
-  }
+  // ==============================
 
   Future<void> googleLogin(String idToken) async {
     final response = await authRepository.googleLogin(idToken: idToken);
@@ -169,9 +110,24 @@ class SignInController extends GetxController {
         "Google Login successful",
         "Google Login",
       );
+      await updateFCMToken();
       Get.offAllNamed(AppRoutes.navigation);
     } else {
       Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
+    }
+  }
+
+  Future<void> updateFCMToken() async {
+    try {
+      final response = await notificationRepository.updateFCMToken();
+      if (response) {
+        appLog("FCM Token updated", source: "FCM Token");
+      } else {
+        appLog("FCM Token update failed", source: "FCM Token");
+      }
+    } catch (e) {
+      errorLog(e);
+      rethrow;
     }
   }
 
@@ -200,6 +156,7 @@ class SignInController extends GetxController {
     );
     if (response) {
       Get.toNamed(AppRoutes.navigation);
+      await updateFCMToken();
     } else {
       errorLog(response, source: "Sign In");
     }
@@ -209,6 +166,7 @@ class SignInController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // initializeDeviceInfo();
     initializeDeviceInfo();
     loginSlider();
   }

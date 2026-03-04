@@ -7,6 +7,7 @@ import 'package:testemu/core/services/subscription_service/subscription_service.
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/app_print.dart';
+import 'package:testemu/features/profile/presentation/controller/profile_controller.dart';
 import 'package:testemu/features/setting/data/model/subscription_model.dart';
 import 'package:testemu/features/setting/repository/setting_repository.dart';
 import 'package:testemu/features/setting/repository/subscription_repository.dart';
@@ -15,6 +16,8 @@ class SubscriptionController extends GetxController {
   SettingRepository settingRepository = SettingRepository.instance;
   SubscriptionRepository subscriptionRepository =
       SubscriptionRepository.instance;
+
+  ProfileController profileController = Get.find<ProfileController>();
 
   /// Api status check here
   Status status = Status.completed;
@@ -140,6 +143,9 @@ class SubscriptionController extends GetxController {
         );
 
         await LocalStorage.setBool(LocalStorageKeys.isSubscribed, true);
+        profileController.profileModel.value?.isSubscribed = true;
+        profileController.getProfile();
+        Get.back();
       } else {
         appLog("❌ Purchase verification failed", source: "Verify Purchase");
       }
