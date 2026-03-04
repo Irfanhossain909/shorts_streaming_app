@@ -206,7 +206,7 @@ class SubscriptionController extends GetxController {
   /// Get ProductDetails for a subscription
   ProductDetails? getProductDetails(SubscriptionData subscription) {
     final productId = Platform.isIOS
-        ? subscription.appleProductId
+        ? subscription.googleProductId
         : subscription.googleProductId;
 
     if (productId == null || productId.isEmpty) {
@@ -236,7 +236,7 @@ class SubscriptionController extends GetxController {
         final productIds = allSubscriptions
             .map((e) {
               if (Platform.isIOS) {
-                return e.appleProductId ?? '';
+                return e.googleProductId ?? '';
               } else {
                 return e.googleProductId ?? '';
               }
@@ -255,7 +255,7 @@ class SubscriptionController extends GetxController {
         // Filter subscriptions to only include those with available IAP products
         subscriptions = allSubscriptions.where((subscription) {
           final productId = Platform.isIOS
-              ? subscription.appleProductId
+              ? subscription.googleProductId
               : subscription.googleProductId;
 
           if (productId == null || productId.isEmpty) {

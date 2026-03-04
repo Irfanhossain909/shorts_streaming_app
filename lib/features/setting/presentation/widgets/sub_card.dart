@@ -18,12 +18,16 @@ class SubCard extends StatelessWidget {
     final productDetails = controller.getProductDetails(subscription);
 
     // Use IAP product data if available, otherwise fall back to API data
-    final displayName = productDetails?.title ?? subscription.name ?? "";
-    final displayDescription =
-        productDetails?.description ?? subscription.description ?? "";
-    final displayPrice =
-        productDetails?.price ?? (subscription.price?.toString() ?? "0");
+    final displayName = subscription.name ?? "";
+    // final displayName = productDetails?.title ?? subscription.name ?? "";
+    final displayDescription = subscription.description ?? "";
+    // final displayDescription =
+    //     productDetails?.description ?? subscription.description ?? "";
+    final displayPrice = (subscription.price?.toString() ?? "0");
+    // final displayPrice =
+    //     productDetails?.price ?? (subscription.price?.toString() ?? "0");
     final displayDuration = subscription.duration ?? "";
+    // final displayDuration = subscription.duration ?? "";
 
     // Get product ID to check subscription status
     final productId =
@@ -95,7 +99,7 @@ class SubCard extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: CommonText(
-              text: "renew at $displayPrice $displayDuration",
+              text: "renew at $displayPrice/ $displayDuration",
               fontSize: 10.sp,
               fontWeight: FontWeight.w400,
               color: AppColors.background,

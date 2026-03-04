@@ -163,7 +163,11 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CommonText(
-                              text: "Subscribe",
+                              text:
+                                  controller.profileModel.value?.isSubscribed ==
+                                      true
+                                  ? "Subscription Successful"
+                                  : "Subscribe",
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.background,
@@ -171,7 +175,10 @@ class ProfileScreen extends StatelessWidget {
                             4.height,
                             CommonText(
                               text:
-                                  "Join membership now for unlimited adfree access",
+                                  controller.profileModel.value?.isSubscribed ==
+                                      true
+                                  ? "Welcome to the dark side of storytelling. Enter. Watch. Stay"
+                                  : "Join membership now for unlimited adfree access",
                               fontSize: 12.sp,
 
                               fontWeight: FontWeight.w400,
@@ -213,7 +220,7 @@ class ProfileScreen extends StatelessWidget {
                             text:
                                 controller.profileModel.value?.isSubscribed ==
                                     true
-                                ? "\$${controller.profileModel.value?.subscription?.price.toString()}.99 /month"
+                                ? "\$${controller.profileModel.value?.subscription?.price} /month"
                                 : "Subscribe Now",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
