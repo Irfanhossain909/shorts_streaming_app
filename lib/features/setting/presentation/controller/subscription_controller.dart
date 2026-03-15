@@ -71,16 +71,13 @@ class SubscriptionController extends GetxController {
     // Add to subscribed products
     subscribedProductIds.add(purchase.productID);
 
-    // Do not verify restored purchases on screen load.
-    // Requirement: if already purchased in store, only update UI state.
-    if (purchase.status == PurchaseStatus.purchased) {
-      await _verifyPurchaseWithAPI(purchase);
-    } else {
-      appLog(
-        "ℹ️ Skipping verify API for restored purchase: ${purchase.productID}",
-        source: "Verify Purchase",
-      );
-    }
+    // Verify with backend for both new purchase and restored (backend should be idempotent).
+    // This ensures verify API is always called when subscription completes.
+    appLog(
+      "📤 Calling verify API for: ${purchase.productID}, status: ${purchase.status}",
+      source: "Verify Purchase",
+    );
+    await _verifyPurchaseWithAPI(purchase);
 
     // Update UI
     update();
@@ -102,24 +99,37 @@ class SubscriptionController extends GetxController {
     update();
   }
 
-  /// Verify purchase with backend API
+  String getPurchaseToken(PurchaseDetails purchase) {
+    if (Platform.isAndroid) {
+      /// Android → purchaseToken
+      return purchase.verificationData.serverVerificationData;
+    } else if (Platform.isIOS) {
+      /// iOS → receipt data
+      return purchase.verificationData.serverVerificationData;
+    }
+
+    return "";
+  }
+
+  /// Verify purchase with backend API (called after purchase or restore).
   Future<void> _verifyPurchaseWithAPI(PurchaseDetails purchase) async {
     try {
-      // Currently we only send verification to backend for Android.
-      // iOS flow will be wired later after backend confirmation.
-      if (!Platform.isAndroid) {
+      final provider = Platform.isIOS ? "apple" : "google";
+      final purchaseToken = getPurchaseToken(purchase);
+
+      if (purchaseToken.isEmpty) {
         appLog(
-          "ℹ️ Purchase verification is currently implemented only for Android. "
-          "iOS payload preview => provider: apple, productId: ${purchase.productID}",
+          "❌ Verify skipped: purchaseToken is empty for ${purchase.productID}",
           source: "Verify Purchase",
         );
         return;
       }
 
-      // Find matching subscription to get numeric price from API data
       double? price;
+
       for (final sub in subscriptions) {
         final googleId = sub.googleProductId;
+
         if (googleId != null &&
             googleId.isNotEmpty &&
             googleId == purchase.productID) {
@@ -129,30 +139,125 @@ class SubscriptionController extends GetxController {
       }
 
       final response = await subscriptionRepository.verifyPurchase(
-        provider: "google",
+        provider: provider,
         productId: purchase.productID,
-        purchaseToken: purchase.verificationData.serverVerificationData,
+        purchaseToken: purchaseToken,
         packageName: "com.rubengalindo.creepyshorts",
         price: price,
       );
 
       if (response) {
         appLog(
-          "✅ Purchase verified successfully with backend",
+          "✅ Verify API success: ${purchase.productID}",
           source: "Verify Purchase",
         );
-
         await LocalStorage.setBool(LocalStorageKeys.isSubscribed, true);
         profileController.profileModel.value?.isSubscribed = true;
         profileController.getProfile();
+
         Get.back();
       } else {
-        appLog("❌ Purchase verification failed", source: "Verify Purchase");
+        appLog(
+          "❌ Verify API returned false (non-200) for ${purchase.productID}",
+          source: "Verify Purchase",
+        );
       }
     } catch (e) {
       appLog("❌ Error verifying purchase: $e", source: "Verify Purchase");
     }
   }
+  // Future<void> _verifyPurchaseWithAPI(PurchaseDetails purchase) async {
+  //   try {
+  //     // Determine provider based on platform
+  //     String provider = Platform.isIOS ? "apple" : "google";
+
+  //     // Find matching subscription to get numeric price from API data
+  //     double? price;
+  //     for (final sub in subscriptions) {
+  //       final googleId = sub.googleProductId;
+  //       if (googleId != null &&
+  //           googleId.isNotEmpty &&
+  //           googleId == purchase.productID) {
+  //         price = sub.price;
+  //         break;
+  //       }
+  //     }
+
+  //     final response = await subscriptionRepository.verifyPurchase(
+  //       provider: provider,
+  //       productId: purchase.productID,
+  //       purchaseToken: purchase.verificationData.serverVerificationData,
+  //       packageName: "com.rubengalindo.creepyshorts",
+  //       price: price,
+  //     );
+
+  //     if (response) {
+  //       appLog(
+  //         "✅ Purchase verified successfully with backend",
+  //         source: "Verify Purchase",
+  //       );
+
+  //       await LocalStorage.setBool(LocalStorageKeys.isSubscribed, true);
+  //       profileController.profileModel.value?.isSubscribed = true;
+  //       profileController.getProfile();
+  //       Get.back();
+  //     } else {
+  //       appLog("❌ Purchase verification failed", source: "Verify Purchase");
+  //     }
+  //   } catch (e) {
+  //     appLog("❌ Error verifying purchase: $e", source: "Verify Purchase");
+  //   }
+  // }
+  // Future<void> _verifyPurchaseWithAPI(PurchaseDetails purchase) async {
+  //   try {
+  //     // Currently we only send verification to backend for Android.
+  //     // iOS flow will be wired later after backend confirmation.
+  //     // if (!Platform.isAndroid) {
+  //     //   appLog(
+  //     //     "ℹ️ Purchase verification is currently implemented only for Android. "
+  //     //     "iOS payload preview => provider: apple, productId: ${purchase.productID}",
+  //     //     source: "Verify Purchase",
+  //     //   );
+  //     //   return;
+  //     // }
+
+  //     // Find matching subscription to get numeric price from API data
+  //     double? price;
+  //     for (final sub in subscriptions) {
+  //       final googleId = sub.googleProductId;
+  //       if (googleId != null &&
+  //           googleId.isNotEmpty &&
+  //           googleId == purchase.productID) {
+  //         price = sub.price;
+  //         break;
+  //       }
+  //     }
+
+  //     final response = await subscriptionRepository.verifyPurchase(
+  //       provider: "google",
+  //       productId: purchase.productID,
+  //       purchaseToken: purchase.verificationData.serverVerificationData,
+  //       packageName: "com.rubengalindo.creepyshorts",
+  //       price: price,
+  //     );
+
+  //     if (response) {
+  //       appLog(
+  //         "✅ Purchase verified successfully with backend",
+  //         source: "Verify Purchase",
+  //       );
+
+  //       await LocalStorage.setBool(LocalStorageKeys.isSubscribed, true);
+  //       profileController.profileModel.value?.isSubscribed = true;
+  //       profileController.getProfile();
+  //       Get.back();
+  //     } else {
+  //       appLog("❌ Purchase verification failed", source: "Verify Purchase");
+  //     }
+  //   } catch (e) {
+  //     appLog("❌ Error verifying purchase: $e", source: "Verify Purchase");
+  //   }
+  // }
 
   /// Check if a product is subscribed
   bool isProductSubscribed(String productId) {
