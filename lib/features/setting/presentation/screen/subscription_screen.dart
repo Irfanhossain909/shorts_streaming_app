@@ -7,6 +7,7 @@ import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/other_widgets/common_loader.dart';
 import 'package:testemu/core/component/screen/error_screen.dart';
 import 'package:testemu/core/component/text/common_text.dart';
+import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
@@ -172,7 +173,7 @@ class SubscriptionScreen extends StatelessWidget {
                       CommonText(
                         textAlign: TextAlign.justify,
                         text:
-                            "(1) After purchasing the Weekly PRO/Monthly PRO/Yearly PRO card, you will be able to watch any episode without restrictions.",
+                            "(1) After purchasing the Creepy Besic, you will be able to watch any episode without restrictions.",
                         fontSize: 10.sp,
                         maxLines: 3,
                         fontWeight: FontWeight.w400,
@@ -189,14 +190,45 @@ class SubscriptionScreen extends StatelessWidget {
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: CommonText(
-                          text: "Privacy Policy | User Agreement | Restore",
-                          maxLines: 3,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.background,
-                          top: 12.h,
-                          bottom: 12.h,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 12.w,
+                          children: [
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              onTap: () {
+                                Get.toNamed(AppRoutes.privacyPolicy);
+                              },
+                              child: CommonText(
+                                text: "Privacy Policy",
+                                maxLines: 3,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                                top: 12.h,
+                                bottom: 12.h,
+                              ),
+                            ),
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              onTap: () {
+                                Get.toNamed(AppRoutes.userAgreement);
+                              },
+                              child: CommonText(
+                                text: "User Agreement ",
+                                maxLines: 3,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                                top: 12.h,
+                                bottom: 12.h,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

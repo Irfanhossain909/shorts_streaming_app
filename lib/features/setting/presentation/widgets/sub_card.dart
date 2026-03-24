@@ -100,7 +100,7 @@ class SubCard extends StatelessWidget {
             alignment: Alignment.center,
             child: CommonText(
               text: "renew at $displayPrice/ $displayDuration",
-              fontSize: 10.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w400,
               color: AppColors.background,
             ),
