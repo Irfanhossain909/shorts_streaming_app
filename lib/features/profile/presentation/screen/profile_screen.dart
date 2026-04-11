@@ -220,7 +220,7 @@ class ProfileScreen extends StatelessWidget {
                             text:
                                 controller.profileModel.value?.isSubscribed ==
                                     true
-                                ? "\$${controller.profileModel.value?.subscription?.price} /month"
+                                ? "\$${controller.profileModel.value?.subscription?.price ?? 0.0} /month"
                                 : "Subscribe Now",
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,

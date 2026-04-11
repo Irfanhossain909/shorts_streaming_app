@@ -41,7 +41,7 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 
 	<key>CFBundleDisplayName</key>
-	<string>Creepy Short</string>
+	<string>Creepy Shorts</string>
 
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -53,7 +53,7 @@
 	<string>6.0</string>
 
 	<key>CFBundleName</key>
-	<string>CreepyShorts</string>
+	<string>Creepy Shorts</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
