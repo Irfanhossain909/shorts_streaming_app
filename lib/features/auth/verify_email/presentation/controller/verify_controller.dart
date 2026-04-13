@@ -69,7 +69,7 @@ class VerifyController extends GetxController {
       );
       // response can be either true (bool) or verifyToken (String)
       if (response != false && response != null) {
-        Get.offAllNamed(AppRoutes.signIn);
+        Get.offAllNamed(AppRoutes.navigation);
       } else {
         Utils.errorSnackBar(Get.context!, "Error", "Something went wrong");
       }

@@ -31,8 +31,7 @@ class SubCard extends StatelessWidget {
 
     // Get product ID to check subscription status
     final productId =
-        productDetails?.id ??
-        (subscription.googleProductId ?? subscription.appleProductId ?? '');
+        productDetails?.id ?? (subscription.storeProductId ?? '');
     final isSubscribed = controller.isProductSubscribed(productId);
 
     return Container(

@@ -12,6 +12,7 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
+import 'package:testemu/features/setting/data/model/subscription_model.dart';
 import 'package:testemu/features/setting/presentation/controller/subscription_controller.dart';
 import 'package:testemu/features/setting/presentation/widgets/sub_card.dart';
 
@@ -83,9 +84,7 @@ class SubscriptionScreen extends StatelessWidget {
                       // Get the correct product ID based on platform
                       final productId =
                           controller.getProductDetails(subscription)?.id ??
-                          (subscription.googleProductId ??
-                              subscription.appleProductId ??
-                              '');
+                          (subscription.storeProductId ?? '');
 
                       return SubCard(
                         onTap: () => controller.buySubscription(productId),

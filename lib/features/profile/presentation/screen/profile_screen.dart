@@ -142,95 +142,103 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 // Subscription Card
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 16.h,
-                  ),
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: AppColors.red.withValues(alpha: 0.7),
-                      width: 1.w,
+                Obx(() {
+                  return Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 16.h,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CommonText(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: AppColors.red.withValues(alpha: 0.7),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CommonText(
+                                text:
+                                    controller
+                                            .profileModel
+                                            .value
+                                            ?.isSubscribed ==
+                                        true
+                                    ? "Subscription Successful"
+                                    : "Subscribe",
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                              4.height,
+                              CommonText(
+                                text:
+                                    controller
+                                            .profileModel
+                                            .value
+                                            ?.isSubscribed ==
+                                        true
+                                    ? "Welcome to the dark side of storytelling. Enter. Watch. Stay"
+                                    : "Join membership now for unlimited adfree access",
+                                fontSize: 12.sp,
+
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.background.withValues(
+                                  alpha: 0.8,
+                                ),
+                                textAlign: TextAlign.left,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        12.width,
+                        InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.subscription);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.red.withValues(alpha: 0.8),
+                                  AppColors.red.withValues(alpha: 0.6),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: CommonText(
                               text:
                                   controller.profileModel.value?.isSubscribed ==
                                       true
-                                  ? "Subscription Successful"
-                                  : "Subscribe",
-                              fontSize: 16.sp,
+                                  ? "\$${controller.profileModel.value?.subscription?.price ?? 0.0} /month"
+                                  : "Subscribe Now",
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.background,
                             ),
-                            4.height,
-                            CommonText(
-                              text:
-                                  controller.profileModel.value?.isSubscribed ==
-                                      true
-                                  ? "Welcome to the dark side of storytelling. Enter. Watch. Stay"
-                                  : "Join membership now for unlimited adfree access",
-                              fontSize: 12.sp,
-
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.background.withValues(
-                                alpha: 0.8,
-                              ),
-                              textAlign: TextAlign.left,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      12.width,
-                      InkWell(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        onTap: () {
-                          Get.toNamed(AppRoutes.subscription);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.red.withValues(alpha: 0.8),
-                                AppColors.red.withValues(alpha: 0.6),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: CommonText(
-                            text:
-                                controller.profileModel.value?.isSubscribed ==
-                                    true
-                                ? "\$${controller.profileModel.value?.subscription?.price ?? 0.0} /month"
-                                : "Subscribe Now",
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                }),
 
                 Container(
                   padding: EdgeInsets.all(16.h),
