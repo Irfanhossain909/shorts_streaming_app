@@ -308,13 +308,13 @@ class ShortVideoPlayer extends StatelessWidget {
                           onTap: () => controller.showEpisodeListBottomSheet(),
                         ),
                       ),
-                      RepaintBoundary(
-                        child: ReelButton(
-                          imgPath: AppIcons.icShare,
-                          text: "Share",
-                          onTap: () => controller.showShareBottomSheet(),
-                        ),
-                      ),
+                      // RepaintBoundary(
+                      //   child: ReelButton(
+                      //     imgPath: AppIcons.icShare,
+                      //     text: "Share",
+                      //     onTap: () => controller.showShareBottomSheet(),
+                      //   ),
+                      // ),
                       if (LocalStorage.isSubscribed)
                         Obx(() {
                           final isDownloading = controller.isDownloading.value;
