@@ -114,10 +114,11 @@ class ShortsScontroller extends GetxController {
     super.onInit();
     printInfo(info: 'ShortsScontroller initialized');
     pageController = PageController(initialPage: 0);
-    fetchShortsVideos();
 
-    // Check if opened via deep link with specific video ID
-    _handleDeepLinkArguments();
+    if (!LocalStorage.isGuest) {
+      fetchShortsVideos();
+      _handleDeepLinkArguments();
+    }
   }
 
   /// Handle deep link arguments

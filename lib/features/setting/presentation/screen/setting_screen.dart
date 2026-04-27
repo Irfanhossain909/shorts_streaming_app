@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
 import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_icons.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/profile/presentation/screen/profile_screen.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -33,13 +34,14 @@ class SettingScreen extends StatelessWidget {
               title: "User Agreement",
               leadPath: AppIcons.icLanguage,
             ),
-            ProfileRow(
-              onTap: () {
-                Get.toNamed(AppRoutes.deleteAccount);
-              },
-              title: "Delete Account",
-              leadPath: AppIcons.icFaq,
-            ),
+            if (!LocalStorage.isGuest)
+              ProfileRow(
+                onTap: () {
+                  Get.toNamed(AppRoutes.deleteAccount);
+                },
+                title: "Delete Account",
+                leadPath: AppIcons.icFaq,
+              ),
           ],
         ),
       ),

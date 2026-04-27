@@ -8,6 +8,8 @@ import 'package:testemu/core/services/notification/device_info_service.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/core/services/storage/storage_keys.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
 import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
 import 'package:testemu/features/notifications/repository/notification_repository.dart';
@@ -161,6 +163,11 @@ class SignInController extends GetxController {
       errorLog(response, source: "Sign In");
     }
     isLoading.value = false;
+  }
+
+  Future<void> continueAsGuest() async {
+    await LocalStorage.setBool(LocalStorageKeys.isGuest, true);
+    Get.offAllNamed(AppRoutes.navigation);
   }
 
   @override

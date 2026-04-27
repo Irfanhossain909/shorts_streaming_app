@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/shimmer/video_player_shimmer.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -18,6 +19,10 @@ class ShortsFeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (LocalStorage.isGuest) {
+      return _buildGuestShortsScreen();
+    }
+
     return GetBuilder<ShortsScontroller>(
       builder: (controller) {
         return Scaffold(
@@ -97,6 +102,52 @@ class ShortsFeedScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildGuestShortsScreen() {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(color: Colors.black),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.play_circle_outline,
+                  size: 80.w,
+                  color: AppColors.background.withValues(alpha: 0.4),
+                ),
+                SizedBox(height: 24.h),
+                CommonText(
+                  text: "Sign In to Watch Shorts",
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.background,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12.h),
+                CommonText(
+                  text:
+                      "Create a free account to enjoy all short videos and more",
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.background.withValues(alpha: 0.6),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                ),
+                SizedBox(height: 32.h),
+                CommonButton(
+                  titleText: "Sign In / Sign Up",
+                  onTap: () => LocalStorage.exitGuestMode(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
