@@ -1,5 +1,6 @@
 /// Shimmer Components Export File
 /// Import this file to access all shimmer loading widgets
+library;
 
 export 'shimmer_base.dart';
 export 'movie_card_shimmer.dart';
