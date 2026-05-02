@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/profile/model/profile_model.dart';
 import 'package:testemu/features/profile/repository/profile_repository.dart';
 
@@ -25,6 +26,7 @@ class ProfileController extends GetxController {
   }
 
   void getProfile() async {
+    if (LocalStorage.isGuest) return;
     isLoading.value = true;
     final response = await profileRepository.getProfile();
 

@@ -61,11 +61,6 @@ init() async {
   DependencyInjection dI = DependencyInjection();
   dI.dependencies();
 
-  // // Move socket connection to background to avoid blocking main thread
-  // Future.delayed(const Duration(milliseconds: 500), () {
-  //   SocketAllOparations.instance.initializeSocket();
-  // });
-
   await Future.wait([
     LocalStorage.getAllPrefData(),
     dotenv.load(fileName: ".env"),

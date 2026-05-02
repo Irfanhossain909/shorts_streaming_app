@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:testemu/core/services/storage/storage_keys.dart';
-import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/services/subscription_service/subscription_service.dart';
 import 'package:testemu/core/utils/enum/enum.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
