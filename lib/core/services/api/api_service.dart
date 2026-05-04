@@ -236,8 +236,11 @@ Dio _getMyDio() {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        // Add authorization header
-        options.headers["Authorization"] ??= "Bearer ${LocalStorage.token}";
+        // Only attach Bearer when token exists — empty `Bearer ` breaks public routes (401).
+        final token = LocalStorage.token.trim();
+        if (token.isNotEmpty) {
+          options.headers.putIfAbsent("Authorization", () => "Bearer $token");
+        }
 
         // Set timeouts (can be overridden by individual requests)
         options.connectTimeout ??= const Duration(seconds: 30);

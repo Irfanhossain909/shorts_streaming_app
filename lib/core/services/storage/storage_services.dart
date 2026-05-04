@@ -67,6 +67,26 @@ class LocalStorage {
     await getAllPrefData();
   }
 
+  /// Clears JWT/session fields so guest API calls do not send stale tokens.
+  /// Does not clear device prefs or guest flag (caller sets guest after this).
+  static Future<void> clearAuthSessionForGuest() async {
+    final localStorage = await _getStorage();
+    await localStorage.setString(LocalStorageKeys.token, "");
+    await localStorage.setString(LocalStorageKeys.refreshToken, "");
+    await localStorage.setBool(LocalStorageKeys.isLogIn, false);
+    await localStorage.setString(LocalStorageKeys.userId, "");
+    await localStorage.setString(LocalStorageKeys.myImage, "");
+    await localStorage.setString(LocalStorageKeys.myName, "");
+    await localStorage.setString(LocalStorageKeys.myEmail, "");
+    token = "";
+    refreshToken = "";
+    isLogIn = false;
+    userId = "";
+    myImage = "";
+    myName = "";
+    myEmail = "";
+  }
+
   /// Exit guest mode and go back to sign-in screen
   static Future<void> exitGuestMode() async {
     final localStorage = await _getStorage();

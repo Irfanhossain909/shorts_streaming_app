@@ -166,6 +166,7 @@ class SignInController extends GetxController {
   }
 
   Future<void> continueAsGuest() async {
+    await LocalStorage.clearAuthSessionForGuest();
     await LocalStorage.setBool(LocalStorageKeys.isGuest, true);
     Get.offAllNamed(AppRoutes.navigation);
   }
