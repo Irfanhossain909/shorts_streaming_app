@@ -30,8 +30,7 @@ class SubCard extends StatelessWidget {
     // final displayDuration = subscription.duration ?? "";
 
     // Get product ID to check subscription status
-    final productId =
-        productDetails?.id ?? (subscription.storeProductId ?? '');
+    final productId = productDetails?.id ?? (subscription.storeProductId ?? '');
     final isSubscribed = controller.isProductSubscribed(productId);
 
     return Container(
@@ -70,6 +69,7 @@ class SubCard extends StatelessWidget {
             fontWeight: FontWeight.w400,
             color: AppColors.background,
           ),
+          Spacer(),
           // Show "Subscribed" text if already subscribed, otherwise show button
           isSubscribed
               ? Container(
@@ -95,6 +95,7 @@ class SubCard extends StatelessWidget {
                   buttonColor: AppColors.buton,
                   titleText: "Subscribe now",
                 ),
+          SizedBox(height: 12.h),
           Align(
             alignment: Alignment.center,
             child: CommonText(

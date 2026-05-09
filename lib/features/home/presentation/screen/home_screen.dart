@@ -242,29 +242,33 @@ class _StickyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: _headerGradient,
-      child: Column(
-        children: [
-          10.height,
-          // Search Bar
-          SearchBarWidget(
-            controller: controller.searchController,
-            onSearchChanged: (query) {
-              controller.updateSearchQuery(query);
-            },
-            onClear: () {
-              controller.clearSearch();
-            },
-          ),
-          10.height,
-          if (!LocalStorage.isGuest) Obx(
-            () => CategoryFilter(
-              categories: controller.categories.map((e) => e.name).toList(),
-              selectedCategory: controller.selectedCategory.value,
-              onCategorySelected: controller.selectCategory,
+      color: AppColors.black,
+      child: Container(
+        decoration: _headerGradient,
+        child: Column(
+          children: [
+            10.height,
+            // Search Bar
+            SearchBarWidget(
+              controller: controller.searchController,
+              onSearchChanged: (query) {
+                controller.updateSearchQuery(query);
+              },
+              onClear: () {
+                controller.clearSearch();
+              },
             ),
-          ),
-        ],
+            10.height,
+            if (!LocalStorage.isGuest)
+              Obx(
+                () => CategoryFilter(
+                  categories: controller.categories.map((e) => e.name).toList(),
+                  selectedCategory: controller.selectedCategory.value,
+                  onCategorySelected: controller.selectCategory,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
