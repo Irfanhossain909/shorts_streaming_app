@@ -38,7 +38,7 @@ class SignUpController extends GetxController {
     text: kDebugMode ? "Namimul Hassan" : "",
   );
   TextEditingController emailController = TextEditingController(
-    text: kDebugMode ? "developernaimul00@gmail.com" : '',
+    text: kDebugMode ? "neniniy780@pazard.com" : '',
   );
   TextEditingController passwordController = TextEditingController(
     text: kDebugMode ? 'hello123' : '',

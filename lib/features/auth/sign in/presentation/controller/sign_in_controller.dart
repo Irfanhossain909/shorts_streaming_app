@@ -8,6 +8,8 @@ import 'package:testemu/core/services/notification/device_info_service.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/log/app_log.dart';
 import 'package:testemu/core/utils/log/error_log.dart';
+import 'package:testemu/core/services/storage/storage_keys.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/auth/repository/auth_repository.dart';
 import 'package:testemu/features/auth/sign%20in/model/login_category_model.dart';
 import 'package:testemu/features/notifications/repository/notification_repository.dart';
@@ -33,7 +35,7 @@ class SignInController extends GetxController {
 
   /// email and password Controller here
   TextEditingController emailController = TextEditingController(
-    text: kDebugMode ? 'rotames140@badfist.com' : '',
+    text: kDebugMode ? 'neniniy780@pazard.com' : '',
   );
   TextEditingController passwordController = TextEditingController(
     text: kDebugMode ? 'hello123' : "",
@@ -51,8 +53,8 @@ class SignInController extends GetxController {
       if (success == null) {
         Utils.errorSnackBar(
           Get.context!,
-          "Google Sign In Failed",
-          "Google Sign In",
+          "Login Failed",
+          "Login",
         );
 
         return;
@@ -62,7 +64,7 @@ class SignInController extends GetxController {
       Utils.errorSnackBar(
         Get.context!,
         "Login failed. Please try again",
-        "Google Sign In",
+        "Login",
       );
     } finally {
       isGoogleLoading.value = false;
@@ -78,8 +80,8 @@ class SignInController extends GetxController {
       if (success == null) {
         Utils.errorSnackBar(
           Get.context!,
-          "Apple Sign In Failed",
-          "Apple Sign In",
+          "Login Failed",
+          "Login",
         );
         return;
       }
@@ -105,15 +107,11 @@ class SignInController extends GetxController {
   Future<void> googleLogin(String idToken) async {
     final response = await authRepository.googleLogin(idToken: idToken);
     if (response) {
-      Utils.successSnackBar(
-        Get.context!,
-        "Google Login successful",
-        "Google Login",
-      );
+      Utils.successSnackBar(Get.context!, "Login successful", "Login");
       await updateFCMToken();
       Get.offAllNamed(AppRoutes.navigation);
     } else {
-      Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
+      Utils.errorSnackBar(Get.context!, "Login failed", "Login");
     }
   }
 
@@ -161,6 +159,12 @@ class SignInController extends GetxController {
       errorLog(response, source: "Sign In");
     }
     isLoading.value = false;
+  }
+
+  Future<void> continueAsGuest() async {
+    await LocalStorage.clearAuthSessionForGuest();
+    await LocalStorage.setBool(LocalStorageKeys.isGuest, true);
+    Get.offAllNamed(AppRoutes.navigation);
   }
 
   @override

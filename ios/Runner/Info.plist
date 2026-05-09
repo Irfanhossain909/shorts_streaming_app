@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
 
 	<!-- ================= GOOGLE SIGN-IN (iOS) ================= -->
 
@@ -41,7 +45,7 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 
 	<key>CFBundleDisplayName</key>
-	<string>Creepy Short</string>
+	<string>Creepy Shorts</string>
 
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -53,7 +57,7 @@
 	<string>6.0</string>
 
 	<key>CFBundleName</key>
-	<string>CreepyShorts</string>
+	<string>Creepy Shorts</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>

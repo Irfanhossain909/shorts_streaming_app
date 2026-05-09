@@ -7,6 +7,7 @@ import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_images.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/core/utils/helpers/other_helper.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/features/home/model/movie_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 import 'package:testemu/features/home/presentation/widgets/coming_soon_section.dart';
@@ -241,29 +242,33 @@ class _StickyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: _headerGradient,
-      child: Column(
-        children: [
-          10.height,
-          // Search Bar
-          SearchBarWidget(
-            controller: controller.searchController,
-            onSearchChanged: (query) {
-              controller.updateSearchQuery(query);
-            },
-            onClear: () {
-              controller.clearSearch();
-            },
-          ),
-          10.height,
-          Obx(
-            () => CategoryFilter(
-              categories: controller.categories.map((e) => e.name).toList(),
-              selectedCategory: controller.selectedCategory.value,
-              onCategorySelected: controller.selectCategory,
+      color: AppColors.black,
+      child: Container(
+        decoration: _headerGradient,
+        child: Column(
+          children: [
+            10.height,
+            // Search Bar
+            SearchBarWidget(
+              controller: controller.searchController,
+              onSearchChanged: (query) {
+                controller.updateSearchQuery(query);
+              },
+              onClear: () {
+                controller.clearSearch();
+              },
             ),
-          ),
-        ],
+            10.height,
+            if (!LocalStorage.isGuest)
+              Obx(
+                () => CategoryFilter(
+                  categories: controller.categories.map((e) => e.name).toList(),
+                  selectedCategory: controller.selectedCategory.value,
+                  onCategorySelected: controller.selectCategory,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

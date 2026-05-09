@@ -150,7 +150,7 @@ class OnlineStatus {
 
 class Subscription {
     String? id;
-    int? price;
+    double? price;
     String? name;
     String? packageName;
     DateTime? currentPeriodStart;
@@ -177,7 +177,7 @@ class Subscription {
 
     factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
         id: json["_id"],
-        price: json["price"],
+        price: json["price"] != null ? double.parse(json["price"].toString()) : 0.0,
         name: json["name"],
         packageName: json["packageName"],
         currentPeriodStart: json["currentPeriodStart"] == null ? null : DateTime.parse(json["currentPeriodStart"]),

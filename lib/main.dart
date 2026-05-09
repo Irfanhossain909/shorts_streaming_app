@@ -31,6 +31,11 @@ Future<void> main() async {
   await ScreenUtil.ensureScreenSize();
   WidgetsFlutterBinding.ensureInitialized();
 
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+
   // Firebase & FCM: init first so FCM is ready before app UI
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -55,11 +60,6 @@ Future<void> main() async {
 init() async {
   DependencyInjection dI = DependencyInjection();
   dI.dependencies();
-
-  // // Move socket connection to background to avoid blocking main thread
-  // Future.delayed(const Duration(milliseconds: 500), () {
-  //   SocketAllOparations.instance.initializeSocket();
-  // });
 
   await Future.wait([
     LocalStorage.getAllPrefData(),

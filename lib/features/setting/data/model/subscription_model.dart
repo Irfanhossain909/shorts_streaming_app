@@ -1,3 +1,51 @@
+import 'dart:io' show Platform;
+
+/// Normalizes API `provider` (e.g. google vs apple) when both store IDs can match.
+_StoreKind _parseSubscriptionProvider(String? p) {
+  if (p == null || p.trim().isEmpty) return _StoreKind.unknown;
+  final s = p.toLowerCase().trim();
+  if (s.contains('google') || s == 'android' || s.contains('play store')) {
+    return _StoreKind.google;
+  }
+  if (s.contains('apple') || s == 'ios' || s.contains('app_store')) {
+    return _StoreKind.apple;
+  }
+  return _StoreKind.unknown;
+}
+
+enum _StoreKind { google, apple, unknown }
+
+extension SubscriptionDataStoreProductId on SubscriptionData {
+  /// Store SKU for this row: follows `provider`, then [isGoogle], then OS fallback.
+  String? get storeProductId {
+    switch (_parseSubscriptionProvider(provider)) {
+      case _StoreKind.google:
+        return googleProductId;
+      case _StoreKind.apple:
+        return appleProductId;
+      case _StoreKind.unknown:
+        if (isGoogle == true) return googleProductId;
+        if (isGoogle == false) return appleProductId;
+        return Platform.isIOS ? appleProductId : googleProductId;
+    }
+  }
+
+  /// True when this plan row belongs to the store (Play vs App Store) on this device.
+  bool get matchesRunningAppStore {
+    switch (_parseSubscriptionProvider(provider)) {
+      case _StoreKind.google:
+        return Platform.isAndroid;
+      case _StoreKind.apple:
+        return Platform.isIOS;
+      case _StoreKind.unknown:
+        if (isGoogle == true) return Platform.isAndroid;
+        if (isGoogle == false) return Platform.isIOS;
+        final id = Platform.isIOS ? appleProductId : googleProductId;
+        return id != null && id.isNotEmpty;
+    }
+  }
+}
+
 class SubscriptionModel {
   bool? success;
   String? message;

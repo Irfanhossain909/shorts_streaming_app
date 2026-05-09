@@ -21,7 +21,7 @@ class SubscriptionService {
 
   /// Callback to notify when purchase succeeds
   Function(PurchaseDetails)? onPurchaseSuccess;
-  
+
   /// Callback to notify when purchases are restored
   Function(List<PurchaseDetails>)? onPurchasesRestored;
 
@@ -159,7 +159,7 @@ class SubscriptionService {
   /// ===============================
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
     List<PurchaseDetails> restoredPurchases = [];
-    
+
     for (final purchase in purchaseDetailsList) {
       switch (purchase.status) {
         case PurchaseStatus.pending:
@@ -183,6 +183,11 @@ class SubscriptionService {
             _isSubscribed = true;
             restoredPurchases.add(purchase);
             debugPrint("🔄 Restored subscription: ${purchase.productID}");
+
+            /// iOS specific: auto-deliver restored product
+            if (Platform.isIOS) {
+              _deliverProduct(purchase);
+            }
           } else {
             debugPrint("❌ Invalid restored purchase");
           }
@@ -197,16 +202,67 @@ class SubscriptionService {
           break;
       }
 
+      /// Complete purchase for both iOS and Android
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
       }
     }
-    
+
     // Notify about restored purchases
     if (restoredPurchases.isNotEmpty) {
       onPurchasesRestored?.call(restoredPurchases);
     }
   }
+  // void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
+  //   List<PurchaseDetails> restoredPurchases = [];
+
+  //   for (final purchase in purchaseDetailsList) {
+  //     switch (purchase.status) {
+  //       case PurchaseStatus.pending:
+  //         debugPrint("⏳ Purchase Pending...");
+  //         break;
+
+  //       case PurchaseStatus.purchased:
+  //         bool valid = await _verifyPurchase(purchase);
+
+  //         if (valid) {
+  //           _deliverProduct(purchase);
+  //         } else {
+  //           debugPrint("❌ Invalid purchase");
+  //         }
+  //         break;
+
+  //       case PurchaseStatus.restored:
+  //         bool restoredValid = await _verifyPurchase(purchase);
+
+  //         if (restoredValid) {
+  //           _isSubscribed = true;
+  //           restoredPurchases.add(purchase);
+  //           debugPrint("🔄 Restored subscription: ${purchase.productID}");
+  //         } else {
+  //           debugPrint("❌ Invalid restored purchase");
+  //         }
+  //         break;
+
+  //       case PurchaseStatus.error:
+  //         debugPrint("❌ Purchase Error: ${purchase.error}");
+  //         break;
+
+  //       case PurchaseStatus.canceled:
+  //         debugPrint("⚠️ Purchase Cancelled");
+  //         break;
+  //     }
+
+  //     if (purchase.pendingCompletePurchase) {
+  //       await _iap.completePurchase(purchase);
+  //     }
+  //   }
+
+  //   // Notify about restored purchases
+  //   if (restoredPurchases.isNotEmpty) {
+  //     onPurchasesRestored?.call(restoredPurchases);
+  //   }
+  // }
 
   /// ===============================
   /// VERIFY PURCHASE

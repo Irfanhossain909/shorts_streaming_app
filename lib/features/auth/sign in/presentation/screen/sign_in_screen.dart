@@ -52,7 +52,7 @@ class SignInScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 250.h,
+                      height: 200.h,
                       child: Obx(() {
                         if (controller.isLoadingSlider.value) {
                           return Column(
@@ -104,7 +104,7 @@ class SignInScreen extends StatelessWidget {
 
                                 child: CommonImage(
                                   height: 200.h,
-                                  width: 120.w,
+                                  width: 110.w,
                                   fill: BoxFit.cover,
                                   highQuality: true,
                                   imageSrc: OtherHelper.getImageUrl(
@@ -184,7 +184,7 @@ class SignInScreen extends StatelessWidget {
                             );
                     }),
 
-                    24.height,
+                    18.height,
 
                     CommonText(
                       text: "Or",
@@ -192,7 +192,7 @@ class SignInScreen extends StatelessWidget {
                       color: AppColors.background,
                     ),
 
-                    24.height,
+                    18.height,
 
                     /// Social buttons
                     Obx(() {
@@ -263,6 +263,38 @@ class SignInScreen extends StatelessWidget {
                               ],
                             );
                     }),
+
+                    24.height,
+
+                    /// Continue as Guest
+                    GestureDetector(
+                      onTap: () => controller.continueAsGuest(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CommonText(
+                            text: "Continue as ",
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.background.withValues(alpha: 0.6),
+                          ),
+                          CommonText(
+                            text: "Guest",
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.background,
+                          ),
+                          SizedBox(width: 4.w),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 12.sp,
+                            color: AppColors.background,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    24.height,
                   ],
                 ),
               );

@@ -32,7 +32,7 @@ class HomeHeader extends StatelessWidget {
                     'Good Evening, ${controller.profileController.profileModel.value?.name ?? 'Guest'} ',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.8),
-                      fontSize: 24.sp,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,

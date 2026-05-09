@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/appbar/common_app_bar.dart';
+import 'package:testemu/core/component/button/common_button.dart';
 import 'package:testemu/core/component/image/common_image.dart';
 import 'package:testemu/core/component/pop_up/common_pop_menu.dart';
 import 'package:testemu/core/component/text/common_text.dart';
@@ -10,6 +11,7 @@ import 'package:testemu/core/config/route/app_routes.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/core/constants/app_images.dart';
+import 'package:testemu/core/services/storage/storage_services.dart';
 import 'package:testemu/core/utils/app_utils.dart';
 import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/notifications/presentation/screen/notifications_screen.dart';
@@ -20,6 +22,241 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (LocalStorage.isGuest) {
+      return _buildGuestProfile(context);
+    }
+    return _buildUserProfile(context);
+  }
+
+  void _showGuestSignInDialog() {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        contentPadding: EdgeInsets.all(20.sp),
+        title: CommonText(
+          text: "Sign In Required",
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w600,
+        ),
+        content: CommonText(
+          text: "Please sign in to access this feature.",
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: CommonText(
+              text: "Cancel",
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.black.withValues(alpha: 0.6),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              LocalStorage.exitGuestMode();
+            },
+            child: CommonText(
+              text: "Sign In",
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuestProfile(BuildContext context) {
+    return Scaffold(
+      appBar: CommonAppBar(
+        title: "Your Profile",
+        isShowBackButton: false,
+        titleFontSize: 24.sp,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          spacing: 4.h,
+          children: [
+            SizedBox(
+              width: 110.w,
+              height: 110.h,
+              child: Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.buton, width: 2),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image.asset(
+                    AppImages.defaultProfile,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+
+            CommonText(
+              text: "Guest",
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.background,
+            ),
+
+            CommonText(
+              text: "Browsing as guest",
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.background.withValues(alpha: 0.6),
+            ),
+
+            // Subscription Card — prompt to sign in
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: AppColors.red.withValues(alpha: 0.7),
+                  width: 1.w,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText(
+                          text: "Subscribe",
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                        4.height,
+                        CommonText(
+                          text: "Sign in to unlock unlimited ad-free access",
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.background.withValues(alpha: 0.8),
+                          textAlign: TextAlign.left,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  12.width,
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    onTap: () => LocalStorage.exitGuestMode(),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.red.withValues(alpha: 0.8),
+                            AppColors.red.withValues(alpha: 0.6),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: CommonText(
+                        text: "Sign In",
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.background,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              padding: EdgeInsets.all(16.h),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
+                ),
+              ),
+              child: Column(
+                spacing: 16.h,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonText(
+                    text: "Settings Account",
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
+                  ProfileRow(
+                    onTap: () {
+                      Utils.messageSnackBar(
+                        context,
+                        "Sign In Required",
+                        "Please sign in to download offline content",
+                      );
+                    },
+                    title: "Offline Download",
+                    leadPath: AppIcons.icOfflineDownload,
+                  ),
+                  ProfileRow(
+                    onTap: () => _showGuestSignInDialog(),
+                    title: "FAQs",
+                    leadPath: AppIcons.icFaq,
+                  ),
+                  CommonText(
+                    text: "More Setting",
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
+                  ProfileRow(
+                    onTap: () => _showGuestSignInDialog(),
+                    title: "Feedback",
+                    leadPath: AppIcons.icFeedback,
+                  ),
+                  ProfileRow(
+                    onTap: () => Get.toNamed(AppRoutes.setting),
+                    title: "Settings",
+                    leadPath: AppIcons.icSettings,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    child: CommonButton(
+                      titleText: "Sign In / Sign Up",
+                      onTap: () => LocalStorage.exitGuestMode(),
+                    ),
+                  ),
+                  48.height,
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserProfile(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(
         title: "Your Profile",
@@ -81,16 +318,13 @@ class ProfileScreen extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(3), // border thickness
+                      padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.buton,
-                          width: 2, // border width
-                        ),
+                        border: Border.all(color: AppColors.buton, width: 2),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100), // full circle
+                        borderRadius: BorderRadius.circular(100),
                         child: Image.network(
                           "${ApiEndPoint.domain}${controller.profileModel.value?.image}",
                           fit: BoxFit.cover,
@@ -142,88 +376,102 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 // Subscription Card
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 16.h,
-                  ),
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: AppColors.red.withValues(alpha: 0.7),
-                      width: 1.w,
+                Obx(() {
+                  return Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 16.h,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CommonText(
-                              text: "Subscribe",
-                              fontSize: 16.sp,
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: AppColors.red.withValues(alpha: 0.7),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CommonText(
+                                text:
+                                    controller
+                                            .profileModel
+                                            .value
+                                            ?.isSubscribed ==
+                                        true
+                                    ? "Subscription Successful"
+                                    : "Subscribe",
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.background,
+                              ),
+                              4.height,
+                              CommonText(
+                                text:
+                                    controller
+                                            .profileModel
+                                            .value
+                                            ?.isSubscribed ==
+                                        true
+                                    ? "Welcome to the dark side of storytelling. Enter. Watch. Stay"
+                                    : "Join membership now for unlimited adfree access",
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.background.withValues(
+                                  alpha: 0.8,
+                                ),
+                                textAlign: TextAlign.left,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        12.width,
+                        InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.subscription);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.red.withValues(alpha: 0.8),
+                                  AppColors.red.withValues(alpha: 0.6),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: CommonText(
+                              text:
+                                  controller.profileModel.value?.isSubscribed ==
+                                      true
+                                  ? "\$${controller.profileModel.value?.subscription?.price ?? 0.0} /month"
+                                  : "Subscribe Now",
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.background,
                             ),
-                            4.height,
-                            CommonText(
-                              text:
-                                  "Join membership now for unlimited adfree access",
-                              fontSize: 12.sp,
-
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.background.withValues(
-                                alpha: 0.8,
-                              ),
-                              textAlign: TextAlign.left,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      12.width,
-                      InkWell(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        onTap: () {
-                          Get.toNamed(AppRoutes.subscription);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.red.withValues(alpha: 0.8),
-                                AppColors.red.withValues(alpha: 0.6),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: CommonText(
-                            text:
-                                controller.profileModel.value?.isSubscribed ==
-                                    true
-                                ? "\$${controller.profileModel.value?.subscription?.price.toString()}.99 /month"
-                                : "Subscribe Now",
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                }),
 
                 Container(
                   padding: EdgeInsets.all(16.h),
@@ -262,7 +510,6 @@ class ProfileScreen extends StatelessWidget {
                         title: "Offline Download",
                         leadPath: AppIcons.icOfflineDownload,
                       ),
-                      // ProfileRow(title: "Language", leadPath: AppImages.icLanguage),
                       ProfileRow(
                         onTap: () {
                           Get.toNamed(AppRoutes.faqs);
@@ -279,6 +526,7 @@ class ProfileScreen extends StatelessWidget {
                       ProfileRow(
                         title: "Feedback",
                         leadPath: AppIcons.icFeedback,
+                        onTap: () => controller.openStoreReview(),
                       ),
                       ProfileRow(
                         onTap: () {
@@ -295,7 +543,7 @@ class ProfileScreen extends StatelessWidget {
                         title: "Log out",
                         leadPath: AppIcons.icLogout,
                       ),
-                      48.height,
+                      // 48.height,
                     ],
                   ),
                 ),
