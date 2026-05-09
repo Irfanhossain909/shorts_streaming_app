@@ -53,8 +53,8 @@ class SignInController extends GetxController {
       if (success == null) {
         Utils.errorSnackBar(
           Get.context!,
-          "Google Sign In Failed",
-          "Google Sign In",
+          "Login Failed",
+          "Login",
         );
 
         return;
@@ -64,7 +64,7 @@ class SignInController extends GetxController {
       Utils.errorSnackBar(
         Get.context!,
         "Login failed. Please try again",
-        "Google Sign In",
+        "Login",
       );
     } finally {
       isGoogleLoading.value = false;
@@ -80,8 +80,8 @@ class SignInController extends GetxController {
       if (success == null) {
         Utils.errorSnackBar(
           Get.context!,
-          "Apple Sign In Failed",
-          "Apple Sign In",
+          "Login Failed",
+          "Login",
         );
         return;
       }
@@ -107,15 +107,11 @@ class SignInController extends GetxController {
   Future<void> googleLogin(String idToken) async {
     final response = await authRepository.googleLogin(idToken: idToken);
     if (response) {
-      Utils.successSnackBar(
-        Get.context!,
-        "Google Login successful",
-        "Google Login",
-      );
+      Utils.successSnackBar(Get.context!, "Login successful", "Login");
       await updateFCMToken();
       Get.offAllNamed(AppRoutes.navigation);
     } else {
-      Utils.errorSnackBar(Get.context!, "Google Login failed", "Google Login");
+      Utils.errorSnackBar(Get.context!, "Login failed", "Login");
     }
   }
 
