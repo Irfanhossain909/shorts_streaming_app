@@ -72,7 +72,7 @@ class SubscriptionScreen extends StatelessWidget {
                   SizedBox(height: 16.h),
                   CarouselSlider(
                     options: CarouselOptions(
-                      height: 220.h,
+                      height: 180.h,
                       autoPlay: false,
                       enlargeCenterPage: true,
                       viewportFraction: 0.85,

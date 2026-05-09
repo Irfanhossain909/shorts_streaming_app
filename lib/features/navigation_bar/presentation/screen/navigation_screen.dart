@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/component/image/common_image.dart';
+import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
 import 'package:testemu/features/home/presentation/screen/home_screen.dart';
@@ -55,7 +56,7 @@ class NavigationScreen extends StatelessWidget {
                   right: 0,
                   child: RepaintBoundary(
                     child: Container(
-                      padding: EdgeInsets.only(bottom: 28.w, top: 28.w),
+                      padding: EdgeInsets.only(bottom: 16.w, top: 12.w),
                       decoration: BoxDecoration(
                         // Use solid color instead of blur for better performance
                         color: AppColors.white.withValues(alpha: 0.3),
@@ -115,15 +116,31 @@ class _NavigationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => onTap(index),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: isSelected ? _selectedDecoration : null,
-        child: CommonImage(
-          imageSrc: NavigationScreen._iconPaths[index],
-          width: 24.w,
-          height: 24.h,
-          imageColor: isSelected ? Colors.white : AppColors.background,
-        ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: isSelected ? _selectedDecoration : null,
+            child: CommonImage(
+              imageSrc: NavigationScreen._iconPaths[index],
+              width: 18.w,
+              height: 18.h,
+              imageColor: isSelected ? Colors.white : AppColors.background,
+            ),
+          ),
+          CommonText(
+            text: index == 0
+                ? "Discover"
+                : index == 1
+                ? "For You"
+                : index == 2
+                ? "My List"
+                : "Profile",
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: isSelected ? AppColors.white : AppColors.background,
+          ),
+        ],
       ),
     );
   }
