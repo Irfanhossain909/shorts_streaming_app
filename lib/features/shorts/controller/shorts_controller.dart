@@ -30,6 +30,9 @@ class ShortsScontroller extends GetxController {
   // Timer for periodic progress saving
   Timer? _progressSaveTimer;
 
+  /// JWT presence after the last completed `fetchShortsVideos` (guest vs signed-in).
+  bool? _hadTokenWhenShortsWereLoaded;
+
   // Video list - will be populated from API
   List<String> get videos {
     return shortsVideosList
@@ -115,10 +118,8 @@ class ShortsScontroller extends GetxController {
     printInfo(info: 'ShortsScontroller initialized');
     pageController = PageController(initialPage: 0);
 
-    if (!LocalStorage.isGuest) {
-      fetchShortsVideos();
-      _handleDeepLinkArguments();
-    }
+    fetchShortsVideos();
+    _handleDeepLinkArguments();
   }
 
   /// Handle deep link arguments
@@ -213,6 +214,7 @@ class ShortsScontroller extends GetxController {
       printInfo(info: '❌ Error fetching shorts videos: $e');
     } finally {
       isLoadingVideos.value = false;
+      _hadTokenWhenShortsWereLoaded = LocalStorage.token.trim().isNotEmpty;
     }
   }
 
@@ -500,6 +502,13 @@ class ShortsScontroller extends GetxController {
   /// Called when Shorts tab becomes visible for the first time
   void onScreenBecameVisible() {
     isScreenVisible.value = true;
+
+    final hasTokenNow = LocalStorage.token.trim().isNotEmpty;
+    if (_hadTokenWhenShortsWereLoaded != null &&
+        _hadTokenWhenShortsWereLoaded != hasTokenNow) {
+      refreshVideos();
+    }
+
     // If videos are loaded but no video is playing, start the first one
     if (videos.isNotEmpty && !_videoControllers.containsKey(0)) {
       _initializeVideoForIndex(0);
