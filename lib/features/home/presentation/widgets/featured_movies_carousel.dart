@@ -43,7 +43,7 @@ class FeaturedMoviesCarousel extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: CommonText(
-                  text: 'Trailers Coming Soon',
+                  text: 'Coming Soon',
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w600,
                   color: AppColors.white,

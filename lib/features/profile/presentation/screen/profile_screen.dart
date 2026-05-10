@@ -321,10 +321,7 @@ class ProfileScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.buton,
-                          width: 2,
-                        ),
+                        border: Border.all(color: AppColors.buton, width: 2),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
@@ -529,6 +526,7 @@ class ProfileScreen extends StatelessWidget {
                       ProfileRow(
                         title: "Feedback",
                         leadPath: AppIcons.icFeedback,
+                        onTap: () => controller.openStoreReview(),
                       ),
                       ProfileRow(
                         onTap: () {
@@ -545,7 +543,7 @@ class ProfileScreen extends StatelessWidget {
                         title: "Log out",
                         leadPath: AppIcons.icLogout,
                       ),
-                      48.height,
+                      // 48.height,
                     ],
                   ),
                 ),
