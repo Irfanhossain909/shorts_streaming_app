@@ -100,6 +100,8 @@ class Trailer {
   final String contentName;
   final String description;
   final String videoUrl;
+  /// Direct MP4 (etc.) URL for in-app playback; prefer over iframe [videoUrl].
+  final String downloadUrls;
   final String videoId;
   final String libraryId;
   final String thumbnailUrl;
@@ -118,6 +120,7 @@ class Trailer {
     required this.contentName,
     required this.description,
     required this.videoUrl,
+    required this.downloadUrls,
     required this.videoId,
     required this.libraryId,
     required this.thumbnailUrl,
@@ -129,6 +132,16 @@ class Trailer {
     required this.updatedAt,
   });
 
+  static String _sanitizeUrl(dynamic raw) {
+    if (raw == null) return '';
+    return raw
+        .toString()
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll('\n', '')
+        .replaceAll('\r', '')
+        .trim();
+  }
+
   factory Trailer.fromJson(Map<String, dynamic> json) {
     return Trailer(
       id: json['_id'] ?? json['id'] ?? '',
@@ -137,7 +150,8 @@ class Trailer {
       color: json['color'] ?? '',
       contentName: json['contentName'] ?? '',
       description: json['description'] ?? '',
-      videoUrl: json['videoUrl'] ?? '',
+      videoUrl: _sanitizeUrl(json['videoUrl']),
+      downloadUrls: _sanitizeUrl(json['downloadUrls']),
       videoId: json['videoId'] ?? '',
       libraryId: json['libraryId'] ?? '',
       thumbnailUrl: json['thumbnailUrl'] ?? '',
@@ -159,6 +173,7 @@ class Trailer {
       'contentName': contentName,
       'description': description,
       'videoUrl': videoUrl,
+      'downloadUrls': downloadUrls,
       'videoId': videoId,
       'libraryId': libraryId,
       'thumbnailUrl': thumbnailUrl,

@@ -315,10 +315,12 @@ class HomeController extends GetxController {
     //Get.snackbar('Movie Selected', title, colorText: AppColors.background);
   }
 
-  void onWatchTap(String videoUrl) {
-    appLog('onWatchTap: $videoUrl');
-    // VideoPlayerController will automatically generate videoId from URL if not provided
-    Get.toNamed(AppRoutes.videoPlayer, arguments: {'videoUrl': videoUrl});
+  void onWatchTap(String videoUrl, {String? videoId}) {
+    appLog('onWatchTap: $videoUrl (videoId: $videoId)');
+    Get.toNamed(AppRoutes.videoPlayer, arguments: {
+      'videoUrl': videoUrl,
+      if (videoId != null && videoId.isNotEmpty) 'videoId': videoId,
+    });
   }
 
   Future<void> onBookmarkTap(

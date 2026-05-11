@@ -9,9 +9,14 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'package:testemu/features/home/model/banner_model.dart';
 import 'package:testemu/features/home/presentation/controller/home_controller.dart';
 
+String _playbackUrl(Trailer trailer) {
+  if (trailer.downloadUrls.isNotEmpty) return trailer.downloadUrls;
+  return trailer.videoUrl;
+}
+
 class FeaturedMoviesCarousel extends StatelessWidget {
   final HomeController controller;
-  final Function(String) onWatchTap;
+  final void Function(String playbackUrl, {String? videoId}) onWatchTap;
   final Function(String, String, ReferenceType) onBookmarkTap;
 
   const FeaturedMoviesCarousel({
@@ -94,7 +99,7 @@ class _CarouselCard extends StatelessWidget {
   final int index;
   final Trailer trailer;
   final HomeController controller;
-  final Function(String) onWatchTap;
+  final void Function(String playbackUrl, {String? videoId}) onWatchTap;
 
   const _CarouselCard({
     super.key,
@@ -145,7 +150,10 @@ class _CarouselCard extends StatelessWidget {
                     duration: trailer.duration,
                     imageUrl: "https://${trailer.thumbnailUrl}",
                     isBookmarked: isBookmarked,
-                    onWatchTap: () => onWatchTap(trailer.videoUrl),
+                    onWatchTap: () => onWatchTap(
+                          _playbackUrl(trailer),
+                          videoId: trailer.videoId,
+                        ),
                     onBookmarkTap: () =>
                         ctrl.toggleCarouselBookmark(title, trailer.id),
                   ),

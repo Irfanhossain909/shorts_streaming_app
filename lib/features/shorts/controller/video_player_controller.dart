@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:testemu/core/services/video_progress/video_progress_service.dart';
+import 'package:video_player/video_player.dart' as vplayer;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
@@ -12,7 +13,18 @@ class VideoPlayerController extends GetxController {
   final errorMessage = ''.obs;
   final isPlaying = false.obs;
 
-  late WebViewController webViewController;
+  /// When true, plays [videos] with [vplayer.VideoPlayer] (shorts-style MP4).
+  /// When false, uses embedded WebView (iframe URLs).
+  final useNativePlayer = false.obs;
+
+  WebViewController? _webViewController;
+  vplayer.VideoPlayerController? _nativeController;
+
+  /// Exposed for fullscreen [VideoPlayer] when [useNativePlayer] is true.
+  vplayer.VideoPlayerController? get nativeController => _nativeController;
+
+  WebViewController? get webViewController => _webViewController;
+
   final VideoProgressService progressService = VideoProgressService.instance;
 
   List<String> videos = [];
@@ -20,6 +32,7 @@ class VideoPlayerController extends GetxController {
   int currentIndex = 0;
 
   Timer? _progressSaveTimer;
+  Timer? _nativeProgressTimer;
   Timer? _loadingTimeoutTimer;
   bool _isInitialized = false;
   int _retryCount = 0;
@@ -27,6 +40,25 @@ class VideoPlayerController extends GetxController {
   static const Duration _loadingTimeout = Duration(
     seconds: 15,
   ); // Timeout for slow networks
+
+  static String _sanitizeUrl(String url) =>
+      url.replaceAll(RegExp(r'\s+'), '').trim();
+
+  /// Direct MP4 / HLS URLs use native playback like the Shorts feed.
+  static bool isDirectVideoUrl(String rawUrl) {
+    final url = _sanitizeUrl(rawUrl);
+    if (url.isEmpty) return false;
+    final lower = url.toLowerCase();
+    if (lower.contains('iframe.mediadelivery.net/embed')) return false;
+    if (lower.endsWith('.mp4') ||
+        lower.endsWith('.webm') ||
+        lower.endsWith('.m3u8')) {
+      return true;
+    }
+    final uri = Uri.tryParse(url);
+    if (uri != null && uri.path.toLowerCase().contains('play_')) return true;
+    return false;
+  }
 
   @override
   void onInit() {
@@ -43,11 +75,11 @@ class VideoPlayerController extends GetxController {
 
     /// ✅ normalize data (MOST IMPORTANT PART)
     if (singleVideo != null && singleVideo.isNotEmpty) {
-      videos = [singleVideo]; // 🔥 convert single to list
-      videoIds = [singleVideoId ?? _generateVideoIdFromUrl(singleVideo)];
+      videos = [_sanitizeUrl(singleVideo)]; // 🔥 convert single to list
+      videoIds = [singleVideoId ?? _generateVideoIdFromUrl(videos.first)];
       currentIndex = 0;
     } else if (videoList != null && videoList.isNotEmpty) {
-      videos = List<String>.from(videoList);
+      videos = List<String>.from(videoList).map(_sanitizeUrl).toList();
       currentIndex = startIndex < videos.length ? startIndex : 0;
 
       // Generate video IDs from list or URLs
@@ -63,8 +95,158 @@ class VideoPlayerController extends GetxController {
       return;
     }
 
-    _initWebView();
-    loadVideo(currentIndex);
+    final primaryUrl = videos.isNotEmpty ? videos[currentIndex] : '';
+    final native = isDirectVideoUrl(primaryUrl);
+    useNativePlayer.value = native;
+
+    if (native) {
+      _initNativePlayback();
+    } else {
+      _initWebView();
+      loadVideo(currentIndex);
+    }
+  }
+
+  Future<void> _initNativePlayback() async {
+    isLoading.value = true;
+    hasError.value = false;
+    errorMessage.value = '';
+    await _loadNativeVideo(currentIndex);
+  }
+
+  Future<void> _loadNativeVideo(int index) async {
+    if (index < 0 || index >= videos.length) return;
+
+    if (_isInitialized) {
+      await _saveNativeProgress();
+    }
+
+    _stopNativeProgressTimer();
+    await _disposeNativeController();
+
+    currentIndex = index;
+    _retryCount = 0;
+    _isInitialized = false;
+    isLoading.value = true;
+    hasError.value = false;
+
+    final videoUrl = videos[index];
+    printInfo(info: '📺 Native load: $videoUrl');
+
+    try {
+      final c = vplayer.VideoPlayerController.networkUrl(
+        Uri.parse(videoUrl),
+        videoPlayerOptions: vplayer.VideoPlayerOptions(
+          mixWithOthers: false,
+          allowBackgroundPlayback: false,
+        ),
+        httpHeaders: const {'Accept': 'video/*;q=0.8'},
+      );
+      _nativeController = c;
+
+      c.addListener(_onNativeVideoTick);
+
+      await c
+          .initialize()
+          .timeout(
+            const Duration(seconds: 20),
+            onTimeout: () => throw Exception('Video loading timeout'),
+          );
+
+      if (_nativeController != c) {
+        try {
+          await c.dispose();
+        } catch (_) {}
+        return;
+      }
+
+      await _loadAndSeekNativeProgress();
+      _isInitialized = true;
+      await c.play();
+      isPlaying.value = true;
+      isLoading.value = false;
+      _startNativeProgressTimer();
+      update();
+    } catch (e) {
+      printInfo(info: '❌ Native video error: $e');
+      await _disposeNativeController();
+      hasError.value = true;
+      isLoading.value = false;
+      errorMessage.value = 'Failed to load video. Try again.';
+    }
+  }
+
+  void _onNativeVideoTick() {
+    final c = _nativeController;
+    if (c == null || !c.value.isInitialized) return;
+    isPlaying.value = c.value.isPlaying;
+  }
+
+  Future<void> _disposeNativeController() async {
+    _nativeController?.removeListener(_onNativeVideoTick);
+    final c = _nativeController;
+    _nativeController = null;
+    if (c != null) {
+      try {
+        await c.dispose();
+      } catch (e) {
+        printInfo(info: '⚠️ Native dispose: $e');
+      }
+    }
+  }
+
+  void _startNativeProgressTimer() {
+    _nativeProgressTimer?.cancel();
+    _nativeProgressTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (_isInitialized && _nativeController != null) {
+        _saveNativeProgress();
+      }
+    });
+  }
+
+  void _stopNativeProgressTimer() {
+    _nativeProgressTimer?.cancel();
+    _nativeProgressTimer = null;
+  }
+
+  Future<void> _loadAndSeekNativeProgress() async {
+    final c = _nativeController;
+    if (c == null || !c.value.isInitialized) return;
+    if (currentIndex < 0 || currentIndex >= videoIds.length) return;
+
+    final videoId = videoIds[currentIndex];
+    try {
+      final saved = await progressService.getProgress(videoId);
+      if (saved == null || saved <= 3) return;
+      final dur = c.value.duration.inSeconds;
+      if (dur > 0 && saved < dur) {
+        await c.seekTo(Duration(seconds: saved));
+        printInfo(info: '▶️ Resumed native video $videoId from ${saved}s');
+      }
+    } catch (e) {
+      printInfo(info: '⚠️ Native seek progress: $e');
+    }
+  }
+
+  Future<void> _saveNativeProgress() async {
+    final c = _nativeController;
+    if (c == null || !c.value.isInitialized) return;
+    if (currentIndex < 0 || currentIndex >= videoIds.length) return;
+
+    final videoId = videoIds[currentIndex];
+    try {
+      final position = c.value.position.inSeconds;
+      final duration = c.value.duration.inSeconds;
+      if (duration > 0 && position >= 0) {
+        await progressService.saveProgress(
+          videoId: videoId,
+          positionInSeconds: position,
+          durationInSeconds: duration,
+        );
+      }
+    } catch (e) {
+      printInfo(info: '⚠️ Error saving native progress: $e');
+    }
   }
 
   /// Generate a unique video ID from URL (fallback if no ID provided)
@@ -83,7 +265,7 @@ class VideoPlayerController extends GetxController {
   }
 
   void _initWebView() {
-    webViewController = WebViewController()
+    _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF000000))
       ..setNavigationDelegate(
@@ -169,9 +351,9 @@ class VideoPlayerController extends GetxController {
       );
 
     // Configure Android-specific settings
-    if (webViewController.platform is AndroidWebViewController) {
+    if (_webViewController!.platform is AndroidWebViewController) {
       final androidController =
-          webViewController.platform as AndroidWebViewController;
+          _webViewController!.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
 
       // Disable resource loading callbacks to avoid null pointer exceptions
@@ -191,6 +373,11 @@ class VideoPlayerController extends GetxController {
   void loadVideo(int index) async {
     if (index < 0 || index >= videos.length) return;
 
+    if (useNativePlayer.value) {
+      await _loadNativeVideo(index);
+      return;
+    }
+
     // Save progress of previous video
     if (_isInitialized) {
       await _saveCurrentProgress();
@@ -205,7 +392,7 @@ class VideoPlayerController extends GetxController {
     printInfo(info: '📺 Loading video: $videoUrl');
 
     try {
-      webViewController.loadRequest(Uri.parse(videoUrl));
+      _webViewController!.loadRequest(Uri.parse(videoUrl));
     } catch (e) {
       printInfo(info: '❌ Error loading video URL: $e');
       hasError.value = true;
@@ -252,8 +439,21 @@ class VideoPlayerController extends GetxController {
   void togglePlayPause() async {
     if (!_isInitialized) return;
 
+    if (useNativePlayer.value) {
+      final c = _nativeController;
+      if (c == null || !c.value.isInitialized) return;
+      if (c.value.isPlaying) {
+        await c.pause();
+        await _saveNativeProgress();
+      } else {
+        await c.play();
+      }
+      isPlaying.value = c.value.isPlaying;
+      return;
+    }
+
     try {
-      await webViewController.runJavaScript('''
+      await _webViewController!.runJavaScript('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -282,8 +482,19 @@ class VideoPlayerController extends GetxController {
   void seekForward() {
     if (!_isInitialized) return;
 
+    if (useNativePlayer.value) {
+      final c = _nativeController;
+      if (c != null && c.value.isInitialized) {
+        final next = c.value.position + const Duration(seconds: 10);
+        c.seekTo(
+          next > c.value.duration ? c.value.duration : next,
+        );
+      }
+      return;
+    }
+
     try {
-      webViewController.runJavaScript('''
+      _webViewController!.runJavaScript('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -303,8 +514,17 @@ class VideoPlayerController extends GetxController {
   void seekBackward() {
     if (!_isInitialized) return;
 
+    if (useNativePlayer.value) {
+      final c = _nativeController;
+      if (c != null && c.value.isInitialized) {
+        final next = c.value.position - const Duration(seconds: 10);
+        c.seekTo(next.isNegative ? Duration.zero : next);
+      }
+      return;
+    }
+
     try {
-      webViewController.runJavaScript('''
+      _webViewController!.runJavaScript('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -324,7 +544,7 @@ class VideoPlayerController extends GetxController {
   /// Check if video element is ready
   Future<bool> _checkVideoReady() async {
     try {
-      final result = await webViewController.runJavaScriptReturningResult('''
+      final result = await _webViewController!.runJavaScriptReturningResult('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -349,7 +569,7 @@ class VideoPlayerController extends GetxController {
     if (!_isInitialized) return null;
 
     try {
-      final result = await webViewController.runJavaScriptReturningResult('''
+      final result = await _webViewController!.runJavaScriptReturningResult('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -375,7 +595,7 @@ class VideoPlayerController extends GetxController {
     if (!_isInitialized) return null;
 
     try {
-      final result = await webViewController.runJavaScriptReturningResult('''
+      final result = await _webViewController!.runJavaScriptReturningResult('''
         (function() {
           try {
             var video = document.querySelector("video");
@@ -416,7 +636,7 @@ class VideoPlayerController extends GetxController {
         if (isReady) {
           // Try to seek
           try {
-            await webViewController.runJavaScript('''
+            await _webViewController!.runJavaScript('''
               (function() {
                 try {
                   var video = document.querySelector("video");
@@ -532,10 +752,16 @@ class VideoPlayerController extends GetxController {
 
   @override
   void onClose() {
-    try {
-      _saveCurrentProgress();
-    } catch (e) {
-      printInfo(info: '⚠️ Error saving progress on close: $e');
+    if (useNativePlayer.value) {
+      unawaited(_saveNativeProgress());
+      _stopNativeProgressTimer();
+      unawaited(_disposeNativeController());
+    } else {
+      try {
+        _saveCurrentProgress();
+      } catch (e) {
+        printInfo(info: '⚠️ Error saving progress on close: $e');
+      }
     }
     _stopProgressTracking();
     _cancelLoadingTimeout();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:testemu/features/shorts/controller/video_player_controller.dart';
+import 'package:video_player/video_player.dart' as vplayer;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -22,10 +23,38 @@ class VideoPlayerScreen extends StatelessWidget {
                 return _errorUI(controller);
               }
 
+              if (controller.useNativePlayer.value) {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+                final nc = controller.nativeController;
+                if (nc == null || !nc.value.isInitialized) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+                return SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: nc.value.size.width,
+                      height: nc.value.size.height,
+                      child: vplayer.VideoPlayer(nc),
+                    ),
+                  ),
+                );
+              }
+
+              final wv = controller.webViewController;
               return Center(
                 child: controller.isLoading.value
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : WebViewWidget(controller: controller.webViewController),
+                    : wv != null
+                        ? WebViewWidget(controller: wv)
+                        : const SizedBox.shrink(),
               );
             }),
 
