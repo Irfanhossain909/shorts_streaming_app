@@ -187,8 +187,17 @@ class ApiService {
 
   ApiResponseModel _handleError(dynamic error) {
     try {
-      return _handleDioException(error);
-    } catch (e) {
+      if (error is SocketException) {
+        _navigateToNoInternet();
+        return ApiResponseModel(503, {
+          "message": AppString.noInternetConnection,
+        });
+      }
+      if (error is DioException) {
+        return _handleDioException(error);
+      }
+      return ApiResponseModel(500, {});
+    } catch (_) {
       return ApiResponseModel(500, {});
     }
   }
@@ -207,13 +216,27 @@ class ApiService {
         );
 
       case DioExceptionType.connectionError:
-        // Navigate to No Internet screen
         _navigateToNoInternet();
         return ApiResponseModel(503, {
           "message": AppString.noInternetConnection,
         });
 
+      case DioExceptionType.unknown:
+        if (error.error is SocketException) {
+          _navigateToNoInternet();
+          return ApiResponseModel(503, {
+            "message": AppString.noInternetConnection,
+          });
+        }
+        return ApiResponseModel(400, {});
+
       default:
+        if (error.error is SocketException) {
+          _navigateToNoInternet();
+          return ApiResponseModel(503, {
+            "message": AppString.noInternetConnection,
+          });
+        }
         return ApiResponseModel(400, {});
     }
   }

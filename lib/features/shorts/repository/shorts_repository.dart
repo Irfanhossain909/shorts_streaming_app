@@ -78,9 +78,11 @@ class ShortsRepository {
       );
       if (response.statusCode == 200) {
         return response;
-      } else {
-        throw Exception(response.message);
       }
+      if (response.isNoConnection) {
+        return response;
+      }
+      throw Exception(response.message);
     } catch (e) {
       errorLog(e, source: 'Download Video');
       throw Exception(e.toString());
@@ -94,9 +96,11 @@ class ShortsRepository {
       );
       if (response.statusCode == 200) {
         return response;
-      } else {
-        throw Exception(response.message);
       }
+      if (response.isNoConnection) {
+        return response;
+      }
+      throw Exception(response.message);
     } catch (e) {
       errorLog(e, source: 'Add Recent Video');
       return ApiResponseModel(500, {'message': 'Failed to add recent video'});

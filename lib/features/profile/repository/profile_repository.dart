@@ -28,10 +28,17 @@ class ProfileRepository {
             .toList();
         return result;
       }
-      throw Exception(response.message);
+      if (response.isNoConnection) {
+        return [];
+      }
+      errorLog(
+        'getFaqs failed: ${response.statusCode} ${response.message}',
+        source: 'getFaqs',
+      );
+      return [];
     } catch (e) {
       errorLog(e, source: "getFaqs");
-      throw Exception(e);
+      return [];
     }
   }
 
@@ -119,10 +126,17 @@ class ProfileRepository {
         );
         return result;
       }
-      throw Exception(response.message);
+      if (response.isNoConnection) {
+        return null;
+      }
+      errorLog(
+        'getProfile failed: ${response.statusCode} ${response.message}',
+        source: 'getProfile',
+      );
+      return null;
     } catch (e) {
       errorLog(e, source: "getProfile");
-      throw Exception(e);
+      return null;
     }
   }
 }

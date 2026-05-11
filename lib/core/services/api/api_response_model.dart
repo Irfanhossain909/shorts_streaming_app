@@ -8,6 +8,9 @@ class ApiResponseModel {
 
   bool get isSuccess => _statusCode == 200;
 
+  /// Set when [ApiService] maps a transport error (e.g. no network) to 503.
+  bool get isNoConnection => _statusCode == 503;
+
   int get statusCode => _statusCode ?? 500;
 
   String get message {

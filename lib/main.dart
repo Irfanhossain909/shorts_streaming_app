@@ -9,6 +9,8 @@ import 'package:testemu/core/utils/extensions/extension.dart';
 import 'app.dart';
 import 'core/config/dependency/dependency_injection.dart';
 import 'core/config/performance/performance_config.dart';
+import 'package:get/get.dart';
+import 'core/services/connectivity/connectivity_guard_service.dart';
 import 'core/services/deep_link_service.dart';
 import 'core/services/notification/fcm_service.dart';
 import 'core/services/notification/notification_service.dart';
@@ -60,6 +62,8 @@ Future<void> main() async {
 init() async {
   DependencyInjection dI = DependencyInjection();
   dI.dependencies();
+
+  Get.put(ConnectivityGuardService(), permanent: true);
 
   await Future.wait([
     LocalStorage.getAllPrefData(),

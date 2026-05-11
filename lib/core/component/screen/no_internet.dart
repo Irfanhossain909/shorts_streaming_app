@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../config/route/app_routes.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_string.dart';
+import '../../services/storage/storage_services.dart';
 import '../button/common_button.dart';
 import '../text/common_text.dart';
 
-class NoInternet extends StatelessWidget {
+class NoInternet extends StatefulWidget {
   const NoInternet({super.key});
+
+  @override
+  State<NoInternet> createState() => _NoInternetState();
+}
+
+class _NoInternetState extends State<NoInternet> {
+  late final Future<void> _prefFuture = LocalStorage.getAllPrefData();
 
   @override
   Widget build(BuildContext context) {
@@ -73,38 +82,49 @@ class NoInternet extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               CommonText(
-                text: "Please check your connection and try again",
-                fontSize: 14,
-                color: AppColors.white.withOpacity(0.6),
+                text:
+                    "When you're online again, this screen will close automatically.",
+                fontSize: 13,
+                color: AppColors.white.withOpacity(0.55),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              // Retry Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CommonButton(
-                    onTap: () {
-                      // Go back and retry
-                      Get.back();
-                    },
-                    titleText: "Try Again",
-                    buttonWidth: 120,
-                    buttonHeight: 48,
-                    buttonColor: AppColors.primaryColor,
-                  ),
-                  const SizedBox(width: 16),
-                  // Back Button
-                  CommonButton(
-                    onTap: () => Get.back(),
-                    titleText: AppString.back,
-                    buttonWidth: 100,
-                    buttonHeight: 48,
-                    buttonColor: AppColors.textSecondary,
-                  ),
-                ],
+              FutureBuilder<void>(
+                future: _prefFuture,
+                builder: (context, snapshot) {
+                  final prefsReady =
+                      snapshot.connectionState == ConnectionState.done;
+                  final showDownloads =
+                      prefsReady && LocalStorage.isSubscribed;
+
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CommonButton(
+                          onTap: () => Get.back(),
+                          titleText: "Try Again",
+                          buttonHeight: 48,
+                          buttonColor: AppColors.primaryColor,
+                        ),
+                        if (showDownloads) ...[
+                          const SizedBox(height: 12),
+                          CommonButton(
+                            onTap: () =>
+                                Get.toNamed(AppRoutes.downloadedShorts),
+                            titleText: "Downloaded Shorts",
+                            buttonHeight: 48,
+                            buttonColor:
+                                AppColors.primaryColor.withOpacity(0.85),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
               // Tips
               Container(
                 padding: const EdgeInsets.all(20),
