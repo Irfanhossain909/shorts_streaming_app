@@ -64,26 +64,31 @@ class DeepLinkService {
         print('🔗 Segments: ${uri.pathSegments}');
       }
 
-      // Handle different deep link patterns
-      // Pattern 1: creepyshorts://shorts/:videoId
-      // Pattern 2: https://api.creepy-shorts.com/shorts/:videoId
+      // Pattern 1 (HTTPS): https://api.creepy-shorts.com/shorts/:videoId
+      // Pattern 2 (custom scheme): creepyshorts://shorts/:videoId
+      //   Here "shorts" is the host; video id is the first path segment.
 
-      if (uri.pathSegments.isNotEmpty) {
-        final firstSegment = uri.pathSegments[0];
-
-        // Navigate to Shorts screen with specific video
-        if (firstSegment == 'shorts' && uri.pathSegments.length >= 2) {
-          final videoId = uri.pathSegments[1];
-          _navigateToShortsVideo(videoId);
-        }
-        // Add more route patterns here as needed
-        // Example: if (firstSegment == 'movie' && uri.pathSegments.length >= 2) { ... }
+      final videoId = _extractShortsVideoId(uri);
+      if (videoId != null && videoId.isNotEmpty) {
+        _navigateToShortsVideo(videoId);
       }
     } catch (e) {
       if (kDebugMode) {
         print('❌ Error parsing deep link: $e');
       }
     }
+  }
+
+  String? _extractShortsVideoId(Uri uri) {
+    if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'shorts') {
+      return uri.pathSegments[1];
+    }
+    if (uri.scheme == 'creepyshorts' &&
+        uri.host == 'shorts' &&
+        uri.pathSegments.isNotEmpty) {
+      return uri.pathSegments.first;
+    }
+    return null;
   }
 
   /// Navigate to specific shorts video

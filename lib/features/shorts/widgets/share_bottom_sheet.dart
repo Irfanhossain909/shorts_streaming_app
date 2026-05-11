@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,16 @@ import 'package:testemu/core/component/text/common_text.dart';
 import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/core/constants/app_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+/// Web URL opens in-app on iOS only when `apple-app-site-association` is
+/// hosted on the same domain. The custom scheme line helps until that is live.
+String _shareMessage(String title, String webLink, String videoId) {
+  if (kIsWeb) {
+    return 'Check out this video: $title\n\n$webLink';
+  }
+  final appLink = 'creepyshorts://shorts/$videoId';
+  return 'Check out this video: $title\n\n$webLink\n\nOpen in Creepy Shorts:\n$appLink';
+}
 
 class ShareBottomSheet extends StatelessWidget {
   final String videoId;
@@ -131,7 +142,7 @@ class ShareBottomSheet extends StatelessWidget {
                     label: "Facebook",
                     onTap: () {
                       Get.back();
-                      _shareToFacebook(webLink, title);
+                      _shareToFacebook(webLink, title, videoId);
                     },
                   ),
 
@@ -141,7 +152,7 @@ class ShareBottomSheet extends StatelessWidget {
                     label: "X",
                     onTap: () {
                       Get.back();
-                      _shareToTwitter(webLink, title);
+                      _shareToTwitter(webLink, title, videoId);
                     },
                   ),
 
@@ -151,7 +162,7 @@ class ShareBottomSheet extends StatelessWidget {
                     label: "WhatsApp",
                     onTap: () {
                       Get.back();
-                      _shareToWhatsApp(webLink, title);
+                      _shareToWhatsApp(webLink, title, videoId);
                     },
                   ),
 
@@ -161,7 +172,7 @@ class ShareBottomSheet extends StatelessWidget {
                     label: "More",
                     onTap: () {
                       Get.back();
-                      _shareViaSystemSheet(webLink, title);
+                      _shareViaSystemSheet(webLink, title, videoId);
                     },
                   ),
                 ],
@@ -175,7 +186,10 @@ class ShareBottomSheet extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: InkWell(
                 onTap: () {
-                  Clipboard.setData(ClipboardData(text: webLink));
+                  final clipboardText = kIsWeb
+                      ? webLink
+                      : '$webLink\n\ncreepyshorts://shorts/$videoId';
+                  Clipboard.setData(ClipboardData(text: clipboardText));
                   Get.back();
                   Get.snackbar(
                     "✓ Link Copied",
@@ -235,7 +249,7 @@ class ShareBottomSheet extends StatelessWidget {
     );
   }
 
-  void _shareToFacebook(String link, String title) async {
+  void _shareToFacebook(String link, String title, String videoId) async {
     try {
       // Try Facebook app first
       final facebookAppUrl = Uri.parse(
@@ -257,14 +271,14 @@ class ShareBottomSheet extends StatelessWidget {
       }
 
       // If both fail, use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     } catch (e) {
       // Last resort: use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     }
   }
 
-  void _shareToTwitter(String link, String title) async {
+  void _shareToTwitter(String link, String title, String videoId) async {
     try {
       final text = Uri.encodeComponent('Check out this video: $title');
 
@@ -288,16 +302,16 @@ class ShareBottomSheet extends StatelessWidget {
       }
 
       // If both fail, use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     } catch (e) {
       // Last resort: use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     }
   }
 
-  void _shareToWhatsApp(String link, String title) async {
+  void _shareToWhatsApp(String link, String title, String videoId) async {
     try {
-      final text = 'Check out this video: $title\n$link';
+      final text = _shareMessage(title, link, videoId);
 
       // Try WhatsApp app first
       final whatsappUrl = Uri.parse(
@@ -319,17 +333,17 @@ class ShareBottomSheet extends StatelessWidget {
       }
 
       // If both fail, use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     } catch (e) {
       // Last resort: use system share sheet
-      _shareViaSystemSheet(link, title);
+      _shareViaSystemSheet(link, title, videoId);
     }
   }
 
-  void _shareViaSystemSheet(String link, String title) async {
+  void _shareViaSystemSheet(String link, String title, String videoId) async {
     try {
       // Use share_plus package for system share sheet
-      await Share.share('Check out this video: $title\n$link', subject: title);
+      await Share.share(_shareMessage(title, link, videoId), subject: title);
     } catch (e) {
       Get.snackbar(
         "Error",

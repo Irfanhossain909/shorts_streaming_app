@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "474QT7LGUB.com.rubengalindo.creepyshorts",
+        "paths": ["/shorts", "/shorts/*"]
+      }
+    ]
+  }
+}
