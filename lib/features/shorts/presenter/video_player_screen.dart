@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:testemu/core/constants/app_colors.dart';
 import 'package:testemu/features/shorts/controller/video_player_controller.dart';
 import 'package:video_player/video_player.dart' as vplayer;
 import 'package:webview_flutter/webview_flutter.dart';
@@ -114,6 +115,63 @@ class VideoPlayerScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+
+            /// Native MP4: bottom scrub bar (Shorts-style); iframe WebView has its own player UI.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Obx(() {
+                if (!controller.useNativePlayer.value) {
+                  return const SizedBox.shrink();
+                }
+                if (controller.hasError.value ||
+                    controller.isLoading.value) {
+                  return const SizedBox.shrink();
+                }
+                final nc = controller.nativeController;
+                if (nc == null || !nc.value.isInitialized) {
+                  return const SizedBox.shrink();
+                }
+                return DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.85),
+                        Colors.black.withValues(alpha: 0.45),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.45, 1.0],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      12.w,
+                      20.h,
+                      12.w,
+                      10.h,
+                    ),
+                    child: SizedBox(
+                      height: 18.h,
+                      width: double.infinity,
+                      child: vplayer.VideoProgressIndicator(
+                        nc,
+                        allowScrubbing: true,
+                        colors: vplayer.VideoProgressColors(
+                          playedColor: AppColors.red2,
+                          bufferedColor:
+                              Colors.white.withValues(alpha: 0.35),
+                          backgroundColor:
+                              Colors.white.withValues(alpha: 0.25),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
           ],
         ),
