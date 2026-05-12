@@ -32,48 +32,100 @@ class FaqsScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: controller.faqs.length,
               itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(bottom: 16.h),
-                  padding: EdgeInsets.all(16.r),
-                  decoration: BoxDecoration(
-                    color: AppColors.transparent,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText(
-                        text: controller.faqs[index].question ?? '',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.activeTrackColor,
-                      ),
-                      SizedBox(height: 18.h),
-                      CommonText(
-                        text: controller.faqs[index].answer ?? '',
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.activeTrackColor.withValues(
-                          alpha: 0.8,
-                        ),
-                      ),
-                      SizedBox(height: 18.h),
-                      Divider(
-                        color: AppColors.activeTrackColor.withValues(
-                          alpha: 0.2,
-                        ),
-                        height: 1.h,
-                      ),
-                    ],
-                  ),
+                final faq = controller.faqs[index];
+                return _ExpandableFaqTile(
+                  question: faq.question ?? '',
+                  answer: faq.answer ?? '',
                 );
               },
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _ExpandableFaqTile extends StatefulWidget {
+  const _ExpandableFaqTile({
+    required this.question,
+    required this.answer,
+  });
+
+  final String question;
+  final String answer;
+
+  @override
+  State<_ExpandableFaqTile> createState() => _ExpandableFaqTileState();
+}
+
+class _ExpandableFaqTileState extends State<_ExpandableFaqTile> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppColors.activeTrackColor;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: AppColors.transparent,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            borderRadius: BorderRadius.circular(8.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: CommonText(
+                      text: widget.question,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Icon(
+                    _expanded ? Icons.remove : Icons.add,
+                    size: 22.sp,
+                    color: color,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: EdgeInsets.only(top: 14.h),
+              child: CommonText(
+                text: widget.answer,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: color.withValues(alpha: 0.8),
+              ),
+            ),
+            crossFadeState: _expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
+            sizeCurve: Curves.easeOut,
+          ),
+          SizedBox(height: _expanded ? 18.h : 0),
+          Divider(
+            color: color.withValues(alpha: 0.2),
+            height: 1.h,
+          ),
+        ],
+      ),
     );
   }
 }
