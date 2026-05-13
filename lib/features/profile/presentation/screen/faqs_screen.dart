@@ -47,10 +47,7 @@ class FaqsScreen extends StatelessWidget {
 }
 
 class _ExpandableFaqTile extends StatefulWidget {
-  const _ExpandableFaqTile({
-    required this.question,
-    required this.answer,
-  });
+  const _ExpandableFaqTile({required this.question, required this.answer});
 
   final String question;
   final String answer;
@@ -87,6 +84,7 @@ class _ExpandableFaqTileState extends State<_ExpandableFaqTile> {
                   Expanded(
                     child: CommonText(
                       text: widget.question,
+                      textAlign: TextAlign.start,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
                       color: color,
@@ -108,6 +106,8 @@ class _ExpandableFaqTileState extends State<_ExpandableFaqTile> {
               padding: EdgeInsets.only(top: 14.h),
               child: CommonText(
                 text: widget.answer,
+                textAlign: TextAlign.justify,
+                maxLines: _expanded ? 1000 : 3,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
                 color: color.withValues(alpha: 0.8),
@@ -120,10 +120,7 @@ class _ExpandableFaqTileState extends State<_ExpandableFaqTile> {
             sizeCurve: Curves.easeOut,
           ),
           SizedBox(height: _expanded ? 18.h : 0),
-          Divider(
-            color: color.withValues(alpha: 0.2),
-            height: 1.h,
-          ),
+          Divider(color: color.withValues(alpha: 0.2), height: 1.h),
         ],
       ),
     );
